@@ -114,7 +114,7 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Akunting Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Kode Akunting</a>
+                    <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Jurnal Umum</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Buku Besar</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Kas Masuk</a>
@@ -171,7 +171,7 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Data Karyawan Menu:</h6>
-            <a class="collapse-item" href="{{ route('data-karyawan.index') }}">Divisi</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Divisi</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
