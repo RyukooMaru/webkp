@@ -152,11 +152,9 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Keamanan Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                    <a class="collapse-item" href="{{ route('keamanan.role.index') }}">Role</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">Permissions</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">User</a>
                 </div>
             </div>
         </li>
