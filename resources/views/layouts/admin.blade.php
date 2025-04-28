@@ -122,7 +122,26 @@
                 </div>
             </div>
         </li>
-
+<!-- Nav Item - Inventory Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
+        aria-expanded="true" aria-controls="collapseInventory">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Inventory</span>
+    </a>
+    <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Inventory Menu:</h6>
+            <a class="collapse-item" href="{{ route('supplier.index') }}">Supplier</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Data Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kelompok Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Satuan Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Purchase Order</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
+        </div>
+    </div>
+</li>
 
 
 
