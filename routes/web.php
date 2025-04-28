@@ -2,6 +2,9 @@
 use App\Http\Controllers\DataKaryawan\DivisiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MutasiGudang\WarehouseController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +33,7 @@ Route::put('/profile', 'ProfileController@update')->name('profile.update');
 /* Data Karyawan */
 Route::resource('data-karyawan', DivisiController::class)
     ->parameters(['data-karyawan' => 'ts_div']);
+
+
+
+Route::resource('warehouse', WarehouseController::class);
