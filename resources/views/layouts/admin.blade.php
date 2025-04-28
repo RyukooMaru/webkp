@@ -141,6 +141,23 @@
             <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
         </div>
     </div>
+</li><!-- Nav Item - Mutasi Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMutasi"
+        aria-expanded="true" aria-controls="collapseMutasi">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Mutasi Gudang</span>
+    </a>
+    <div id="collapseMutasi" class="collapse" aria-labelledby="headingMutasi"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Mutasi Gudang:</h6>
+            <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Permintaan</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Transfer Gudang</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
+        </div>
+    </div>
 </li>
 
 

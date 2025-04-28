@@ -5,6 +5,9 @@ use App\Http\Controllers\Inventory\SupplierController;
 use App\Http\Controllers\Keamanan\RoleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MutasiGudang\WarehouseController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -68,3 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
     });
 });
+
+
+
+Route::resource('warehouse', WarehouseController::class);
