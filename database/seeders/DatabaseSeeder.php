@@ -19,11 +19,15 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-         \App\Models\User::factory()->create([
-             'name' => 'John',
-             'last_name' => 'Doe',
-             'password' => 'password',
-             'email' => 'test@example.com',
-         ]);
+        // \App\Models\User::factory()->create([
+        //     'name' => 'John',
+        //     'last_name' => 'Doe',
+        //     'password' => 'password',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        $this->call([
+            SalesReturnHeaderSeeder::class,
+        ]);
     }
 }
