@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\DataKaryawan;
+namespace App\Http\Controllers\Presensi;
 use App\Http\Controllers\Controller;
 use App\Models\ts_div;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 
 class DivisiController extends Controller
 {
