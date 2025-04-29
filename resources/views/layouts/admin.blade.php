@@ -163,6 +163,27 @@
         </div>
     </div>
 </li>
+<!-- Nav Item - Company Profile Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseComprof"
+        aria-expanded="true" aria-controls="collapseComprof">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Company Profile</span>
+    </a>
+    <div id="collapseComprof" class="collapse" aria-labelledby="headingCompanyProfile"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Company Profile Menu:</h6>
+            <a class="collapse-item" href="{{ route('comprof.settingmenu.index') }}">Setting Menu</a>
+            <a class="collapse-item" href="{{ route('comprof.settingsubmenu.index') }}">Setting Sub Menu</a>
+            <a class="collapse-item" href="{{ route('comprof.slidesetting.index') }}">Setting Slide Bar</a>
+            <a class="collapse-item" href="{{ route('comprof.company.index') }}">Setting Perusahaan</a>
+            <a class="collapse-item" href="{{ route('comprof.staff.index') }}">Data Staf</a>
+            <a class="collapse-item" href="{{ route('comprof.newscategory.index') }}">Kategori Berita</a>
+            <a class="collapse-item" href="{{ route('comprof.albumcategory.index') }}">Kategori Album</a>
+        </div>
+    </div>
+</li>
 
 
 
