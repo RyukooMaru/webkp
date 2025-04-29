@@ -1,8 +1,10 @@
 <?php
+
 use App\Http\Controllers\DataKaryawan\DivisiController;
 use App\Http\Controllers\Akuntansi\KodeAkuntingController;
 use App\Http\Controllers\Inventory\SupplierController;
 use App\Http\Controllers\Keamanan\RoleController;
+use App\Http\Controllers\SalesReturn\SalesReturnController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\MutasiGudang\WarehouseController;
 */
 
 /* Login, Home, Profile */
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -75,3 +78,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 Route::resource('warehouse', WarehouseController::class);
+
+// Route untuk DataTables AJAX
+Route::get('sales-returns/data', [SalesReturnController::class, 'data'])
+    ->name('sales-returns.data');
+
+// Route khusus untuk print PDF
+Route::get('sales-returns/print', [SalesReturnController::class, 'print'])
+    ->name('sales-returns.print');
+
+// Resource routes tanpa 'show'
+Route::resource('sales-returns', SalesReturnController::class)
+    ->except(['show']);
