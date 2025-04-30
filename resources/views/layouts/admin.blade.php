@@ -24,6 +24,7 @@
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+
 </head>
 
 <body id="page-top">
@@ -201,16 +202,16 @@
         </li>
 <!-- Nav Item - Data Karyawan Collapse Menu -->
 <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatakaryawan"
-        aria-expanded="true" aria-controls="collapseDatakaryawan">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePresensi"
+        aria-expanded="true" aria-controls="collapsePresensi">
         <i class="fas fa-fw fa-wrench"></i>
-        <span>Data Karyawan</span>
+        <span>Presensi</span>
     </a>
-    <div id="collapseDatakaryawan" class="collapse" aria-labelledby="headingDatakaryawan"
+    <div id="collapsePresensi" class="collapse" aria-labelledby="headingPresensi"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Karyawan Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Divisi</a>
+            <h6 class="collapse-header">Presensi Menu:</h6>
+            <a class="collapse-item" href="{{-- route('#') --}}">Data Karyawan</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
@@ -532,6 +533,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+
+<script>
+
+</script>
 
 </body>
 
