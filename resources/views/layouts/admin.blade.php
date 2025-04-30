@@ -211,7 +211,7 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Presensi Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Data Karyawan</a>
+            <a class="collapse-item" href="{{ route('data-karyawan.index') }}">Data Karyawan</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>

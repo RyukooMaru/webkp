@@ -18155,3 +18155,248 @@ Did you mean one of these?
 [stacktrace]
 #0 {main}
 "} 
+[2025-04-30 04:27:20] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:27:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:28:12] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:28:31] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:28:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:28:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:28:57] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:29:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:29:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:29:54] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:30:11] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:30:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:30:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:31:35] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:31:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:31:36] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:31:41] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:10] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:31] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:32:47] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:33:08] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:33:08] local.ERROR: Cannot use App\Http\Controllers\Akuntansi\KodeAkuntingController as KodeAkuntingController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\Akuntansi\\KodeAkuntingController as KodeAkuntingController because the name is already in use at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:8)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-30 04:35:38] local.ERROR: SQLSTATE[HY000] [1049] Unknown database 'projekkp' (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 1049): SQLSTATE[HY000] [1049] Unknown database 'projekkp' (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:823)
+[stacktrace]
+#0 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(777): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#1 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(396): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#2 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(342): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#3 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(359): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#4 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(175): Illuminate\\Database\\Connection->scalar('select exists (...')
+#5 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\Builder->hasTable('migrations')
+#6 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#7 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#8 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}(1)
+#9 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#10 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#11 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#12 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#13 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#14 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#15 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#16 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#17 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#18 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#19 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#20 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(213): Illuminate\\Container\\Container->call(Array)
+#21 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Command\\Command.php(279): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#22 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#23 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#24 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#25 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#26 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#27 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#28 {main}
+
+[previous exception] [object] (PDOException(code: 1049): SQLSTATE[HY000] [1049] Unknown database 'projekkp' at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php:66)
+[stacktrace]
+#0 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php(66): PDO->__construct('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#1 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php(44): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#2 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=127....', Array, Array)
+#3 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#4 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->Illuminate\\Database\\Connectors\\{closure}()
+#5 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(1229): call_user_func(Object(Closure))
+#6 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(1265): Illuminate\\Database\\Connection->getPdo()
+#7 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(510): Illuminate\\Database\\Connection->getReadPdo()
+#8 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(405): Illuminate\\Database\\Connection->getPdoForSelect(true)
+#9 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(810): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('select exists (...', Array)
+#10 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(777): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#11 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(396): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#12 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(342): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#13 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(359): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#14 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(175): Illuminate\\Database\\Connection->scalar('select exists (...')
+#15 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\Builder->hasTable('migrations')
+#16 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#17 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#18 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}(1)
+#19 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#20 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#21 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#22 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#23 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#24 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#25 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#26 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#27 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#28 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#29 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#30 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(213): Illuminate\\Container\\Container->call(Array)
+#31 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Command\\Command.php(279): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#32 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#33 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#34 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#35 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#36 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#37 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#38 {main}
+"} 
+[2025-04-30 04:39:00] local.ERROR: Target class [Database\Seeders\NamaSeeder] does not exist. {"exception":"[object] (Illuminate\\Contracts\\Container\\BindingResolutionException(code: 0): Target class [Database\\Seeders\\NamaSeeder] does not exist. at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:1019)
+[stacktrace]
+#0 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(890): Illuminate\\Container\\Container->build('Database\\\\Seeder...')
+#1 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1078): Illuminate\\Container\\Container->resolve('Database\\\\Seeder...', Array, true)
+#2 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(821): Illuminate\\Foundation\\Application->resolve('Database\\\\Seeder...', Array)
+#3 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1058): Illuminate\\Container\\Container->make('Database\\\\Seeder...', Array)
+#4 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(98): Illuminate\\Foundation\\Application->make('Database\\\\Seeder...')
+#5 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(70): Illuminate\\Database\\Console\\Seeds\\SeedCommand->getSeeder()
+#6 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Concerns\\GuardsAttributes.php(155): Illuminate\\Database\\Console\\Seeds\\SeedCommand->Illuminate\\Database\\Console\\Seeds\\{closure}()
+#7 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(69): Illuminate\\Database\\Eloquent\\Model::unguarded(Object(Closure))
+#8 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Seeds\\SeedCommand->handle()
+#9 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#10 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#11 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#12 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#13 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(213): Illuminate\\Container\\Container->call(Array)
+#14 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Command\\Command.php(279): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#15 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#16 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Seeds\\SeedCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#20 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#21 {main}
+
+[previous exception] [object] (ReflectionException(code: -1): Class \"Database\\Seeders\\NamaSeeder\" does not exist at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:1017)
+[stacktrace]
+#0 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(1017): ReflectionClass->__construct('Database\\\\Seeder...')
+#1 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(890): Illuminate\\Container\\Container->build('Database\\\\Seeder...')
+#2 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1078): Illuminate\\Container\\Container->resolve('Database\\\\Seeder...', Array, true)
+#3 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(821): Illuminate\\Foundation\\Application->resolve('Database\\\\Seeder...', Array)
+#4 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1058): Illuminate\\Container\\Container->make('Database\\\\Seeder...', Array)
+#5 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(98): Illuminate\\Foundation\\Application->make('Database\\\\Seeder...')
+#6 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(70): Illuminate\\Database\\Console\\Seeds\\SeedCommand->getSeeder()
+#7 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Concerns\\GuardsAttributes.php(155): Illuminate\\Database\\Console\\Seeds\\SeedCommand->Illuminate\\Database\\Console\\Seeds\\{closure}()
+#8 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Seeds\\SeedCommand.php(69): Illuminate\\Database\\Eloquent\\Model::unguarded(Object(Closure))
+#9 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Seeds\\SeedCommand->handle()
+#10 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#11 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#12 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#13 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#14 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(213): Illuminate\\Container\\Container->call(Array)
+#15 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Command\\Command.php(279): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#16 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#17 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Seeds\\SeedCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#20 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#21 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#22 {main}
+"} 
