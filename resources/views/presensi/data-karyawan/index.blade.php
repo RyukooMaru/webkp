@@ -23,14 +23,17 @@
             <h6 class="m-0 font-weight-bold text-primary">Data Karyawan</h6>
         </div>
         <div class="card-body">
-            <a href="{{ route('data-karyawan.create') }}" class="btn btn-primary">
-                <span class="text">+ Add Data</span>
+            <a href="{{ route('data-karyawan.create') }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-100">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Data</span>
             </a>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered display my-4" id="myTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>emp_Auto</th>
+                            <th>No.</th>
                             <th>emp_Code</th>
                             <th>emp_NID</th>
                             <th>emp_Name</th>
@@ -94,7 +97,7 @@
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>emp_Auto</th>
+                            <th>No.</th>
                             <th>emp_Code</th>
                             <th>emp_NID</th>
                             <th>emp_Name</th>
@@ -157,93 +160,135 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        @foreach($m_employees as $m_employee)
+                        @foreach($Employees as $index => $Employee)
                         <tr>
-                            <td>{{ $m_employee->emp_Auto }}</td>
-                            <td>{{ $m_employee->emp_Code }} </td>
-                            <td>{{ $m_employee->emp_NID }} </td>
-                            <td>{{ $m_employee->emp_Name }} </td>
-                            <td>{{ $m_employee->emp_ActiveYN }} </td>
-                            <td>{{ $m_employee->emp_Address }} </td>
-                            <td>{{ $m_employee->emp_CityCode }} </td>
-                            <td>{{ $m_employee->emp_ProvinceCode }} </td>
-                            <td>{{ $m_employee->emp_DivCode }} </td>
-                            <td>{{ $m_employee->EMP_SUBDIVCODE }} </td>
-                            <td>{{ $m_employee->emp_PosCode }} </td>
-                            <td>{{ $m_employee->emp_ZipCode }} </td>
-                            <td>{{ $m_employee->emp_Phone1 }} </td>
-                            <td>{{ $m_employee->emp_Phone2 }} </td>
-                            <td>{{ $m_employee->emp_hp1 }} </td>
-                            <td>{{ $m_employee->emp_hp2 }} </td>
-                            <td>{{ $m_employee->emp_Address2 }} </td>
-                            <td>{{ $m_employee->emp_CityCode2 }} </td>
-                            <td>{{ $m_employee->emp_ProvinceCode2 }} </td>
-                            <td>{{ $m_employee->emp_ZipCode2 }} </td>
-                            <td>{{ $m_employee->emp_Phone3 }} </td>
-                            <td>{{ $m_employee->emp_Phone4 }} </td>
-                            <td>{{ $m_employee->emp_hp3 }} </td>
-                            <td>{{ $m_employee->emp_hp4 }} </td>
-                            <td>{{ $m_employee->emp_Email }} </td>
-                            <td>{{ $m_employee->emp_Email2 }} </td>
-                            <td>{{ $m_employee->emp_Web }} </td>
-                            <td>{{ $m_employee->emp_Sex }} </td>
-                            <td>{{ $m_employee->emp_Marital }} </td>
-                            <td>{{ $m_employee->emp_Religion }} </td>
-                            <td>{{ $m_employee->emp_PlaceBorn }} </td>
-                            <td>{{ $m_employee->emp_DateBorn }} </td>
-                            <td>{{ $m_employee->emp_Enroll }} </td>
-                            <td>{{ $m_employee->emp_startcontract }} </td>
-                            <td>{{ $m_employee->emp_Expired }} </td>
-                            <td>{{ $m_employee->emp_permanent }} </td>
-                            <td>{{ $m_employee->emp_quit }} </td>
-                            <td>{{ $m_employee->emp_reason }} </td>
-                            <td>{{ $m_employee->emp_office }} </td>
-                            <td>{{ $m_employee->emp_ptkp }} </td>
-                            <td>{{ $m_employee->emp_blood }} </td>
-                            <td>{{ $m_employee->EMP_SHIF }} </td>
-                            <td>{{ $m_employee->EMP_PAJAK }} </td>
-                            <td>{{ $m_employee->EMP_status }} </td>
-                            <td>{{ $m_employee->emp_bayar }} </td>
-                            <td>{{ $m_employee->emp_BANK }} </td>
-                            <td>{{ $m_employee->emp_NOREK }} </td>
-                            <td>{{ $m_employee->emp_PEMILIK }} </td>
-                            <td>{{ $m_employee->emp_NPWP }} </td>
-                            <td>{{ $m_employee->emp_education }} </td>
-                            <td>{{ $m_employee->EMP_JAMSOSTEK }} </td>
-                            <td>{{ $m_employee->emp_datejamsostek }} </td>
-                            <td>{{ $m_employee->emp_ktp }} </td>
-                            <td>{{ $m_employee->emp_no_ktp }} </td>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $Employee->emp_Code }} </td>
+                            <td>{{ $Employee->emp_NID }} </td>
+                            <td>{{ $Employee->emp_Name }} </td>
+                            <td>{{ $Employee->emp_ActiveYN }} </td>
+                            <td>{{ $Employee->emp_Address }} </td>
+                            <td>{{ $Employee->emp_CityCode }} </td>
+                            <td>{{ $Employee->emp_ProvinceCode }} </td>
+                            <td>{{ $Employee->emp_DivCode }} </td>
+                            <td>{{ $Employee->EMP_SUBDIVCODE }} </td>
+                            <td>{{ $Employee->emp_PosCode }} </td>
+                            <td>{{ $Employee->emp_ZipCode }} </td>
+                            <td>{{ $Employee->emp_Phone1 }} </td>
+                            <td>{{ $Employee->emp_Phone2 }} </td>
+                            <td>{{ $Employee->emp_hp1 }} </td>
+                            <td>{{ $Employee->emp_hp2 }} </td>
+                            <td>{{ $Employee->emp_Address2 }} </td>
+                            <td>{{ $Employee->emp_CityCode2 }} </td>
+                            <td>{{ $Employee->emp_ProvinceCode2 }} </td>
+                            <td>{{ $Employee->emp_ZipCode2 }} </td>
+                            <td>{{ $Employee->emp_Phone3 }} </td>
+                            <td>{{ $Employee->emp_Phone4 }} </td>
+                            <td>{{ $Employee->emp_hp3 }} </td>
+                            <td>{{ $Employee->emp_hp4 }} </td>
+                            <td>{{ $Employee->emp_Email }} </td>
+                            <td>{{ $Employee->emp_Email2 }} </td>
+                            <td>{{ $Employee->emp_Web }} </td>
+                            <td>{{ $Employee->emp_Sex }} </td>
+                            <td>{{ $Employee->emp_Marital }} </td>
+                            <td>{{ $Employee->emp_Religion }} </td>
+                            <td>{{ $Employee->emp_PlaceBorn }} </td>
+                            <td>{{ $Employee->emp_DateBorn }} </td>
+                            <td>{{ $Employee->emp_Enroll }} </td>
+                            <td>{{ $Employee->emp_startcontract }} </td>
+                            <td>{{ $Employee->emp_Expired }} </td>
+                            <td>{{ $Employee->emp_permanent }} </td>
+                            <td>{{ $Employee->emp_quit }} </td>
+                            <td>{{ $Employee->emp_reason }} </td>
+                            <td>{{ $Employee->emp_office }} </td>
+                            <td>{{ $Employee->emp_ptkp }} </td>
+                            <td>{{ $Employee->emp_blood }} </td>
+                            <td>{{ $Employee->EMP_SHIF }} </td>
+                            <td>{{ $Employee->EMP_PAJAK }} </td>
+                            <td>{{ $Employee->EMP_status }} </td>
+                            <td>{{ $Employee->emp_bayar }} </td>
+                            <td>{{ $Employee->emp_BANK }} </td>
+                            <td>{{ $Employee->emp_NOREK }} </td>
+                            <td>{{ $Employee->emp_PEMILIK }} </td>
+                            <td>{{ $Employee->emp_NPWP }} </td>
+                            <td>{{ $Employee->emp_education }} </td>
+                            <td>{{ $Employee->EMP_JAMSOSTEK }} </td>
+                            <td>{{ $Employee->emp_datejamsostek }} </td>
+                            <td>{{ $Employee->emp_ktp }} </td>
+                            <td>{{ $Employee->emp_no_ktp }} </td>
                             <td>
-                                @if ($m_employee->EMP_PICT)
-                                    <img src="data:image/jpeg;base64,{{ base64_encode($m_employee->EMP_PICT) }}" alt="Employee Picture" width="100" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+                                @if ($Employee->EMP_PICT)
+                                    <img src="data:image/jpeg;base64,{{ base64_encode($Employee->EMP_PICT) }}" alt="Employee Picture" width="100" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
                                 @else
                                     <span>No Image</span>
                                 @endif
                             </td>
-                            <td>{{ $m_employee->emp_ENTRYID }} </td>
-                            <td>{{ \Carbon\Carbon::parse($m_employee->emp_FirstEntry)->format('d-m-Y H:i') }}</td>
-                            <td>{{ $m_employee->emp_UpdateID }} </td>
-                            <td>{{ $m_employee->emp_LastUpdate }} </td>
+                            <td>{{ $Employee->emp_ENTRYID }} </td>
+                            <td>{{ \Carbon\Carbon::parse($Employee->emp_FirstEntry)->format('d-m-Y H:i') }}</td>
+                            <td>{{ $Employee->emp_UpdateID }} </td>
+                            <td>{{ $Employee->emp_LastUpdate }} </td>
                             <td>
-                                <a href="{{ route('data-karyawan.edit', $m_employee->emp_Auto)}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                                    Edit
+                                <a href="{{ route('data-karyawan.edit', $Employee->emp_Auto)}}" class="mb-2 btn btn-sm btn-warning edit-btn shadow-sm">
+                                    <i class="fas fa-edit"></i>
                                 </a>
-                                <form method="POST" action="{{ route('data-karyawan.destroy', $m_employee) }}" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="return confirm('Are you sure?')">
-                                        Delete
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-danger delete-btn delete-empbtn shadow-sm" 
+                                    data-url="{{ route('data-karyawan.destroy', $Employee) }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            @if(count($Employees) > 0)
+            <!-- Tampilkan tabel -->
+            @else
+                <div class="alert alert-info">Tidak ada Data Karyawan tersedia.</div>
+            @endif
         </div>
     </div>
+</div>
 
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="confirmDeleteEMPModal" tabindex="-1" aria-labelledby="confirmDeleteEMPModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteEMPModalLabel">Konfirmasi Penghapusan Data Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus data ini?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" id="deleteEMPForm">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger" >Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- /.container-fluid -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteEmployeeButtons = document.querySelectorAll('.delete-empbtn');
+        const deleteEmployeeForm = document.getElementById('deleteEMPForm');
+        const modalEmployee = new bootstrap.Modal(document.getElementById('confirmDeleteEMPModal'));
+
+        deleteEmployeeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const url = this.getAttribute('data-url');
+                deleteEmployeeForm.setAttribute('action', url);
+                modalEmployee.show();
+            });
+        });
+    });
+</script>
 @endsection

@@ -34,8 +34,6 @@
                         <h6 class="m-0 font-weight-bold text-primary">Form Tambah Data Karyawan</h6>
                     </div>
                     <div class="card-body">
-                        
-
                             <div class="pl-lg-2">
                                 <div class="form-row">
                                     <div class="col-lg-6">
