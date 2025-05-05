@@ -25,7 +25,7 @@
     <!-- Content Row -->
     
     <!-- Card Row -->
-    <form method="POST" class="needs-validation" action="{{ route('data-karyawan.update', $m_employee->emp_Auto) }}" enctype="multipart/form-data">
+    <form method="POST" class="needs-validation" action="{{ route('data-karyawan.update', $Employee->emp_Auto) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="row">
@@ -35,19 +35,18 @@
                         <h6 class="m-0 font-weight-bold text-primary">Form Edit Data Karyawan</h6>
                     </div>
                     <div class="card-body">
-                        
                             <div class="pl-lg-2">
                                 <div class="form-row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Code">Kode Karyawan:</label>
-                                            <input type="text" name="emp_Code" id="emp_Code" value="{{ $m_employee->emp_Code }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Code" id="emp_Code" value="{{ $Employee->emp_Code }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_NID">Nomor Induk Karyawan:</label>
-                                            <input type="text" name="emp_NID" id="emp_NID" value="{{ $m_employee->emp_NID }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_NID" id="emp_NID" value="{{ $Employee->emp_NID }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     
@@ -56,7 +55,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Name">Nama Karyawan:</label>
-                                            <input type="text" name="emp_Name" id="emp_Name" value="{{ $m_employee->emp_Name }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Name" id="emp_Name" value="{{ $Employee->emp_Name }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -64,9 +63,9 @@
                                             <label class="form-control-label" for="emp_ActiveYN">Aktif? (Y/N):</label>
                                             <select name="emp_ActiveYN" id="emp_ActiveYN" class="form-control bg-light small">
                                                 <!-- <option selected disabled value=>Choose...</option> -->
-                                                <option value="" {{ $m_employee->emp_Sex == '' ? 'selected' : '' }}>Pilih</option>
-                                                <option value="Y" {{ $m_employee->emp_Sex == 'Y' ? 'selected' : '' }}>Ya</option>
-                                                <option value="N" {{ $m_employee->emp_Sex == 'N' ? 'selected' : '' }}>Tidak</option>
+                                                <option value="" {{ $Employee->emp_Sex == '' ? 'selected' : '' }}>Pilih</option>
+                                                <option value="Y" {{ $Employee->emp_Sex == 'Y' ? 'selected' : '' }}>Ya</option>
+                                                <option value="N" {{ $Employee->emp_Sex == 'N' ? 'selected' : '' }}>Tidak</option>
                                             </select>
                                         </div>
                                     </div>
@@ -75,19 +74,19 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_DivCode">Divisi Code:</label>
-                                            <input type="text" name="emp_DivCode" id="emp_DivCode" value="{{ $m_employee->emp_DivCode }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_DivCode" id="emp_DivCode" value="{{ $Employee->emp_DivCode }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="form-control-label" for="EMP_SUBDIVCODE">Sub-Divisi Code:</label>
-                                            <input type="text" name="EMP_SUBDIVCODE" id="EMP_SUBDIVCODE" value="{{ $m_employee->EMP_SUBDIVCODE }}" class="form-control bg-light small">
+                                            <input type="text" name="EMP_SUBDIVCODE" id="EMP_SUBDIVCODE" value="{{ $Employee->EMP_SUBDIVCODE }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_PosCode">Posisi Code:</label>
-                                            <input type="text" name="emp_PosCode" id="emp_PosCode" value="{{ $m_employee->emp_PosCode }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_PosCode" id="emp_PosCode" value="{{ $Employee->emp_PosCode }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -95,13 +94,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Email">Email 1:</label>
-                                            <input type="text" name="emp_Email" id="emp_Email" value="{{ $m_employee->emp_Email }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Email" id="emp_Email" value="{{ $Employee->emp_Email }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Email2">Email 2:</label>
-                                            <input type="text" name="emp_Email2" id="emp_Email2" value="{{ $m_employee->emp_Email2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Email2" id="emp_Email2" value="{{ $Employee->emp_Email2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +108,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Web">Website:</label>
-                                            <input type="text" name="emp_Web" id="emp_Web" value="{{ $m_employee->emp_Web }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Web" id="emp_Web" value="{{ $Employee->emp_Web }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -119,9 +118,9 @@
                                             <label class="form-control-label" for="emp_Sex">Jenis Kelamin:</label>
                                             <select name="emp_Sex" id="emp_Sex" class="form-control bg-light small">
                                                 <!-- <option selected disabled value=>Choose...</option> -->
-                                                <option value="" {{ $m_employee->emp_Sex == '' ? 'selected' : '' }}>Pilih</option>
-                                                <option value="M" {{ $m_employee->emp_Sex == 'M' ? 'selected' : '' }}>Pria</option>
-                                                <option value="F" {{ $m_employee->emp_Sex == 'F' ? 'selected' : '' }}>Wanita</option>
+                                                <option value="" {{ $Employee->emp_Sex == '' ? 'selected' : '' }}>Pilih</option>
+                                                <option value="M" {{ $Employee->emp_Sex == 'M' ? 'selected' : '' }}>Pria</option>
+                                                <option value="F" {{ $Employee->emp_Sex == 'F' ? 'selected' : '' }}>Wanita</option>
                                             </select>
                                         </div>
                                     </div>
@@ -130,16 +129,16 @@
                                             <label class="form-control-label" for="emp_Marital">Status Kawin:</label>
                                             <select name="emp_Marital" id="emp_Marital" class="form-control bg-light small">
                                                 <!-- <option selected disabled value=>Choose...</option> -->
-                                                <option value="" {{ $m_employee->emp_Marital == '' ? 'selected' : '' }}>Pilih</option>
-                                                <option value="S" {{ $m_employee->emp_Marital == 'S' ? 'selected' : '' }}>Lajang</option>
-                                                <option value="M" {{ $m_employee->emp_Marital == 'M' ? 'selected' : '' }}>Menikah</option>
+                                                <option value="" {{ $Employee->emp_Marital == '' ? 'selected' : '' }}>Pilih</option>
+                                                <option value="S" {{ $Employee->emp_Marital == 'S' ? 'selected' : '' }}>Lajang</option>
+                                                <option value="M" {{ $Employee->emp_Marital == 'M' ? 'selected' : '' }}>Menikah</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Religion">Agama:</label>
-                                            <input type="text" name="emp_Religion" id="emp_Religion" value="{{ $m_employee->emp_Religion }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Religion" id="emp_Religion" value="{{ $Employee->emp_Religion }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -147,13 +146,13 @@
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_PlaceBorn">Tempat Lahir:</label>
-                                            <input type="text" name="emp_PlaceBorn" id="emp_PlaceBorn" value="{{ $m_employee->emp_PlaceBorn }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_PlaceBorn" id="emp_PlaceBorn" value="{{ $Employee->emp_PlaceBorn }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_DateBorn">Tanggal Lahir:</label>
-                                            <input type="date" name="emp_DateBorn" id="emp_DateBorn" value="{{ $m_employee->emp_DateBorn }}" class="form-control bg-light small">
+                                            <input type="date" name="emp_DateBorn" id="emp_DateBorn" value="{{ $Employee->emp_DateBorn }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
@@ -161,18 +160,18 @@
                                             <label class="form-control-label" for="emp_blood">Golongan Darah:</label>
                                             <select name="emp_blood" id="emp_blood" class="form-control bg-light small">
                                                 <!-- <option selected disabled value=>Choose...</option> -->
-                                                <option value="" {{ $m_employee->emp_blood == '' ? 'selected' : '' }}>Pilih</option>
-                                                <option value="O" {{ $m_employee->emp_blood == 'O' ? 'selected' : '' }}>O</option>
-                                                <option value="A" {{ $m_employee->emp_blood == 'A' ? 'selected' : '' }}>A</option>
-                                                <option value="B" {{ $m_employee->emp_blood == 'B' ? 'selected' : '' }}>B</option>
-                                                <option value="AB" {{ $m_employee->emp_blood == 'AB' ? 'selected' : '' }}>AB</option>
+                                                <option value="" {{ $Employee->emp_blood == '' ? 'selected' : '' }}>Pilih</option>
+                                                <option value="O" {{ $Employee->emp_blood == 'O' ? 'selected' : '' }}>O</option>
+                                                <option value="A" {{ $Employee->emp_blood == 'A' ? 'selected' : '' }}>A</option>
+                                                <option value="B" {{ $Employee->emp_blood == 'B' ? 'selected' : '' }}>B</option>
+                                                <option value="AB" {{ $Employee->emp_blood == 'AB' ? 'selected' : '' }}>AB</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_education">Pendidikan terakhir:</label>
-                                            <input type="text" name="emp_education" id="emp_education" value="{{ $m_employee->emp_education }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_education" id="emp_education" value="{{ $Employee->emp_education }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +186,7 @@
                             <figure class="rounded-circle mb-4" 
                                 style="height: 180px; width: 180px; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f0f0f0;">
                                 <img id="preview" 
-                                    style="width: 100%; height: 100%; object-fit: cover;" src="data:image/jpeg;base64,{{ base64_encode($m_employee->EMP_PICT) }}">
+                                    style="width: 100%; height: 100%; object-fit: cover;" src="data:image/jpeg;base64,{{ base64_encode($Employee->EMP_PICT) }}">
                             </figure>
                         </div>
                         <input type="hidden" name="hapus_gambar" id="hapus_gambar" value="0">
@@ -215,7 +214,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Address">Alamat:</label>
-                                            <textarea type="text" name="emp_Address" id="emp_Address" placeholder="{{ $m_employee->emp_Address }}" class="form-control bg-light small"></textarea>
+                                            <textarea type="text" name="emp_Address" id="emp_Address" placeholder="{{ $Employee->emp_Address }}" class="form-control bg-light small"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -223,13 +222,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_CityCode">Kode Kota:</label>
-                                            <input type="text" name="emp_CityCode" id="emp_CityCode" value="{{ $m_employee->emp_CityCode }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_CityCode" id="emp_CityCode" value="{{ $Employee->emp_CityCode }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_ProvinceCode">Kode Provinsi:</label>
-                                            <input type="text" name="emp_ProvinceCode" id="emp_ProvinceCode" value="{{ $m_employee->emp_ProvinceCode }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_ProvinceCode" id="emp_ProvinceCode" value="{{ $Employee->emp_ProvinceCode }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -237,7 +236,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_ZipCode">Zip Code:</label>
-                                            <input type="text" name="emp_ZipCode" id="emp_ZipCode" value="{{ $m_employee->emp_ZipCode }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_ZipCode" id="emp_ZipCode" value="{{ $Employee->emp_ZipCode }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -245,25 +244,25 @@
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Phone1">No. Telpon 1:</label>
-                                            <input type="text" name="emp_Phone1" id="emp_Phone1" value="{{ $m_employee->emp_Phone1 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Phone1" id="emp_Phone1" value="{{ $Employee->emp_Phone1 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Phone2">No. Telpon 2:</label>
-                                            <input type="text" name="emp_Phone2" id="emp_Phone2" value="{{ $m_employee->emp_Phone2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Phone2" id="emp_Phone2" value="{{ $Employee->emp_Phone2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_hp1">No. Handphone 1:</label>
-                                            <input type="text" name="emp_hp1" id="emp_hp1" value="{{ $m_employee->emp_hp1 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_hp1" id="emp_hp1" value="{{ $Employee->emp_hp1 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_hp2">No. Handphone 2:</label>
-                                            <input type="text" name="emp_hp2" id="emp_hp2" value="{{ $m_employee->emp_hp2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_hp2" id="emp_hp2" value="{{ $Employee->emp_hp2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -279,7 +278,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Address2">Alamat 2:</label>
-                                            <textarea type="text" name="emp_Address2" id="emp_Address2" placeholder="{{ $m_employee->emp_Address2 }}" class="form-control bg-light small"></textarea>
+                                            <textarea type="text" name="emp_Address2" id="emp_Address2" placeholder="{{ $Employee->emp_Address2 }}" class="form-control bg-light small"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -287,13 +286,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_CityCode2">Kode Kota 2:</label>
-                                            <input type="text" name="emp_CityCode2" id="emp_CityCode2" value="{{ $m_employee->emp_CityCode2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_CityCode2" id="emp_CityCode2" value="{{ $Employee->emp_CityCode2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_ProvinceCode2">Kode Provinsi 2:</label>
-                                            <input type="text" name="emp_ProvinceCode2" id="emp_ProvinceCode2" value="{{ $m_employee->emp_ProvinceCode2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_ProvinceCode2" id="emp_ProvinceCode2" value="{{ $Employee->emp_ProvinceCode2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +300,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_ZipCode2">Zip Code 2:</label>
-                                            <input type="text" name="emp_ZipCode2" id="emp_ZipCode2" value="{{ $m_employee->emp_ZipCode2 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_ZipCode2" id="emp_ZipCode2" value="{{ $Employee->emp_ZipCode2 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -309,25 +308,25 @@
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Phone3">No. Telpon 3:</label>
-                                            <input type="text" name="emp_Phone3" id="emp_Phone3" value="{{ $m_employee->emp_Phone3 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Phone3" id="emp_Phone3" value="{{ $Employee->emp_Phone3 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_Phone4">No. Telpon 4:</label>
-                                            <input type="text" name="emp_Phone4" id="emp_Phone4" value="{{ $m_employee->emp_Phone4 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_Phone4" id="emp_Phone4" value="{{ $Employee->emp_Phone4 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_hp3">No. Handphone 3:</label>
-                                            <input type="text" name="emp_hp3" id="emp_hp3" value="{{ $m_employee->emp_hp3 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_hp3" id="emp_hp3" value="{{ $Employee->emp_hp3 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <label class="form-control-label" for="emp_hp4">No. Handphone 4:</label>
-                                            <input type="text" name="emp_hp4" id="emp_hp4" value="{{ $m_employee->emp_hp4 }}" class="form-control bg-light small">
+                                            <input type="text" name="emp_hp4" id="emp_hp4" value="{{ $Employee->emp_hp4 }}" class="form-control bg-light small">
                                         </div>
                                     </div>
                                 </div>
@@ -345,13 +344,13 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_Enroll">Tanggal Enroll:</label>
-                                    <input type="date" name="emp_Enroll" id="emp_Enroll" value="{{ $m_employee->emp_Enroll }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_Enroll" id="emp_Enroll" value="{{ $Employee->emp_Enroll }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_startcontract">Tanggal Mulai Contract:</label>
-                                    <input type="date" name="emp_startcontract" id="emp_startcontract" value="{{ $m_employee->emp_startcontract }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_startcontract" id="emp_startcontract" value="{{ $Employee->emp_startcontract }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -359,13 +358,13 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_Expired">Tanggal Contract Expired:</label>
-                                    <input type="date" name="emp_Expired" id="emp_Expired" value="{{ $m_employee->emp_Expired }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_Expired" id="emp_Expired" value="{{ $Employee->emp_Expired }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_permanent">Tanggal Permanent:</label>
-                                    <input type="date" name="emp_permanent" id="emp_permanent" value="{{ $m_employee->emp_permanent }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_permanent" id="emp_permanent" value="{{ $Employee->emp_permanent }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -373,13 +372,13 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_quit">Tanggal Quit:</label>
-                                    <input type="date" name="emp_quit" id="emp_quit" value="{{ $m_employee->emp_quit }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_quit" id="emp_quit" value="{{ $Employee->emp_quit }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_reason">Code Alasan:</label>
-                                    <input type="text" name="emp_reason" id="emp_reason" value="{{ $m_employee->emp_reason }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_reason" id="emp_reason" value="{{ $Employee->emp_reason }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -387,25 +386,25 @@
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_office">Office:</label>
-                                    <input type="text" name="emp_office" id="emp_office" value="{{ $m_employee->emp_office }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_office" id="emp_office" value="{{ $Employee->emp_office }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="EMP_SHIF">Shift Code:</label>
-                                    <input type="text" name="EMP_SHIF" id="EMP_SHIF" value="{{ $m_employee->EMP_SHIF }}" class="form-control bg-light small">
+                                    <input type="text" name="EMP_SHIF" id="EMP_SHIF" value="{{ $Employee->EMP_SHIF }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="EMP_status">Status:</label>
-                                    <input type="text" name="EMP_status" id="EMP_status" value="{{ $m_employee->EMP_status }}" class="form-control bg-light small">
+                                    <input type="text" name="EMP_status" id="EMP_status" value="{{ $Employee->EMP_status }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_ptkp">Status PTKP:</label>
-                                    <input type="text" name="emp_ptkp" id="emp_ptkp" value="{{ $m_employee->emp_ptkp }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_ptkp" id="emp_ptkp" value="{{ $Employee->emp_ptkp }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -413,31 +412,31 @@
                             <div class="col-lg-1">
                                 <div class="form-group">
                                     <label class="form-control-label" for="EMP_PAJAK">Pajak:</label>
-                                    <input type="text" name="EMP_PAJAK" id="EMP_PAJAK" value="{{ $m_employee->EMP_PAJAK }}" class="form-control bg-light small">
+                                    <input type="text" name="EMP_PAJAK" id="EMP_PAJAK" value="{{ $Employee->EMP_PAJAK }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-1">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_bayar">Pembayaran:</label>
-                                    <input type="text" name="emp_bayar" id="emp_bayar" value="{{ $m_employee->emp_bayar }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_bayar" id="emp_bayar" value="{{ $Employee->emp_bayar }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-1">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_BANK">Code Bank:</label>
-                                    <input type="text" name="emp_BANK" id="emp_BANK" value="{{ $m_employee->emp_BANK }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_BANK" id="emp_BANK" value="{{ $Employee->emp_BANK }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_NOREK">No.Rekening:</label>
-                                    <input type="text" name="emp_NOREK" id="emp_NOREK" value="{{ $m_employee->emp_NOREK }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_NOREK" id="emp_NOREK" value="{{ $Employee->emp_NOREK }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-3">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_PEMILIK">Pemilik:</label>
-                                    <input type="text" name="emp_PEMILIK" id="emp_PEMILIK" value="{{ $m_employee->emp_PEMILIK }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_PEMILIK" id="emp_PEMILIK" value="{{ $Employee->emp_PEMILIK }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -445,19 +444,19 @@
                             <div class="col-lg-3">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_NPWP">NPWP:</label>
-                                    <input type="text" name="emp_NPWP" id="emp_NPWP" value="{{ $m_employee->emp_NPWP }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_NPWP" id="emp_NPWP" value="{{ $Employee->emp_NPWP }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-3">
                                 <div class="form-group">
                                     <label class="form-control-label" for="EMP_JAMSOSTEK">JAMSOSTEK:</label>
-                                    <input type="text" name="EMP_JAMSOSTEK" id="EMP_JAMSOSTEK" value="{{ $m_employee->EMP_JAMSOSTEK }}" class="form-control bg-light small">
+                                    <input type="text" name="EMP_JAMSOSTEK" id="EMP_JAMSOSTEK" value="{{ $Employee->EMP_JAMSOSTEK }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_datejamsostek">Terdaftar Jamsostek:</label>
-                                    <input type="date" name="emp_datejamsostek" id="emp_datejamsostek" value="{{ $m_employee->emp_datejamsostek }}" class="form-control bg-light small">
+                                    <input type="date" name="emp_datejamsostek" id="emp_datejamsostek" value="{{ $Employee->emp_datejamsostek }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
@@ -465,19 +464,19 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_ktp">KTP:</label>
-                                    <input type="text" name="emp_ktp" id="emp_ktp" value="{{ $m_employee->emp_ktp }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_ktp" id="emp_ktp" value="{{ $Employee->emp_ktp }}" class="form-control bg-light small">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="emp_no_ktp">No. KTP:</label>
-                                    <input type="text" name="emp_no_ktp" id="emp_no_ktp" value="{{ $m_employee->emp_no_ktp }}" class="form-control bg-light small">
+                                    <input type="text" name="emp_no_ktp" id="emp_no_ktp" value="{{ $Employee->emp_no_ktp }}" class="form-control bg-light small">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="pl-lg-2">
-                        <button type="submit" href="{{ route('data-karyawan.edit', $m_employee->emp_Auto)}}" class="btn btn-lg shadow-sm btn-primary px-lg float-right">
+                        <button type="submit" href="{{ route('data-karyawan.edit', $Employee->emp_Auto)}}" class="btn btn-lg shadow-sm btn-primary px-lg float-right">
                             <span class="text">Save</span>
                         </button>
                     </div>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Presensi;
 use App\Http\Controllers\Controller;
-use App\Models\Presensi\m_employee;
+use App\Models\Presensi\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -14,9 +14,9 @@ class KaryawanController extends Controller
      */
     public function index()
     {
-        $m_employees = m_employee::all();
+        $Employees = Employee::all();
  
-        return view('presensi.data-karyawan.index', compact('m_employees'));
+        return view('presensi.data-karyawan.index', compact('Employees'));
     }
 
     /**
@@ -33,7 +33,7 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($m_employee) ? ',' . $m_employee->emp_Auto . ',emp_Auto' : ''),
+            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($Employee) ? ',' . $Employee->emp_Auto . ',emp_Auto' : ''),
             'emp_NID' => 'nullable|string|max:30',
             'emp_Name' => 'nullable|string|max:50',
             'emp_ActiveYN' => 'nullable|string|max:1',
@@ -94,7 +94,7 @@ class KaryawanController extends Controller
         ]);
 
         // Tambahkan data user login dan waktu entry
-        $validated['emp_ENTRYID'] = auth::user()->id;
+        $validated['emp_ENTRYID'] = Auth::User()->id;
         $validated['emp_FirstEntry'] = Carbon::now();
 
         if ($request->hasFile('EMP_PICT')) {
@@ -102,9 +102,9 @@ class KaryawanController extends Controller
             $validated['EMP_PICT'] = file_get_contents($request->file('EMP_PICT'));
         }
     
-        m_employee::create($validated);
+        Employee::create($validated);
         
-        return redirect()->route('data-karyawan.index')->with('success', 'Employee created successfully.');
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -118,18 +118,18 @@ class KaryawanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(m_employee $m_employee)
+    public function edit(Employee $Employee)
     {
-        return view('presensi.data-karyawan.edit', compact('m_employee'));
+        return view('presensi.data-karyawan.edit', compact('Employee'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, m_employee $m_employee)
+    public function update(Request $request, Employee $Employee)
     {
         $validated = $request->validate([
-            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($m_employee) ? ',' . $m_employee->emp_Auto . ',emp_Auto' : ''),
+            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($Employee) ? ',' . $Employee->emp_Auto . ',emp_Auto' : ''),
             'emp_NID' => 'nullable|string|max:30',
             'emp_Name' => 'nullable|string|max:50',
             'emp_ActiveYN' => 'nullable|string|max:1',
@@ -190,11 +190,6 @@ class KaryawanController extends Controller
         ]);
     
         // Jika ada upload file baru
-        if ($request->hasFile('EMP_PICT')) {
-            $validated['EMP_PICT'] = file_get_contents($request->file('EMP_PICT'));
-        } else {
-            unset($validated['EMP_PICT']);
-        }
 
         if ($request->hasFile('EMP_PICT')) {
             $validated['EMP_PICT'] = file_get_contents($request->file('EMP_PICT'));
@@ -204,22 +199,24 @@ class KaryawanController extends Controller
             unset($validated['EMP_PICT']);
         }
 
-        $validated['emp_UpdateID'] = Auth::id(); // ID user yang login
+        $validated['emp_UpdateID'] = Auth::user()->id; // ID user yang login
         $validated['emp_LastUpdate'] = Carbon::now(); // Timestamp saat update
         
-        $m_employee->update($validated);
+        $Employee->update($validated);
     
-        return redirect()->route('data-karyawan.index')->with('success', 'Employee updated successfully.');
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil diperbarui.');
 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(m_employee $m_employee)
+    public function destroy($id)
     {
-        $m_employee->delete();
+        $Employee = Employee::findOrFail($id);
+        $Employee->delete();
  
-        return redirect()->route('data-karyawan.index');
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil dihapus.');;
     }
+
 }

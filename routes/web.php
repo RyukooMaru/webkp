@@ -8,9 +8,12 @@ use App\Http\Controllers\Presensi\KaryawanController;
 use App\Http\Controllers\SalesReturn\SalesReturnController;
 use App\Http\Controllers\Comprof\SettingMenuController;
 use App\Http\Controllers\Presensi\DivisiController;
+use App\Http\Controllers\Presensi\SubDivisiController;
+use App\Http\Controllers\Presensi\PosisiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
+
 
 
 
@@ -44,13 +47,24 @@ Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
 
 
-// Presensi
+
+
+
+// Data Karyawan
 Route::resource('divisi', DivisiController::class)
-    ->parameters(['divisi' => 'ts_div']);
+    ->parameters(['divisi' => 'Divisi']);
+
+// Data Sub-Divisi
+Route::resource('subdivisi', SubDivisiController::class)
+    ->parameters(['subdivisi' => 'SubDivisi']);
+
+// Data Posisi
+Route::resource('posisi', PosisiController::class)
+    ->parameters(['posisi' => 'Posisi']);
 
 // Data Karyawan
 Route::resource('data-karyawan', KaryawanController::class)
-    ->parameters(['data-karyawan' => 'm_employee']);
+    ->parameters(['data-karyawan' => 'Employee']);
 
 
 
