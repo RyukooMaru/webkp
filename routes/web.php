@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\Akuntansi\KodeAkuntingController;
+use App\Http\Controllers\Akuntansi\JurnalUmumController;
 use App\Http\Controllers\Inventory\SupplierController;
 use App\Http\Controllers\Keamanan\RoleController;
 use App\Http\Controllers\Presensi\KaryawanController;
