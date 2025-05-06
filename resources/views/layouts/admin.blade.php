@@ -134,15 +134,14 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Inventory Menu:</h6>
             <a class="collapse-item" href="{{ route('supplier.index') }}">Supplier</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Data Produk</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kelompok Produk</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Satuan Produk</a>
+            <a class="collapse-item" href="{{ route('dataproduk.index') }}">Data Produk</a>
+            <a class="collapse-item" href="{{ route('kelompokproduk.index') }}">Kelompok Produk</a>
+            <a class="collapse-item" href="{{ route('satuanproduk.index') }}">Satuan Produk</a> 
             <a class="collapse-item" href="{{-- route('#') --}}">Purchase Order</a>
             <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
         </div>
     </div>
 </li>
-
 
 
         <!-- Divider -->
