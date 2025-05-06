@@ -232,11 +232,11 @@
             <h6 class="collapse-header">Company Profile Menu:</h6>
             <a class="collapse-item" href="{{ route('comprof.settingmenu.index') }}">Setting Menu</a>
             <a class="collapse-item" href="{{ route('comprof.settingsubmenu.index') }}">Setting Sub Menu</a>
-            <a class="collapse-item" href="{{ route('comprof.slidesetting.index') }}">Setting Slide Bar</a>
-            <a class="collapse-item" href="{{ route('comprof.company.index') }}">Setting Perusahaan</a>
-            <a class="collapse-item" href="{{ route('comprof.staff.index') }}">Data Staf</a>
-            <a class="collapse-item" href="{{ route('comprof.newscategory.index') }}">Kategori Berita</a>
-            <a class="collapse-item" href="{{ route('comprof.albumcategory.index') }}">Kategori Album</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Slide Bar</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Perusahaan</a>
+            <a class="collapse-item" href="{{ route('comprof.datastaf.index') }}">Data Staf</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Berita</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Album</a>
         </div>
     </div>
 </li>

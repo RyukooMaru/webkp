@@ -30,10 +30,10 @@
         </button>
     </div>
 
-    <!-- Setting Menu Table -->
+    <!-- Menu Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Setting Menu</h6>  
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Menu</h6>  
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -71,7 +71,7 @@
                             <td>
                                 <button class="btn btn-sm btn-warning edit-btn"
                                     data-id="{{ $menu->id }}"
-                                    data-nama="{{ $menu->nama_menu }}"
+                                    data-nama_menu="{{ $menu->nama_menu }}"
                                     data-slug="{{ $menu->slug }}"
                                     data-route="{{ $menu->route }}"
                                     data-urutan="{{ $menu->urutan }}"
@@ -82,7 +82,7 @@
                                 </button>
                                 <button class="btn btn-sm btn-danger delete-btn"
                                     data-id="{{ $menu->id }}"
-                                    data-nama="{{ $menu->nama_menu }}"
+                                    data-nama_menu="{{ $menu->nama_menu }}"
                                     data-toggle="modal" data-target="#deleteMenuModal">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
@@ -102,7 +102,7 @@
 
 <!-- Add Menu Modal -->
 <div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="addMenuModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addMenuModalLabel">Tambah Menu Baru</h5>
@@ -124,8 +124,7 @@
                     </div>
                     <div class="form-group">
                         <label for="route">Route</label>
-                        <input type="text" class="form-control" id="route" name="route" placeholder="dashboard.index">
-                        <small class="form-text text-muted">Nama route Laravel</small>
+                        <input type="text" class="form-control" id="route" name="route" placeholder="contoh: dashboard.index">
                     </div>
                     <div class="form-group">
                         <label for="urutan">Urutan *</label>
@@ -159,7 +158,7 @@
 
 <!-- Edit Menu Modal -->
 <div class="modal fade" id="editMenuModal" tabindex="-1" role="dialog" aria-labelledby="editMenuModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editMenuModalLabel">Edit Menu</h5>
@@ -172,8 +171,8 @@
                 @method('PUT')
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="edit_nama">Nama Menu *</label>
-                        <input type="text" class="form-control" id="edit_nama" name="nama_menu" required>
+                        <label for="edit_nama_menu">Nama Menu *</label>
+                        <input type="text" class="form-control" id="edit_nama_menu" name="nama_menu" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_slug">Slug *</label>
@@ -224,7 +223,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus menu <strong id="delete_nama"></strong>?</p>
+                <p>Apakah Anda yakin ingin menghapus menu <strong id="delete_nama_menu"></strong>?</p>
                 <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
             <div class="modal-footer">
@@ -252,7 +251,7 @@
             var url = "{{ route('comprof.settingmenu.update', ':id') }}".replace(':id', id);
             
             $('#editForm').attr('action', url);
-            $('#edit_nama').val($(this).data('nama'));
+            $('#edit_nama_menu').val($(this).data('nama_menu'));
             $('#edit_slug').val($(this).data('slug'));
             $('#edit_route').val($(this).data('route'));
             $('#edit_urutan').val($(this).data('urutan'));
@@ -264,10 +263,10 @@
         $('.delete-btn').click(function() {
             var id = $(this).data('id');
             var url = "{{ route('comprof.settingmenu.destroy', ':id') }}".replace(':id', id);
-            var nama = $(this).data('nama');
+            var nama = $(this).data('nama_menu');
             
             $('#deleteForm').attr('action', url);
-            $('#delete_nama').text(nama);
+            $('#delete_nama_menu').text(nama);
         });
 
         // Auto generate slug from nama_menu
