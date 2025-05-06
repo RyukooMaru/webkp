@@ -76,5 +76,12 @@
             @yield('content')
         </main>
     </div>
+{{-- !!! Tambahkan jQuery jika belum ada dan diperlukan oleh plugin lain --}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<!-- Bootstrap 5 JS Bundle (sudah termasuk Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+@stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
 </body>
 </html>
