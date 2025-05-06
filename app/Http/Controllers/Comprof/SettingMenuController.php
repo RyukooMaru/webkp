@@ -61,7 +61,7 @@ class SettingMenuController extends Controller
         ]);
 
         return redirect()->route('comprof.settingmenu.index')
-            ->with('Sukses', 'Menu Berhasil ditambahkan');
+            ->with('success', 'Menu berhasil ditambahkan');
     }
 
     public function update(Request $request, Menu $settingmenu)
@@ -92,7 +92,7 @@ class SettingMenuController extends Controller
             $parent = Menu::find($request->parent_id);
             if ($parent && $this->isDescendant($parent, $settingmenu)) {
                 return redirect()->back()
-                    ->with('Error', 'Cannot create circular menu reference')
+                    ->with('error', 'Cannot create circular menu reference')
                     ->withInput();
             }
         }
@@ -107,20 +107,20 @@ class SettingMenuController extends Controller
         ]);
 
         return redirect()->route('comprof.settingmenu.index')
-            ->with('success', 'Menu updated successfully');
+            ->with('success', 'Menu berhasil diperbarui');
     }
 
     public function destroy(Menu $settingmenu)
     {
         if ($settingmenu->children()->exists()) {
             return redirect()->back()
-                ->with('error', 'Cannot delete menu with submenus');
+                ->with('error', 'Tidak dapat menghapus menu yang memiliki submenu');
         }
 
         $settingmenu->delete();
 
         return redirect()->route('comprof.settingmenu.index')
-            ->with('success', 'Menu deleted successfully');
+            ->with('success', 'Menu berhasil dihapus');
     }
 
     private function isDescendant($parent, $child)
