@@ -73,27 +73,14 @@ Route::prefix('akunting')->group(function () {
     Route::delete('/kodeakunting/{id}', [KodeAkuntingController::class, 'destroy'])->name('kodeakunting.destroy');
     Route::get('/kodeakunting/get-subclasses/{classId}', [KodeAkuntingController::class, 'getSubclassesByClass'])->name('kodeakunting.getSubclasses');
 });
-
-
-// Inventory routes
-Route::prefix('inventory')->group(function () {
-    // Daftar Supplier routes
-    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
-    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
-    Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
-    Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
-});
-
-
-// keamanan routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::prefix('keamanan/roles')->name('keamanan.role.')->group(function () {
-        Route::get('/', [RoleController::class, 'index'])->name('index');
-        Route::get('/create', [RoleController::class, 'create'])->name('create');
-        Route::post('/', [RoleController::class, 'store'])->name('store');
-        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
-        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
-        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+// Jurnal Umum routes
+Route::middleware(['auth'])->group(function () { // Pastikan hanya user terautentikasi
+    Route::prefix('akunting')->name('akunting.')->group(function () { // Prefix untuk URL dan nama route
+        Route::resource('jurnal-umum', JurnalUmumController::class)->names('jurnalumum');
+        // Tambahkan route AJAX helper jika perlu (seperti getNamaPerkiraan)
+        Route::get('jurnal-umum/get-nama-perkiraan/{id}', [JurnalUmumController::class, 'getNamaPerkiraan'])->name('jurnalumum.getNamaPerkiraan');
+         // Route untuk mendapatkan nomor jurnal baru via AJAX (opsional)
+        Route::get('jurnal-umum/get-next-no', [JurnalUmumController::class, 'create'])->name('jurnalumum.getNextNo');
     });
 });
 
@@ -122,6 +109,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
+// Route untuk gudang
 Route::resource('warehouse', WarehouseController::class);
 
 // Route untuk DataTables AJAX
@@ -159,11 +147,5 @@ Route::prefix('comprof')->name('comprof.')->group(function () {
 });
 
 
-// Inventory routes
-Route::prefix('inventory')->group(function () {
-    // Daftar Supplier routes
-    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
-    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
-    Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
-    Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
-});
+
+
