@@ -96,21 +96,76 @@ Route::prefix('inventory')->group(function () {
     Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
     Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
 
-    // Kelompok Produk routes
-    Route::get('/kelompokproduk', [KelompokprodukController::class, 'index'])->name('kelompokproduk.index');
-    Route::post('/kelompokproduk', [KelompokprodukController::class, 'store'])->name('kelompokproduk.store');
-    Route::put('/kelompokproduk/{kelompokproduk}', [KelompokprodukController::class, 'update'])->name('kelompokproduk.update');
-    Route::delete('/kelompokproduk/{kelompokproduk}', [KelompokprodukController::class, 'destroy'])->name('kelompokproduk.destroy');
+     // Kelompok Produk routes
+     Route::get('/kelompokproduk', [KelompokprodukController::class, 'index'])->name('kelompokproduk.index');
+     Route::post('/kelompokproduk', [KelompokprodukController::class, 'store'])->name('kelompokproduk.store');
+     Route::put('/kelompokproduk/{kelompokproduk}', [KelompokprodukController::class, 'update'])->name('kelompokproduk.update');
+     Route::delete('/kelompokproduk/{kelompokproduk}', [KelompokprodukController::class, 'destroy'])->name('kelompokproduk.destroy');
 
-    // Satuan Produk Routes
-    Route::get('/satuanproduk', [SatuanprodukController::class, 'index'])->name('satuanproduk.index');
-    Route::post('/satuanproduk', [SatuanprodukController::class, 'store'])->name('satuanproduk.store');
-    Route::put('/satuanproduk/{satuanproduk}', [SatuanprodukController::class, 'update'])->name('satuanproduk.update');
-    Route::delete('/satuanproduk/{satuanproduk}', [SatuanprodukController::class, 'destroy'])->name('satuanproduk.destroy');
+     // Satuan Produk Routes
+     Route::get('/satuanproduk', [SatuanprodukController::class, 'index'])->name('satuanproduk.index');
+     Route::post('/satuanproduk', [SatuanprodukController::class, 'store'])->name('satuanproduk.store');
+     Route::put('/satuanproduk/{satuanproduk}', [SatuanprodukController::class, 'update'])->name('satuanproduk.update');
+     Route::delete('/satuanproduk/{satuanproduk}', [SatuanprodukController::class, 'destroy'])->name('satuanproduk.destroy');
 
-   // Data Produk routes
-   Route::get('/dataproduk', [DataprodukController::class, 'index'])->name('dataproduk.index');
-   Route::post('/dataproduk', [DataprodukController::class, 'store'])->name('dataproduk.store');
-   Route::put('/dataproduk/{dataproduk}', [DataprodukController::class, 'update'])->name('dataproduk.update');
-   Route::delete('/dataproduk/{dataproduk}', [DataprodukController::class, 'destroy'])->name('dataproduk.destroy');
+    // Data Produk routes
+    Route::get('/dataproduk', [DataprodukController::class, 'index'])->name('dataproduk.index');
+    Route::post('/dataproduk', [DataprodukController::class, 'store'])->name('dataproduk.store');
+    Route::put('/dataproduk/{dataproduk}', [DataprodukController::class, 'update'])->name('dataproduk.update');
+    Route::delete('/dataproduk/{dataproduk}', [DataprodukController::class, 'destroy'])->name('dataproduk.destroy');
 });
+
+
+// keamanan routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::prefix('keamanan/roles')->name('keamanan.role.')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::get('/create', [RoleController::class, 'create'])->name('create');
+        Route::post('/', [RoleController::class, 'store'])->name('store');
+        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+    });
+});
+
+
+
+// Route untuk gudang
+Route::resource('warehouse', WarehouseController::class);
+
+// Route untuk DataTables AJAX
+Route::get('sales-returns/data', [SalesReturnController::class, 'data'])
+    ->name('sales-returns.data');
+
+// Route khusus untuk print PDF
+Route::get('sales-returns/print', [SalesReturnController::class, 'print'])
+    ->name('sales-returns.print');
+
+// Resource routes tanpa 'show'
+Route::resource('sales-returns', SalesReturnController::class)
+    ->except(['show']);
+
+
+// Company Profile routes group
+Route::prefix('comprof')->name('comprof.')->group(function () {
+    // Setting Menu
+    Route::get('/settingmenu', [SettingMenuController::class, 'index'])->name('settingmenu.index');
+    Route::post('/settingmenu', [SettingMenuController::class, 'store'])->name('settingmenu.store');
+    Route::put('/settingmenu/{settingmenu}', [SettingMenuController::class, 'update'])->name('settingmenu.update');
+    Route::delete('/settingmenu/{settingmenu}', [SettingMenuController::class, 'destroy'])->name('settingmenu.destroy');
+
+    // Sub Menu
+    Route::get('/settingsubmenu', [SubMenuController::class, 'index'])->name('settingsubmenu.index');
+    Route::post('/settingsubmenu', [SubMenuController::class, 'store'])->name('settingsubmenu.store');
+    Route::put('/settingsubmenu/{settingsubmenu}', [SubMenuController::class, 'update'])->name('settingsubmenu.update');
+    Route::delete('/settingsubmenu/{settingsubmenu}', [SubMenuController::class, 'destroy'])->name('settingsubmenu.destroy');
+
+    // Data Staf
+    Route::get('/datastaf', [DataStafController::class, 'index'])->name('datastaf.index');
+    Route::post('/datastaf', [DataStafController::class, 'store'])->name('datastaf.store');
+    Route::put('/datastaf/{datastaf}', [DataStafController::class, 'update'])->name('datastaf.update');
+    Route::delete('/datastaf/{datastaf}', [DataStafController::class, 'destroy'])->name('datastaf.destroy');
+});
+
+
+
