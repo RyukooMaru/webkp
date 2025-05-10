@@ -17,8 +17,8 @@
              <div id="jurnal-alert" class="alert" style="display: none;"></div>
 
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="jurnalTable" width="100%" cellspacing="0">
-                    <thead>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
                         <tr>
                             <th>No. Jurnal</th>
                             <th>Tgl. Buat</th>
@@ -122,7 +122,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -215,7 +215,7 @@
                 </div>
                 <div class="modal-footer">
                     {{-- Tombol ini yang seharusnya menutup modal --}}
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary" id="btnSimpanJurnal">
                         <i class="fas fa-save"></i> Simpan Jurnal
                     </button>
@@ -249,11 +249,11 @@
 @endsection
 
 @push('scripts') {{-- Sesuaikan dengan stack script di layout Anda --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Contoh SweetAlert --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script> {{-- Contoh InputMask --}}
 
 <script>
 $(document).ready(function() {
+var table = $('#dataTable').DataTable();
+
     const jurnalModal = new bootstrap.Modal(document.getElementById('jurnalModal'));
     const viewJurnalModal = new bootstrap.Modal(document.getElementById('viewJurnalModal')); // <-- TAMBAHKAN INI
     const detailTableBody = $('#detailTableBody');
@@ -266,12 +266,6 @@ $(document).ready(function() {
     // UTILITIES & HELPER FUNCTIONS
     // -------------------------
 
-    // tombol batal
-    const tombolBatalSelector = '#jurnalModal .modal-footer button[data-bs-dismiss="modal"]';
-    $(document).on('click', tombolBatalSelector, function(event) {
-        console.log('Tombol Batal di-klik (listener via delegation). Event:', event);
-        // ...
-    });
     // Format Angka ke Rupiah (atau format standar)
      function formatCurrency(number) {
         if (isNaN(number)) return "0.00";
@@ -331,8 +325,6 @@ $(document).ready(function() {
             balanceStatus.text('Not Balance').removeClass('bg-success').addClass('bg-danger');
         }
     }
-
-    // Tambah Baris Detail Baru
     // Tambah Baris Detail Baru
     function addDetailRow(data = null) {
         const newRow = $(detailRowTemplate.cloneNode(true));
