@@ -2,7 +2,7 @@
 
 @section('main-content')
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Daftar Kode Akuntansi</h1>
+    <h1 class="h3 mb-2 text-gray-800">Kode Akuntansi</h1>
 
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
