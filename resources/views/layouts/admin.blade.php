@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Laravel SB Admin 2">
-    <meta name="author" content="CV.PRIMA BELLA PANEN JAYA">
+    <meta name="author" content="CV.PRIMA BELLA PANEN REJEKI">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -134,8 +134,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Akunting Menu:</h6>
                         <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
-                        <a class="collapse-item" href="{{ route('akunting.jurnalumum.index') }}">Jurnal Umum</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">Buku Besar</a>
+                        <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
+                        <a class="collapse-item" href="{{ route('bukubesar.index') }}">Buku Besar</a>
                         <a class="collapse-item" href="{{-- route('#') --}}">Kas Masuk</a>
                         <a class="collapse-item" href="{{-- route('#') --}}">Kas Keluar</a>
                     </div>
@@ -495,7 +495,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>CV.PRIMA BELLA PANEN JAYA {{ now()->year }}</span>
+                        <span>CV.PRIMA BELLA PANEN REJEKI {{ now()->year }}</span>
                     </div>
                 </div>
             </footer>

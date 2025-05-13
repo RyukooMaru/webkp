@@ -16,6 +16,7 @@ use App\Http\Controllers\Comprof\DataStafController;
 use App\Http\Controllers\Inventory\KelompokprodukController;
 use App\Http\Controllers\Inventory\SatuanprodukController;
 use App\Http\Controllers\Inventory\DataprodukController;
+use App\Http\Controllers\Akuntansi\BukuBesarController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
@@ -67,6 +68,7 @@ Route::resource('data-karyawan', KaryawanController::class)
 
 
 // Akuntansi routes
+Route::middleware(['auth'])->group(function () { // Pastikan hanya user terautentikasi
 Route::prefix('akunting')->group(function () {
 // Kode Akuntansi routes
     Route::get('/kodeakunting', [KodeAkuntingController::class, 'index'])->name('kodeakunting.index');
@@ -75,15 +77,17 @@ Route::prefix('akunting')->group(function () {
     Route::put('/kodeakunting/{id}', [KodeAkuntingController::class, 'update'])->name('kodeakunting.update');
     Route::delete('/kodeakunting/{id}', [KodeAkuntingController::class, 'destroy'])->name('kodeakunting.destroy');
     Route::get('/kodeakunting/get-subclasses/{classId}', [KodeAkuntingController::class, 'getSubclassesByClass'])->name('kodeakunting.getSubclasses');
-});
 // Jurnal Umum routes
-Route::middleware(['auth'])->group(function () { // Pastikan hanya user terautentikasi
-    Route::prefix('akunting')->name('akunting.')->group(function () { // Prefix untuk URL dan nama route
-        Route::resource('jurnal-umum', JurnalUmumController::class)->names('jurnalumum');
-        // Tambahkan route AJAX helper jika perlu (seperti getNamaPerkiraan)
-        Route::get('jurnal-umum/get-nama-perkiraan/{id}', [JurnalUmumController::class, 'getNamaPerkiraan'])->name('jurnalumum.getNamaPerkiraan');
-         // Route untuk mendapatkan nomor jurnal baru via AJAX (opsional)
-        Route::get('jurnal-umum/get-next-no', [JurnalUmumController::class, 'create'])->name('jurnalumum.getNextNo');
+    Route::resource('jurnal-umum', JurnalUmumController::class)->names('jurnalumum');
+    // Tambahkan route AJAX helper jika perlu (seperti getNamaPerkiraan)
+    Route::get('jurnal-umum/get-nama-perkiraan/{id}', [JurnalUmumController::class, 'getNamaPerkiraan'])->name('jurnalumum.getNamaPerkiraan');
+    // Route untuk mendapatkan nomor jurnal baru via AJAX (opsional)
+    Route::get('jurnal-umum/get-next-no', [JurnalUmumController::class, 'create'])->name('jurnalumum.getNextNo');
+
+// Buku Besar routes
+    Route::get('/akunting/buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
+    Route::get('/akunting/buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
+
     });
 });
 

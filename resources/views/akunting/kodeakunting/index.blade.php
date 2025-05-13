@@ -49,22 +49,23 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $kode->cls_kiraid }}</td>
                         <td>{{ $kode->cls_ina }}</td>
-                        <td>{{ $kode->accClass->cls_ina }}</td>    {{-- Asumsi relasi accClass ada dan mengembalikan objek Class --}}
-                        <td>{{ $kode->accSubclass->cls_ina }}</td> {{-- Asumsi relasi accSubclass ada dan mengembalikan objek SubClass --}}
+                        <td>{{ $kode->accClass->cls_ina }}</td>
+                        <td>{{ $kode->accSubclass->cls_ina }}</td>
                         <td>{{ $kode->status }}</td>
                         <td>{{ $kode->d_k }}</td>
                         <td>{{ Auth::user()->name ?? 'System' }}</td>
                         <td>{{ \Carbon\Carbon::parse($kode->tanggal)->format('d M Y') }}</td>
                         <td>
+                        <div class="d-flex gap-2">
                             <button class="btn btn-sm btn-warning edit-btn"
                                 data-id="{{ $kode->id }}"
                                 data-kiraid="{{ $kode->cls_kiraid }}"
                                 data-ina="{{ $kode->cls_ina }}"
                                 data-status="{{ $kode->status }}"
                                 data-dk="{{ $kode->d_k }}"
-                                data-clsid="{{ $kode->accClass->cls_id ?? '' }}" {{-- Tambahkan ini --}}
-                                data-clssubid="{{ $kode->accSubclass->cls_subid ?? '' }}" {{-- Tambahkan ini --}}
-                                data-tanggal="{{ $kode->tanggal }}" {{-- Tambahkan tanggal juga --}}
+                                data-clsid="{{ $kode->accClass->cls_id ?? '' }}"
+                                data-clssubid="{{ $kode->accSubclass->cls_subid ?? '' }}"
+                                data-tanggal="{{ $kode->tanggal }}"
                                 data-toggle="modal" data-target="#editCodeModal">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -74,7 +75,8 @@
                                 data-toggle="modal" data-target="#deleteCodeModal">
                                 <i class="fas fa-trash"></i>
                             </button>
-                        </td>
+                        </div>
+                    </td>
                     </tr>
                     @endforeach
                 </tbody>
