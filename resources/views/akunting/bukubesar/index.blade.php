@@ -2,14 +2,17 @@
 
 @section('main-content')
 <div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Buku Besar</h1>
+    <div class="mb-3">
+    <a href="{{ route('akunting.bukubesar.pdf') }}" class="btn btn-danger btn-sm " target="_blank">
+        <i class="fas fa-file-pdf"></i> Print to PDF
+    </a>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Buku Besar</h3>
-                    <a href="{{ route('akunting.bukubesar.pdf') }}" class="btn btn-danger btn-sm " target="_blank">
-                            <i class="fas fa-file-pdf"></i> Print to PDF
-                        </a>
+                <h6 class="m-0 font-weight-bold text-primary">Daftar Buku Besar</h6>
                 </div>
                 <div class="card-body">
                     @if($jurnalEntries->isEmpty() && $totalDebetKeseluruhan == 0 && $totalKreditKeseluruhan == 0)
