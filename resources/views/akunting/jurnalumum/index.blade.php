@@ -822,7 +822,7 @@ var table = $('#dataTable').DataTable();
     // Tentukan URL dan Method (SAMA SEPERTI SEBELUMNYA)
     const jurnalId = $('#jurnalId').val();
     const method = $('#formMethod').val();
-    let url = "{{ route('akunting.jurnalumum.store') }}";
+    let url = "{{ route('jurnalumum.store') }}";
     if (method === 'PUT' && jurnalId) {
         url = `{{ url('akunting/jurnal-umum') }}/${jurnalId}`;
          // Pastikan _method=PUT ada di finalData (biasanya sudah dari serializeArray jika field hidden ada)
