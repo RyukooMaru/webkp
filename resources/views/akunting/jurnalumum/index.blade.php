@@ -20,27 +20,27 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
+                            <th width="10%">Tanggal</th>
                             <th>No. Jurnal</th>
-                            <th>Tgl. Buat</th>
-                            <th>Referensi</th>
+                            <th width="5%">Referensi</th>
                             <th>Lokasi</th>
-                            <th>Catatan</th>
-                            <th>Pengguna</th>
+                            <th width="15%">Catatan</th>
                             <th>Nominal</th>
-                            <th>Tgl. Edit</th>
+                            <th width="5%">Pengguna</th>
+                            <th width="10%">Tanggal Edit</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($jurnals as $jurnal)
                         <tr id="row-jurnal-{{ $jurnal->id }}">
-                            <td>{{ $jurnal->no_jurnal }}</td>
                             <td>{{ $jurnal->tanggal_buat->format('d-m-Y') }}</td>
+                            <td>{{ $jurnal->no_jurnal }}</td>
                             <td>{{ $jurnal->referensi }}</td>
                             <td>{{ $jurnal->lokasi_nama ?? '-' }}</td> {{-- Tampilkan lokasi --}}
                             <td>{{ Str::limit($jurnal->catatan, 50) }}</td> {{-- Batasi catatan --}}
-                            <td>{{ $jurnal->user->name ?? 'N/A' }}</td> {{-- Tampilkan nama user --}}
                             <td class="text-end">{{ number_format($jurnal->nominal, 2, ',', '.') }}</td>
+                            <td>{{ $jurnal->user->name ?? 'N/A' }}</td> {{-- Tampilkan nama user --}}
                             <td>{{ $jurnal->tanggal_edit->format('d-m-Y H:i') }}</td>
                             <td>
                                 <button class="btn btn-info btn-sm btn-view" data-id="{{ $jurnal->id }}" title="Lihat Detail">

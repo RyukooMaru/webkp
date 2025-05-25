@@ -17,6 +17,8 @@ use App\Http\Controllers\Inventory\KelompokprodukController;
 use App\Http\Controllers\Inventory\SatuanprodukController;
 use App\Http\Controllers\Inventory\DataprodukController;
 use App\Http\Controllers\Akuntansi\BukuBesarController;
+use App\Http\Controllers\Akuntansi\KasMasukController;
+use App\Http\Controllers\Akuntansi\KasKeluarController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
@@ -87,6 +89,12 @@ Route::prefix('akunting')->group(function () {
 // Buku Besar routes
     Route::get('/akunting/buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
     Route::get('/akunting/buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
+
+// Kas Masuk routes
+    Route::resource('kas-masuk', KasMasukController::class);
+// Kas Keluar routes
+    Route::resource('kas-keluar', KasKeluarController::class);
+
 
     });
 });
