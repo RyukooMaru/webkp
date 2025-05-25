@@ -2,43 +2,44 @@
 
 namespace App\Models\Akuntansi;
 
-use App\Models\User; // Pastikan namespace User benar
+use App\Models\User; // Pastikan ini ada jika Anda menggunakan relasi user
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccHdjurnal extends Model
 {
     use HasFactory;
 
-    protected $table = 'acc_hd_jurnal';
+    protected $table = 'acc_hd_jurnal'; // Pastikan nama tabel sudah benar
+
     protected $fillable = [
         'no_jurnal',
         'tanggal_buat',
         'tanggal_edit',
-        'lokasi_nama', // Ganti ke lokasi_id nanti
+        'lokasi_nama',
         'referensi',
         'catatan',
         'user_id',
         'nominal',
+        'tipe_jurnal', // <-- TAMBAHKAN INI
+        // 'created_at' dan 'updated_at' biasanya tidak perlu di fillable jika timestamps diaktifkan
     ];
 
+    // ... (relasi dan method lainnya)
     protected $casts = [
-        'tanggal_buat' => 'date',
+        'tanggal_buat' => 'datetime', // atau 'date' jika hanya tanggal tanpa waktu
         'tanggal_edit' => 'datetime',
-        'nominal' => 'decimal:2',
+        'nominal' => 'float', // Casting nominal juga baik
+        // 'created_at' => 'datetime', // Otomatis jika menggunakan $timestamps = true
+        // 'updated_at' => 'datetime', // Otomatis jika menggunakan $timestamps = true
     ];
-
-    // Relasi ke Detail Jurnal
-    public function details(): HasMany
+    public function user()
     {
-        return $this->hasMany(AccDtjurnal::class, 'acc_hd_jurnal_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relasi ke User
-    public function user(): BelongsTo
+    public function details()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(AccDtjurnal::class, 'acc_hd_jurnal_id');
     }
 }

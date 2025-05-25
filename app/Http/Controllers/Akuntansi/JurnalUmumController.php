@@ -131,16 +131,16 @@ class JurnalUmumController extends Controller
             $header = AccHdjurnal::create([
                 'no_jurnal' => $noJurnal,
                 'tanggal_buat' => $request->tanggal_buat,
-                'tanggal_edit' => $now, // Tanggal edit diisi saat ini
+                'tanggal_edit' => $now,
                 'lokasi_nama' => $request->lokasi_nama,
                 'referensi' => $request->referensi,
                 'catatan' => $request->catatan_header,
                 'user_id' => Auth::id(),
-                'nominal' => $totalDebet, // Nominal adalah total debet (atau kredit)
-                'created_at' => $now, // Set manual agar konsisten dengan tanggal_edit saat create
+                'nominal' => $totalDebet,
+                'tipe_jurnal' => 'JU', // <-- SET TIPE JURNAL
+                'created_at' => $now,
                 'updated_at' => $now,
             ]);
-
             // 2. Simpan Detail Jurnal
             foreach ($request->details as $detailData) {
                 AccDtjurnal::create([

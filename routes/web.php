@@ -3,6 +3,8 @@ use App\Http\Controllers\DataKaryawan\DivisiController;
 use App\Http\Controllers\Akuntansi\KodeAkuntingController;
 use App\Http\Controllers\Akuntansi\JurnalUmumController;
 use App\Http\Controllers\Akuntansi\BukuBesarController;
+use App\Http\Controllers\Akuntansi\KasMasukController;
+use App\Http\Controllers\Akuntansi\KasKeluarController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +58,12 @@ Route::prefix('akunting')->group(function () {
 // Buku Besar routes
     Route::get('/akunting/buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
     Route::get('/akunting/buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
+
+// Kas Masuk routes
+    Route::resource('kas-masuk', KasMasukController::class);
+// Kas Keluar routes
+    Route::resource('kas-keluar', KasKeluarController::class);
+
 
     });
 });

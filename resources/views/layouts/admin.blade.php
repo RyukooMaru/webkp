@@ -130,9 +130,9 @@
                     <h6 class="collapse-header">Akunting Menu:</h6>
                     <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
                     <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
-                    <a class="collapse-item" href="{{ route('bukubesar.index') }}">Buku Besar</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Kas Masuk</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Kas Keluar</a>
+                    <a class="collapse-item" href="{{ route('bukubesar.index') }}">Daftar Penjurnalan</a>
+                    <a class="collapse-item" href="{{ route('kas-masuk.index') }}">Kas Masuk</a>
+                    <a class="collapse-item" href="{{ route('kas-keluar.index') }}">Kas Keluar</a>
                 </div>
             </div>
         </li>
