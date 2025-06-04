@@ -3,69 +3,77 @@
 namespace App\Http\Controllers\Comprof;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Comprof\Menu;
 use App\Models\Comprof\Submenu;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class SubMenuController extends Controller
 {
-    /**
-     * Menampilkan daftar submenu.
-     */
     public function index()
     {
         $submenus = Submenu::with('menu')->orderBy('urut')->get();
-        $menus = Menu::all();
+        $menus = Menu::where('status', 1)->orderBy('urutan')->get();
 
-        return view('comprof.submenu.index', compact('submenus', 'menus'));
+        return view('comprof.settingsubmenu.index', compact('submenus', 'menus'));
     }
 
-    /**
-     * Menyimpan submenu baru.
-     */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'menu_id'       => 'required|exists:menu_tabel,id',
-            'nama_submenu'  => 'required|string|max:255',
-            'urut'          => 'required|integer',
-            'tautan'        => 'required|string|max:255',
-            'status'        => 'required|boolean',
+        $validated = $request->validate([
+            'menu_id' => 'required|exists:setmenu,id',
+            'nama_submenu' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('submenu_tabel', 'nama_submenu')
+            ],
+            'urut' => 'required|integer|min:0',
+            'tautan' => 'required|string|max:255',
+            'status' => 'required|boolean',
         ]);
 
-        Submenu::create($request->all());
+        Submenu::create($validated);
 
-        return redirect()->route('comprof.settingsubmenu.index')
-                         ->with('success', 'Sub menu berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Sub Menu berhasil ditambahkan',
+            'data' => $validated
+        ]);
     }
 
-    /**
-     * Memperbarui data submenu.
-     */
-    public function update(Request $request, Submenu $settingsubmenu)
+    // Perhatikan parameter harus sesuai (Submenu $submenu)
+    public function update(Request $request, Submenu $submenu): JsonResponse
     {
-        $request->validate([
-            'menu_id'       => 'required|exists:menu_tabel,id',
-            'nama_submenu'  => 'required|string|max:255',
-            'urut'          => 'required|integer',
-            'tautan'        => 'required|string|max:255',
-            'status'        => 'required|boolean',
+        $validated = $request->validate([
+            'menu_id' => 'required|exists:setmenu,id',
+            'nama_submenu' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('submenu_tabel', 'nama_submenu')->ignore($submenu->id)
+            ],
+            'urut' => 'required|integer|min:0',
+            'tautan' => 'required|string|max:255',
+            'status' => 'required|boolean',
         ]);
 
-        $settingsubmenu->update($request->all());
+        $submenu->update($validated);
 
-        return redirect()->route('comprof.settingsubmenu.index')
-                         ->with('success', 'Sub menu berhasil diperbarui');
+        return response()->json([
+            'message' => 'Sub Menu berhasil diperbarui',
+            'data' => $submenu
+        ]);
     }
 
-    /**
-     * Menghapus submenu.
-     */
-    public function destroy(Submenu $settingsubmenu)
+    // Perhatikan parameter harus sesuai (Submenu $submenu)
+    public function destroy(Submenu $submenu): JsonResponse
     {
-        $settingsubmenu->delete();
+        $submenu->delete();
 
-        return redirect()->route('comprof.settingsubmenu.index')
-                         ->with('success', 'Sub menu berhasil dihapus');
+        return response()->json([
+            'message' => 'Sub Menu berhasil dihapus',
+            'data' => $submenu
+        ]);
     }
 }

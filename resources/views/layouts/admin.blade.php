@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Laravel SB Admin 2">
-    <meta name="author" content="Alejandro RH">
+    <meta name="author" content="CV.PRIMA BELLA PANEN REJEKI">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,9 +18,38 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
+
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <style>
+        .note-editable {
+            min-height: 150px !important;
+        }
+        .note-toolbar {
+            background-color: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+        }
+    </style>
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+
+    <!-- Scripts -->
+<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+<script src="{{ asset('vendor/datatables/dataTables.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Summernote JS -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 </head>
 <body id="page-top">
 
@@ -114,15 +143,36 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Akunting Menu:</h6>
-                    <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Jurnal Umum</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Buku Besar</a>
+                    <a class="collapse-item" href="{{--route('kodeakunting.index')--}}">Kode Akunting</a>
+                    <a class="collapse-item" href="{{--route('jurnalumum.index')--}}">Jurnal Umum</a>
+                    <a class="collapse-item" href="{{--route('bukubesar.index')--}}">Buku Besar</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Kas Masuk</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Kas Keluar</a>
                 </div>
             </div>
-        </li>
-        
+          </li>
+        <!-- Nav Item - Inventory Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
+                    aria-expanded="true" aria-controls="collapseInventory">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Inventory</span>
+                </a>
+                <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Inventory Menu:</h6>
+                        <a class="collapse-item" href="{{-- route('supplier.index') --}}">Supplier</a>
+                        <a class="collapse-item" href="{{-- route('dataproduk.index') --}}">Data Produk</a>
+                        <a class="collapse-item" href="{{-- route('kelompokproduk.index') --}}">Kelompok Produk</a>
+                        <a class="collapse-item" href="{{-- route('satuanproduk.index') --}}">Satuan Produk</a> 
+                        <a class="collapse-item" href="{{-- route('#') --}}">Purchase Order</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
+                    </div>
+                </div>
+            </li>
+
+
 <!-- Nav Item - Company Profile Collapse Menu -->
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseComprof"
@@ -136,17 +186,14 @@
             <h6 class="collapse-header">Company Profile Menu:</h6>
             <a class="collapse-item" href="{{ route('comprof.settingmenu.index') }}">Setting Menu</a>
             <a class="collapse-item" href="{{ route('comprof.settingsubmenu.index') }}">Setting Sub Menu</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Slide Bar</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Perusahaan</a>
+            <a class="collapse-item" href="#">Setting Slide Bar</a>
+            <a class="collapse-item" href="#">Setting Perusahaan</a>
             <a class="collapse-item" href="{{ route('comprof.datastaf.index') }}">Data Staf</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Berita</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Album</a>
+            <a class="collapse-item" href="#">Kategori Berita</a>
+            <a class="collapse-item" href="#">Kategori Album</a>
         </div>
     </div>
 </li>
-
-
-
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -423,7 +470,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>CV.PRIMA BELLA PANEN JAYA {{ now()->year }}</span>
+                    <span>CV.PRIMA BELLA PANEN REJEKI {{ now()->year }}</span>
                 </div>
             </div>
         </footer>
@@ -460,11 +507,7 @@
         </div>
     </div>
 </div>
-
-<!-- Scripts -->
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>
+
