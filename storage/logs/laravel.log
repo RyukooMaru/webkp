@@ -51357,9 +51357,7 @@ Did you mean one of these?
 #52 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\public\\index.php(54): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #53 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\server.php(21): require_once('G:\\\\SEMESTER 6\\\\P...')
 #54 {main}
-<<<<<<< HEAD
 "}
-=======
 "}
 [2025-05-13 07:52:49] local.ERROR: Route [kodeakunting.index] not defined. {"view":{"view":"G:\\SEMESTER 6\\PROJECT KP\\projekkp\\resources\\views\\layouts\\admin.blade.php","data":{"errors":"<pre class=sf-dump id=sf-dump-487969565 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\ViewErrorBag</span> {<a class=sf-dump-ref>#1332</a><samp data-depth=1 class=sf-dump-expanded>
   #<span class=sf-dump-protected title=\"Protected property\">bags</span>: []
@@ -78355,7 +78353,6 @@ Did you mean one of these?
 #53 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\server.php(21): require_once('G:\\\\SEMESTER 6\\\\P...')
 #54 {main}
 "}
->>>>>>> Akunting
 [2025-05-13 16:44:10] local.ERROR: syntax error, unexpected token "<<", expecting end of file {"exception":"[object] (ParseError(code: 0): syntax error, unexpected token \"<<\", expecting end of file at G:\\SEMESTER 6\\PROJECT KP\\projekkp\\routes\\web.php:6)
 [stacktrace]
 #0 G:\\SEMESTER 6\\PROJECT KP\\projekkp\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(513): Illuminate\\Routing\\RouteFileRegistrar->register('G:\\\\SEMESTER 6\\\\P...')

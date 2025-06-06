@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Submenu extends Model
 {
     protected $table = 'submenu_tabel';
-    protected $primaryKey = 'id';
     
     protected $fillable = [
         'menu_id',
@@ -19,7 +18,7 @@ class Submenu extends Model
     ];
 
     protected $casts = [
-        'entrydate' => 'datetime',
+        'status' => 'boolean',
     ];
 
     public function menu(): BelongsTo
@@ -27,8 +26,11 @@ class Submenu extends Model
         return $this->belongsTo(Menu::class, 'menu_id');
     }
 
-    public function getStatusAttribute(): string
+    // Accessor untuk status HTML
+    public function getStatusHtmlAttribute(): string
     {
-        return $this->activeyn === 'T' ? 'Aktif' : 'Nonaktif';
+        return $this->status
+            ? '<span class="badge bg-success">Aktif</span>'
+            : '<span class="badge bg-danger">Tidak Aktif</span>';
     }
 }

@@ -3,275 +3,423 @@
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Data Staf</h1>
-    <p class="mb-4">Manajemen Data Staf untuk aplikasi.</p>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <!-- Add New Button -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStaffModal">
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddStaf">
             <i class="fas fa-plus"></i> Tambah Data Staf
         </button>
     </div>
 
-    <!-- Table -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Staf</h6>
-        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
                             <th width="5%">No</th>
                             <th width="20%">Profil Staf</th>
-                            <th width="25%">Informasi</th>
-                            <th width="40%">Keterangan</th>
-                            <th width="10%">Aksi</th>
+                            <th width="55%">Keterangan Staf</th>
+                            <th width="20%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($staffs as $index => $staff)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                <div class="text-center">
-                                    <img src="{{ $staff->profile_image_url }}" alt="Profil Staf" class="img-thumbnail" width="100">
-                                    <h5 class="mt-2">{{ $staff->name }}</h5>
-                                    <p class="text-muted">{{ $staff->jabatan }}</p>
-                                </div>
-                            </td>
-                            <td>
-                                <p><strong>Pendidikan:</strong></p>
-                                <div class="border p-2 bg-light">
-                                    {!! nl2br(e($staff->education)) !!}
-                                </div>
-                            </td>
-                            <td>
-                                <div class="border p-2 bg-light">
-                                    {!! nl2br(e($staff->description)) !!}
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-warning edit-btn"
-                                    data-id="{{ $staff->id }}"
-                                    data-name="{{ $staff->name }}"
-                                    data-jabatan="{{ $staff->jabatan }}"
-                                    data-profile_image="{{ $staff->profile_image }}"
-                                    data-description="{{ $staff->description }}"
-                                    data-education="{{ $staff->education }}"
-                                    data-status="{{ $staff->status }}"
-                                    data-toggle="modal" 
-                                    data-target="#editStaffModal">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-id="{{ $staff->id }}"
-                                    data-name="{{ $staff->name }}"
-                                    data-toggle="modal" 
-                                    data-target="#deleteStaffModal">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="align-middle text-center">{{ $index + 1 }}</td>
+                                <td class="align-middle text-center">
+                                    <img src="{{ $staff->profile_image_url }}" alt="Profil Staf" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                                </td>
+                                <td class="align-middle">
+                                    <div class="mb-2">
+                                        <strong>Nama:</strong> {{ $staff->name }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Jabatan:</strong> {{ $staff->jabatan }}
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Pendidikan:</strong> {{ $staff->education }}
+                                    </div>
+                                    <div>
+                                        <strong>Deskripsi:</strong> 
+                                        <div class="mt-1">
+                                            {!! \Illuminate\Support\Str::limit($staff->description, 200) !!}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $staff->id }}"
+                                            data-name="{{ $staff->name }}"
+                                            data-jabatan="{{ $staff->jabatan }}"
+                                            data-education="{{ $staff->education }}"
+                                            data-description="{{ $staff->description }}"
+                                            data-profile_image_url="{{ $staff->profile_image_url }}"
+                                            data-status="{{ $staff->status }}"
+                                            title="Edit Staf">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $staff->id }}"
+                                            data-name="{{ $staff->name }}"
+                                            title="Hapus Staf">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak ada data staf</td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Tidak ada data staf</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Add Modal -->
-<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addStaffModalLabel">Tambah Data Staf</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('comprof.datastaf.store') }}" method="POST" enctype="multipart/form-data">
+    <!-- Universal Modal for Add/Edit -->
+    <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="mainForm" method="POST" class="modal-content" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-body">
+                <input type="hidden" id="id" name="id">
+                <input type="hidden" id="formMethod" name="_method" value="POST">
+                <input type="hidden" id="status" name="status" value="1">
+
+                <div class="modal-header py-2">
+                    <h5 class="modal-title" id="modalTitle">Tambah Data Staf</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="name">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" id="name" name="name" class="form-control" required>
                             </div>
-                            <div class="form-group">
-                                <label for="jabatan">Jabatan</label>
-                                <input type="text" class="form-control" id="jabatan" name="jabatan" required>
+
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Jabatan <span class="text-danger">*</span></label>
+                                <input type="text" id="jabatan" name="jabatan" class="form-control" required>
                             </div>
-                            <div class="form-group">
-                                <label for="profile_image">Foto Profil</label>
-                                <input type="file" class="form-control-file" id="profile_image" name="profile_image" required>
-                                <small class="form-text text-muted">Format: JPG, PNG. Maksimal 2MB.</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select class="form-control" id="status" name="status" required>
-                                    <option value="1">Aktif</option>
-                                    <option value="0">Nonaktif</option>
-                                </select>
+
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Pendidikan <span class="text-danger">*</span></label>
+                                <textarea id="education" name="education" class="form-control" rows="3" required></textarea>
                             </div>
                         </div>
+
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="education">Pendidikan</label>
-                                <textarea class="form-control" id="education" name="education" rows="3" required></textarea>
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Gambar Profil <span class="text-danger" id="imageRequired">*</span></label>
+                                <input type="file" id="profile_image" name="profile_image" class="form-control" accept="image/*">
+                                <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB</small>
+                                
+                                <div id="imagePreview" class="mt-3 text-center">
+                                    <img src="" alt="Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; display: none;">
+                                </div>
                             </div>
+
                             <div class="form-group">
-                                <label for="description">Keterangan</label>
-                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                <label class="small mb-1">Deskripsi Staf <span class="text-danger">*</span></label>
+                                <textarea id="description" name="description" class="form-control summernote" rows="5" required></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-3" id="modalSubmit">Simpan</button>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal -->
-<div class="modal fade" id="editStaffModal" tabindex="-1" aria-labelledby="editStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editStaffModalLabel">Edit Data Staf</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="editForm" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="edit_name">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="edit_name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_jabatan">Jabatan</label>
-                                <input type="text" class="form-control" id="edit_jabatan" name="jabatan" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_profile_image">Foto Profil</label>
-                                <input type="file" class="form-control-file" id="edit_profile_image" name="profile_image">
-                                <small class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
-                                <div id="currentImage" class="mt-2"></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_status">Status</label>
-                                <select class="form-control" id="edit_status" name="status" required>
-                                    <option value="1">Aktif</option>
-                                    <option value="0">Nonaktif</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="edit_education">Pendidikan</label>
-                                <textarea class="form-control" id="edit_education" name="education" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_description">Keterangan</label>
-                                <textarea class="form-control" id="edit_description" name="description" rows="3" required></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteStaffModal" tabindex="-1" aria-labelledby="deleteStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteStaffModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus data staf: <strong id="delete_name"></strong>?</p>
-                <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <form id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('scripts')
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<style>
+    .note-editable {
+        min-height: 150px !important;
+    }
+    .note-toolbar {
+        background-color: #f8f9fa !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    #imagePreview img {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+    }
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+    .d-flex.gap-2 {
+        gap: 0.5rem;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .alert {
+        border-left: 4px solid;
+    }
+    .modal-header {
+        padding: 0.75rem 1.5rem;
+    }
+    .modal-footer {
+        padding: 0.75rem 1.5rem;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .img-thumbnail {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable();
+$(function() {
+    const modalEl = document.getElementById('universalModal');
+    const modalInstance = new bootstrap.Modal(modalEl);
+    const form = $('#mainForm');
+    const baseComprofUrl = "{{ url('comprof') }}";
 
-        $('.edit-btn').click(function() {
-            var id = $(this).data('id');
-            var url = "{{ route('comprof.datastaf.update', ':id') }}".replace(':id', id);
-            var imagePath = $(this).data('profile_image');
-            var currentImageHtml = '';
-            
-            if (imagePath) {
-                currentImageHtml = `<p>Gambar Saat Ini:</p>
-                                  <img src="{{ asset('storage') }}/${imagePath}" class="img-thumbnail" width="100">`;
-            } else {
-                currentImageHtml = '<p>Tidak ada gambar</p>';
+    // Inisialisasi Summernote
+    $('.summernote').summernote({
+        height: 150,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+            ['view', ['codeview']]
+        ]
+    });
+
+    // Inisialisasi DataTables
+    $('#dataTable').DataTable();
+
+    // Preview gambar saat dipilih
+    $('#profile_image').change(function() {
+        const file = this.files[0];
+        const preview = $('#imagePreview img');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.attr('src', e.target.result).show();
             }
-            
-            $('#editForm').attr('action', url);
-            $('#edit_name').val($(this).data('name'));
-            $('#edit_jabatan').val($(this).data('jabatan'));
-            $('#edit_description').val($(this).data('description'));
-            $('#edit_education').val($(this).data('education'));
-            $('#edit_status').val($(this).data('status'));
-            $('#currentImage').html(currentImageHtml);
-        });
+            reader.readAsDataURL(file);
+        } else {
+            // Tampilkan gambar yang sudah ada jika ada
+            const existingImg = preview.data('existing');
+            if (existingImg) {
+                preview.attr('src', existingImg).show();
+            } else {
+                preview.hide();
+            }
+        }
+    });
 
-        $('.delete-btn').click(function() {
-            var id = $(this).data('id');
-            var url = "{{ route('comprof.datastaf.destroy', ':id') }}".replace(':id', id);
-            var name = $(this).data('name');
-            
-            $('#deleteForm').attr('action', url);
-            $('#delete_name').text(name);
+    // Tambah Data Staf
+    $('#btnAddStaf').click(() => {
+        form.trigger('reset');
+        $('#modalTitle').text('Tambah Data Staf');
+        $('#modalSubmit').text('Simpan');
+        form.attr('action', `${baseComprofUrl}/datastaf`);
+        $('#formMethod').val('POST');
+        $('.summernote').summernote('reset');
+        $('#imagePreview img').hide().removeData('existing');
+        $('#imageRequired').show(); // Tampilkan tanda bintang untuk required
+        modalInstance.show();
+    });
+
+    // Edit Data Staf
+    $('#dataTable').on('click', '.edit-btn', function() {
+        const btn = $(this);
+        const id = btn.data('id');
+        form.attr('action', `${baseComprofUrl}/datastaf/${id}`);
+        
+        $('#id').val(id);
+        $('#name').val(btn.data('name'));
+        $('#jabatan').val(btn.data('jabatan'));
+        $('#education').val(btn.data('education'));
+        $('#description').summernote('code', btn.data('description'));
+        $('#status').val(btn.data('status'));
+        
+        // Tampilkan gambar yang sudah ada
+        const preview = $('#imagePreview img');
+        const profileImageUrl = btn.data('profile_image_url');
+        
+        if (profileImageUrl) {
+            preview.attr('src', profileImageUrl)
+                   .show()
+                   .data('existing', profileImageUrl);
+        } else {
+            preview.hide().removeData('existing');
+        }
+        
+        $('#modalTitle').text('Edit Data Staf');
+        $('#modalSubmit').text('Simpan Perubahan');
+        $('#formMethod').val('PUT');
+        $('#imageRequired').hide(); // Sembunyikan tanda bintang saat edit
+        modalInstance.show();
+    });
+
+    // Submit Form dengan AJAX
+    form.on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const isEdit = $('#formMethod').val() === 'PUT';
+        
+        // Validasi gambar hanya untuk tambah data
+        if (!isEdit && !formData.get('profile_image')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gambar Profil Diperlukan',
+                text: 'Silakan pilih gambar profil untuk staf baru',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        
+        // Ambil konten summernote
+        const descriptionContent = $('#description').summernote('code');
+        formData.set('description', descriptionContent);
+        
+        // Tambahkan status ke FormData
+        formData.set('status', $('#status').val());
+        
+        // Jika edit dan tidak ada file baru, hapus entry profile_image
+        if (isEdit && !$('#profile_image')[0].files[0]) {
+            formData.delete('profile_image');
+        }
+        
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                modalInstance.hide();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let message = 'Terjadi kesalahan pada server';
+                let errors = xhr.responseJSON;
+
+                if (xhr.status === 422 && errors && errors.errors) {
+                    message = '';
+                    Object.values(errors.errors).forEach(arr => {
+                        arr.forEach(msg => message += msg + '<br>');
+                    });
+                } else if (errors && errors.message) {
+                    message = errors.message;
+                } else if (errors && errors.error) {
+                    message = errors.error;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error ' + xhr.status,
+                    html: message,
+                    confirmButtonText: 'OK'
+                });
+            }
         });
     });
+
+    // Hapus Data Staf
+    $('#dataTable').on('click', '.delete-btn', function() {
+        const btn = $(this);
+        const id = btn.data('id');
+        const name = btn.data('name');
+        const row = btn.closest('tr');
+
+        Swal.fire({
+            title: 'Hapus Data Staf?',
+            html: `Yakin ingin menghapus data staf <strong>${name}</strong>?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-danger me-2',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `{{ route('comprof.datastaf.destroy', '') }}/${id}`,
+                    type: 'DELETE',
+                    data: { 
+                        _token: "{{ csrf_token() }}",
+                    },
+                    success: function(response) {
+                        row.fadeOut(400, function() {
+                            row.remove();
+                            // Re-number table
+                            $('#dataTable tbody tr').each(function(index) {
+                                $(this).find('td:first').text(index + 1);
+                            });
+                        });
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500 
+                        });
+                    },
+                    error: function(xhr) {
+                        let message = 'Terjadi kesalahan pada server';
+
+                        if (xhr.status === 404) {
+                            message = 'Data staf tidak ditemukan';
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: message,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
 </script>
-@endsection
+@endpush

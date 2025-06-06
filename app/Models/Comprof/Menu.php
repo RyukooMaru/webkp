@@ -3,38 +3,39 @@
 namespace App\Models\Comprof;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany; 
 
 class Menu extends Model
 {
-    protected $table = 'comprof_menus';
-    
+    protected $table = 'setmenu';
+
     protected $fillable = [
         'nama_menu',
-        'slug',
-        'route',
         'urutan',
         'status',
-        'parent_id'
     ];
 
     protected $casts = [
         'status' => 'boolean',
     ];
 
-    public function parent(): BelongsTo
+    // Relasi ke submenu
+    public function submenus(): HasMany
     {
-        return $this->belongsTo(Menu::class, 'parent_id');
+        return $this->hasMany(Submenu::class, 'menu_id');
     }
 
-    public function children(): HasMany
-    {
-        return $this->hasMany(Menu::class, 'parent_id')->orderBy('urutan');
-    }
-
+    // Accessor untuk label status
     public function getStatusLabelAttribute(): string
     {
         return $this->status ? 'Aktif' : 'Tidak Aktif';
+    }
+
+    // Accessor untuk status dalam format HTML
+    public function getStatusHtmlAttribute(): string
+    {
+        return $this->status 
+            ? '<span class="badge bg-success">Aktif</span>' 
+            : '<span class="badge bg-danger">Tidak Aktif</span>';
     }
 }

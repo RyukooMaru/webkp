@@ -22,6 +22,20 @@
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
+    <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
+
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <style>
+        .note-editable {
+            min-height: 150px !important;
+        }
+        .note-toolbar {
+            background-color: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+        }
+    </style>
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
@@ -170,11 +184,14 @@
     <div id="collapseMutasi" class="collapse" aria-labelledby="headingMutasi"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Mutasi Gudang:</h6>
-            <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Permintaan</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Transfer Gudang</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
+            <h6 class="collapse-header">Company Profile Menu:</h6>
+            <a class="collapse-item" href="{{ route('comprof.settingmenu.index') }}">Setting Menu</a>
+            <a class="collapse-item" href="{{ route('comprof.settingsubmenu.index') }}">Setting Sub Menu</a>
+            <a class="collapse-item" href="#">Setting Slide Bar</a>
+            <a class="collapse-item" href="#">Setting Perusahaan</a>
+            <a class="collapse-item" href="{{ route('comprof.datastaf.index') }}">Data Staf</a>
+            <a class="collapse-item" href="#">Kategori Berita</a>
+            <a class="collapse-item" href="#">Kategori Album</a>
         </div>
     </div>
 </li>
@@ -540,3 +557,4 @@
 </body>
 
 </html>
+

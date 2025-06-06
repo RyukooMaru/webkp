@@ -2,7 +2,7 @@
 
 @section('main-content')
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Setting Menu</h1>
+    <h1 class="h3 mb-2 text-gray-800">Setting Sub Menu</h1>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -12,8 +12,8 @@
     @endif
 
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddMenu">
-            <i class="fas fa-plus"></i> Tambah Menu
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddSubMenu">
+            <i class="fas fa-plus"></i> Tambah Sub Menu
         </button>
     </div>
 
@@ -23,41 +23,46 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-
                             <th>No</th>
-                            <th>Nama Menu</th>
+                            <th>Menu</th>
+                            <th>Nama Sub Menu</th>
                             <th>Urutan</th>
+                            <th>Tautan</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                    @forelse($setmenus as $index => $menu)
+                        @forelse($submenus as $index => $submenu)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $menu->nama_menu }}</td>
-                                <td>{{ $menu->urutan }}</td>
-                                <td>{!! $menu->status_html !!}</td>
+                                <td>{{ $submenu->menu->nama_menu ?? '-' }}</td>
+                                <td>{{ $submenu->nama_submenu }}</td>
+                                <td>{{ $submenu->urut }}</td>
+                                <td>{{ $submenu->tautan }}</td>
+                                <td>{!! $submenu->status_html !!}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $menu->id }}"
-                                        data-nama="{{ $menu->nama_menu }}"
-                                        data-urutan="{{ $menu->urutan }}"
-                                        data-status="{{ $menu->status }}"
-                                        title="Edit Menu">
+                                        data-id="{{ $submenu->id }}"
+                                        data-menu_id="{{ $submenu->menu_id }}"
+                                        data-nama_submenu="{{ $submenu->nama_submenu }}"
+                                        data-urut="{{ $submenu->urut }}"
+                                        data-tautan="{{ $submenu->tautan }}"
+                                        data-status="{{ $submenu->status }}"
+                                        title="Edit Sub Menu">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $menu->id }}"
-                                        data-nama="{{ $menu->nama_menu }}"
-                                        title="Hapus Menu">
+                                        data-id="{{ $submenu->id }}"
+                                        data-nama_submenu="{{ $submenu->nama_submenu }}"
+                                        title="Hapus Sub Menu">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Tidak ada data menu</td>
+                                <td colspan="7" class="text-center text-muted">Tidak ada data sub menu</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -66,7 +71,7 @@
         </div>
     </div>
 
-    <!-- Modal Add/Edit -->
+    <!-- Universal Modal for Add/Edit -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <form id="mainForm" method="POST" class="modal-content">
@@ -75,7 +80,7 @@
                 @method('POST')
 
                 <div class="modal-header py-2">
-                    <h5 class="modal-title" id="modalTitle">Tambah Menu</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah Sub Menu</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Tutup">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -83,13 +88,28 @@
 
                 <div class="modal-body p-2">
                     <div class="form-group mb-2">
-                        <label class="small mb-0">Nama Menu <span class="text-danger">*</span></label>
-                        <input type="text" id="nama_menu" name="nama_menu" class="form-control form-control-sm" required>
+                        <label class="small mb-0">Menu Induk <span class="text-danger">*</span></label>
+                        <select id="menu_id" name="menu_id" class="form-control form-control-sm" required>
+                            <option value="">Pilih Menu</option>
+                            @foreach($menus as $menu)
+                                <option value="{{ $menu->id }}">{{ $menu->nama_menu }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label class="small mb-0">Nama Sub Menu <span class="text-danger">*</span></label>
+                        <input type="text" id="nama_submenu" name="nama_submenu" class="form-control form-control-sm" required>
                     </div>
 
                     <div class="form-group mb-2">
                         <label class="small mb-0">Urutan <span class="text-danger">*</span></label>
-                        <input type="number" id="urutan" name="urutan" class="form-control form-control-sm" required min="0">
+                        <input type="number" id="urut" name="urut" class="form-control form-control-sm" required min="0">
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label class="small mb-0">Tautan <span class="text-danger">*</span></label>
+                        <input type="text" id="tautan" name="tautan" class="form-control form-control-sm" required>
                     </div>
 
                     <div class="form-group mb-2">
@@ -119,30 +139,33 @@ $(function() {
     const form = $('#mainForm');
     const baseComprofUrl = "{{ url('comprof') }}";
 
-    // Inisialisasi DataTables
+    // Initialize DataTables
     $('#dataTable').DataTable();
 
-    // Tambah Menu
-    $('#btnAddMenu').click(() => {
+    // Add New Sub Menu
+    $('#btnAddSubMenu').click(() => {
         form.trigger('reset');
-        $('#modalTitle').text('Tambah Menu');
+        $('#modalTitle').text('Tambah Sub Menu');
         $('#modalSubmit').text('Simpan');
-        form.attr('action', `${baseComprofUrl}/settingmenu`); // Corrected for store
+        form.attr('action', `${baseComprofUrl}/settingsubmenu`);
         form.find('input[name="_method"]').val('POST');
         modalInstance.show();
     });
 
-    // Edit Menu
+    // Edit Sub Menu
     $('#dataTable').on('click', '.edit-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
-        form.attr('action', `${baseComprofUrl}/settingmenu/${id}`);
+        form.attr('action', `${baseComprofUrl}/settingsubmenu/${id}`);
         
         $('#id').val(id);
-        $('#nama_menu').val(btn.data('nama'));
-        $('#urutan').val(btn.data('urutan'));
+        $('#menu_id').val(btn.data('menu_id'));
+        $('#nama_submenu').val(btn.data('nama_submenu'));
+        $('#urut').val(btn.data('urut'));
+        $('#tautan').val(btn.data('tautan'));
         $('#status').val(btn.data('status'));
-        $('#modalTitle').text('Edit Menu');
+        
+        $('#modalTitle').text('Edit Sub Menu');
         $('#modalSubmit').text('Simpan Perubahan');
         form.find('input[name="_method"]').val('PUT');
         
@@ -175,16 +198,16 @@ $(function() {
         });
     });
 
-    // Hapus Menu
+    // Delete Sub Menu
     $('#dataTable').on('click', '.delete-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
-        const nama = btn.data('nama');
+        const nama = btn.data('nama_submenu');
         const row = btn.parents('tr');
 
         Swal.fire({
-            title: 'Hapus Menu?',
-            html: `Yakin ingin menghapus menu <strong>${nama}</strong>?`,
+            title: 'Hapus Sub Menu?',
+            html: `Yakin ingin menghapus sub menu <strong>${nama}</strong>?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Ya, Hapus!',
@@ -197,7 +220,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.settingmenu.destroy', '') }}/${id}`,
+                    url: `{{ route('comprof.settingsubmenu.destroy', '') }}/${id}`,
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",
@@ -205,6 +228,10 @@ $(function() {
                     success: function(response) {
                         row.fadeOut(400, function() {
                             row.remove();
+                            // Re-number the table
+                            $('#dataTable tbody tr').each(function(index) {
+                                $(this).find('td:first').text(index + 1);
+                            });
                         });
                         Swal.fire({
                             icon: 'success',
@@ -218,7 +245,7 @@ $(function() {
                         let message = 'Terjadi kesalahan pada server';
 
                         if (xhr.status === 404) {
-                            message = 'Data menu tidak ditemukan';
+                            message = 'Data sub menu tidak ditemukan';
                         } else if (xhr.responseJSON && xhr.responseJSON.message) {
                             message = xhr.responseJSON.message;
                         }
