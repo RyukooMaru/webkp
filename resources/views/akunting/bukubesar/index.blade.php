@@ -3,11 +3,74 @@
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Daftar Penjurnalan</h1>
-    <div class="mb-3">
-    <a href="{{ route('akunting.bukubesar.pdf') }}" class="btn btn-danger btn-sm " target="_blank">
-        <i class="fas fa-file-pdf"></i> Print to PDF
+    {{-- FORM FILTER --}}
+<div class="card shadow mb-4">
+
+    {{-- BAGIAN INI AKAN MENJADI TRIGGER (TOMBOL) UNTUK MEMBUKA/MENUTUP --}}
+    <a href="#collapseFilter" class="d-block card-header py-3 text-decoration-none" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseFilter">
+        <div class="d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Filter Penjurnalan
+            </h6>
+            <i class="fa fa-chevron-down text-primary"></i>
+        </div>
     </a>
+
+    {{-- BAGIAN INI ADALAH KONTEN YANG BISA TERSEMBUNYI/TAMPIL --}}
+    {{-- Class 'collapse' membuatnya tersembunyi secara default --}}
+    <div class="collapse" id="collapseFilter">
+        <div class="card-body">
+            {{-- Form filter Anda yang sudah ada diletakkan di sini --}}
+            <form action="{{ route('bukubesar.index') }}" method="GET">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="start_date">Dari Tanggal</label>
+                            <input type="date" class="form-control" name="start_date" value="{{ request('start_date') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="end_date">Sampai Tanggal</label>
+                            <input type="date" class="form-control" name="end_date" value="{{ request('end_date') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>No. Referensi</label>
+                            <input type="text" class="form-control" name="referensi" placeholder="Cari referensi..." value="{{ request('referensi') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>No. Rekening</label>
+                            <input type="text" class="form-control" name="no_rekening" placeholder="Cari no. rekening..." value="{{ request('no_rekening') }}">
+                        </div>
+                    </div>
+                     <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Nama Perkiraan</label>
+                            <input type="text" class="form-control" name="nama_perkiraan" placeholder="Cari nama perkiraan..." value="{{ request('nama_perkiraan') }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-filter"></i> Filter
+                        </button>
+                        <a href="{{ route('bukubesar.index') }}" class="btn btn-secondary">
+                            <i class="fa fa-times"></i> Reset
+                        </a>
+                        <a href="{{ route('akunting.bukubesar.pdf', request()->query()) }}" class="btn btn-danger" target="_blank">
+                            <i class="fa fa-file-pdf"></i> Cetak PDF
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
