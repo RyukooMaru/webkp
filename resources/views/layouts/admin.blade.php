@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -14,7 +15,9 @@
 
     <!-- Fonts -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
@@ -23,14 +26,20 @@
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
 
+    <!-- Cropper.js untuk Crop Gambar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
+
+
 
 </head>
+
 <body id="page-top">
 
-<!-- Page Wrapper -->
-<div id="wrapper">
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/home') }}">
@@ -39,102 +48,138 @@
             </div>
         </a>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0">
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item {{ Nav::isRoute('home') }}">
-            <a class="nav-link" href="{{ route('home') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Dashboard') }}</span></a>
-        </li>
-<!-- Nav Item - Data Master Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatamaster"
-        aria-expanded="true" aria-controls="collapseDatamaster">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Data Master</span>
-    </a>
-    <div id="collapseDatamaster" class="collapse" aria-labelledby="headingDatamaster"
-        data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Master Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-        </div>
-    </div>
-</li>
-<!-- Nav Item - Pembelian Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePembelian"
-        aria-expanded="true" aria-controls="collapsePembelian">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Pembelian</span>
-    </a>
-    <div id="collapsePembelian" class="collapse" aria-labelledby="headingPembelian"
-        data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Pembelian Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-        </div>
-    </div>
-</li>
-<!-- Nav Item - Penjualan Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePenjualan"
-        aria-expanded="true" aria-controls="collapsePenjualan">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Penjualan</span>
-    </a>
-    <div id="collapsePenjualan" class="collapse" aria-labelledby="headingPenjualan"
-        data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Penjualan Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-        </div>
-    </div>
-</li>
-        <!-- Nav Item - Akunting Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAkunting"
-                aria-expanded="true" aria-controls="collapseAkunting">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Akunting</span>
-            </a>
-            <div id="collapseAkunting" class="collapse" aria-labelledby="headingAkunting"
-                data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Akunting Menu:</h6>
-                    <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
-                    <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
-                    <a class="collapse-item" href="{{ route('bukubesar.index') }}">Daftar Penjurnalan</a>
-                    <a class="collapse-item" href="{{ route('kas-masuk.index') }}">Kas Masuk</a>
-                    <a class="collapse-item" href="{{ route('kas-keluar.index') }}">Kas Keluar</a>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item {{ Nav::isRoute('home') }}">
+                <a class="nav-link" href="{{ route('home') }}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>{{ __('Dashboard') }}</span></a>
+            </li>
+            <!-- Nav Item - Data Master Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatamaster"
+                    aria-expanded="true" aria-controls="collapseDatamaster">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Data Master</span>
+                </a>
+                <div id="collapseDatamaster" class="collapse" aria-labelledby="headingDatamaster"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Data Master Menu:</h6>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                    </div>
                 </div>
-            </div>
-        </li>
-
-
-
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            {{ __('Settings') }}
+            </li>
+            <!-- Nav Item - Pembelian Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePembelian"
+                    aria-expanded="true" aria-controls="collapsePembelian">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Pembelian</span>
+                </a>
+                <div id="collapsePembelian" class="collapse" aria-labelledby="headingPembelian"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Pembelian Menu:</h6>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                    </div>
+                </div>
+            </li>
+            <!-- Nav Item - Penjualan Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePenjualan"
+                    aria-expanded="true" aria-controls="collapsePenjualan">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Penjualan</span>
+                </a>
+                <div id="collapsePenjualan" class="collapse" aria-labelledby="headingPenjualan"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Penjualan Menu:</h6>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                        <a class="collapse-item" href="{{-- route('#') --}}">Retur Penjualan</a>
+                    </div>
+                </div>
+            </li>
+            <!-- Nav Item - Akunting Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAkunting"
+                    aria-expanded="true" aria-controls="collapseAkunting">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Akunting</span>
+                </a>
+                <div id="collapseAkunting" class="collapse" aria-labelledby="headingAkunting"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Akunting Menu:</h6>
+                        <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
+                        <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
+                        <a class="collapse-item" href="{{ route('bukubesar.index') }}">Daftar Penjurnalan</a>
+                        <a class="collapse-item" href="{{ route('kas-masuk.index') }}">Kas Masuk</a>
+                        <a class="collapse-item" href="{{ route('kas-keluar.index') }}">Kas Keluar</a>
+                    </div>
+                </div>
+            </li>
+<!-- Nav Item - Inventory Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
+        aria-expanded="true" aria-controls="collapseInventory">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Inventory</span>
+    </a>
+    <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Inventory Menu:</h6>
+            <a class="collapse-item" href="{{-- route('#') --}}">Supplier</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Data Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kelompok Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Satuan Produk</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Purchase Order</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
         </div>
+    </div>
+</li><!-- Nav Item - Mutasi Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMutasi"
+        aria-expanded="true" aria-controls="collapseMutasi">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Mutasi Gudang</span>
+    </a>
+    <div id="collapseMutasi" class="collapse" aria-labelledby="headingMutasi"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Mutasi Gudang:</h6>
+            <a class="collapse-item" href="{{-- route('#') --}}">Gudang</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Permintaan</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Transfer Gudang</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
+        </div>
+    </div>
+</li>
+
+
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                {{ __('Settings') }}
+            </div>
 
         <!-- Nav Item - Profile -->
         <li class="nav-item {{ Nav::isRoute('profile') }}">
@@ -154,11 +199,9 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Keamanan Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">Role</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">Permissions</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">User</a>
                 </div>
             </div>
         </li>
@@ -172,47 +215,62 @@
     <div id="collapseDatakaryawan" class="collapse" aria-labelledby="headingDatakaryawan"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Karyawan Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Divisi</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+            <h6 class="collapse-header">Presensi Menu:</h6>
+            <a class="collapse-item" href="{{ route('employee.index') }}">Data Karyawan</a>
+            <a class="collapse-item" href="{{ route('divisi.index') }}">Divisi</a>
+            <a class="collapse-item" href="{{ route('subdivisi.index') }}">Sub-Divisi</a>
+            <a class="collapse-item" href="{{ route('posisi.index') }}">Posisi</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
         </div>
     </div>
 </li>
-        <!-- Nav Item - Page Setting -->
-        <li class="nav-item {{-- Nav::isRoute('#') --}}">
-            <a class="nav-link" href="{{-- route('#') --}}">
-                <i class="fas fa-fw fa-hands-helping"></i>
-                <span>{{ __('Page Setting') }}</span>
-            </a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+<!-- Nav Item - Company Profile Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseComprof"
+        aria-expanded="true" aria-controls="collapseComprof">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Company Profile</span>
+    </a>
+    <div id="collapseComprof" class="collapse" aria-labelledby="headingCompanyProfile"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Company Profile Menu:</h6>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Menu</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Sub Menu</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Slide Bar</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Setting Perusahaan</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Data Staf</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Berita</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Album</a>
         </div>
+    </div>
+</li>
 
-    </ul>
-    <!-- End of Sidebar -->
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
 
-        <!-- Main Content -->
-        <div id="content">
+        </ul>
+        <!-- End of Sidebar -->
 
-            <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-                <!-- Sidebar Toggle (Topbar) -->
-                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                    <i class="fa fa-bars"></i>
-                </button>
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
 
                 {{-- <!-- Topbar Search -->
                 <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -226,28 +284,32 @@
                     </div>
                 </form> --}}
 
-                <!-- Topbar Navbar -->
-                <ul class="navbar-nav ml-auto">
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
 
-                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                    <li class="nav-item dropdown no-arrow d-sm-none">
-                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <!-- Dropdown - Messages -->
-                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                            <form class="form-inline mr-auto w-100 navbar-search">
-                                <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                            placeholder="Search for..." aria-label="Search"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                        </div>
-                    </li>
+                                </form>
+                            </div>
+                        </li>
 
                     {{-- <!-- Nav Item - Alerts -->
                     <li class="nav-item dropdown no-arrow mx-1">
@@ -354,51 +416,56 @@
                         </div>
                     </li>
 
-                    <div class="topbar-divider d-none d-sm-block"></div>
+                        <div class="topbar-divider d-none d-sm-block"></div>
 
-                    <!-- Nav Item - User Information -->
-                    <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
-                            <figure class="img-profile rounded-circle avatar font-weight-bold" data-initial="{{ Auth::user()->name[0] }}"></figure>
-                        </a>
-                        <!-- Dropdown - User Information -->
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="{{ route('profile') }}">
-                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                {{ __('Profile') }}
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
+                                <figure class="img-profile rounded-circle avatar font-weight-bold"
+                                    data-initial="{{ Auth::user()->name[0] }}"></figure>
                             </a>
-                            <a class="dropdown-item" href="javascript:void(0)">
-                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                {{ __('Settings') }}
-                            </a>
-                            <a class="dropdown-item" href="javascript:void(0)">
-                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                {{ __('Activity Log') }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                {{ __('Logout') }}
-                            </a>
-                        </div>
-                    </li>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{{ route('profile') }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{ __('Profile') }}
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{ __('Settings') }}
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{ __('Activity Log') }}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal"
+                                    data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{ __('Logout') }}
+                                </a>
+                            </div>
+                        </li>
 
-                </ul>
+                    </ul>
 
-            </nav>
-            <!-- End of Topbar -->
+                </nav>
+                <!-- End of Topbar -->
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
 
-                @yield('main-content')
+                    @yield('main-content')
+
+                </div>
+                <!-- /.container-fluid -->
 
             </div>
-            <!-- /.container-fluid -->
-
-        </div>
-        <!-- End of Main Content -->
+            <!-- End of Main Content -->
 
         <!-- Footer -->
         <footer class="sticky-footer bg-white">
@@ -410,37 +477,39 @@
         </footer>
         <!-- End of Footer -->
 
+        </div>
+        <!-- End of Content Wrapper -->
+
     </div>
-    <!-- End of Content Wrapper -->
 
-</div>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ __('Ready to Leave?') }}</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-link" type="button" data-dismiss="modal">{{ __('Cancel') }}</button>
-                <a class="btn btn-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Ready to Leave?') }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-link" type="button" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <a class="btn btn-danger" href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 <!-- Scripts -->
     {{-- !!! Tambahkan jQuery jika belum ada dan diperlukan oleh plugin lain --}}
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
@@ -453,6 +522,11 @@
 
     <!-- Bootstrap 5 JS Bundle (sudah termasuk Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    @stack('scripts')
+
+    <!-- Script Cropper.js untuk Crop Gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+@stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
+
 </body>
+
 </html>

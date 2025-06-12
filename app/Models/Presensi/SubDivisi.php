@@ -28,4 +28,9 @@ class SubDivisi extends Model
     {
         return $this->belongsTo(Divisi::class,  'div_divcode', 'div_auto');
     }
+
+    public function Employee()
+    {
+        return $this->hasMany(Employee::class, 'EMP_SUBDIVCODE', 'div_auto');
+    }
 }
