@@ -3,8 +3,8 @@
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Daftar Data Divisi</h1>
-    <p class="mb-4">Manajemen Data Divisi & Sub-Divisi untuk aplikasi.</p>
-
+    <p class="mb-4">Manajemen Data Divisi untuk aplikasi.</p>
+    
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -14,628 +14,425 @@
     </div>
     @endif
 
+    <!-- Add New Divisi Button -->
     <div class="mb-3">
-        <a href="#" class="btn btn-primary btn-icon-split" data-toggle="modal" data-target="#addDivisiModal">
-            <span class="icon text-white-100">
-                <i class="fas fa-plus mt-1"></i>
-            </span>
-            <span class="text">Tambah Divisi</span>
-        </a>
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="addDivisiButton">
+            <i class="fas fa-plus"></i> Tambah Divisi
+        </button>
     </div>
 
     <!-- Divisi Card -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+        <div class="card-header">
             <h6 class="m-0 font-weight-bold text-primary">Daftar Data Divisi</h6>
-            <a class="btn btn-primary" data-toggle="collapse" href="#collapseDivisi" role="button" aria-expanded="false" aria-controls="collapseDivisi">
-                <i class="fas fa-chevron-down"></i>
-            </a>
         </div>
-        <div class="collapse" id="collapseDivisi">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Kode Divisi</th>
-                                <th>Nama Divisi</th>
-                                <th>NIK</th>
-                                <th>Shift (Y/N)</th>
-                                <th>Biaya</th>
-                                <th>Entry ID</th>
-                                <th>Entry Date</th>
-                                <th>User ID</th>
-                                <th>Last Update</th>
-                                <th>Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>No</th>
-                                <th>Kode Divisi</th>
-                                <th>Nama Divisi</th>
-                                <th>NIK</th>
-                                <th>Shift (Y/N)</th>
-                                <th>Biaya</th>
-                                <th>Entry ID</th>
-                                <th>Entry Date</th>
-                                <th>User ID</th>
-                                <th>Last Update</th>
-                                <th>Tindakan</th>
-                            </tr>
-                        </tfoot>
-                        <tbody>
-                            @foreach($Divisis as $index => $Divisi)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $Divisi->Div_Code }}</td>
-                                <td>{{ $Divisi->Div_Name }}</td>
-                                <td>{{ $Divisi->DIV_NIK }}</td>
-                                <td>{{ $Divisi->DIV_SHIFTYN }}</td>
-                                <td>{{ $Divisi->DIV_BIAYA }}</td>
-                                <td>{{ $Divisi->Div_EntryID }}</td>
-                                <td>{{ \Carbon\Carbon::parse($Divisi->Div_Entrydate)->format('d-m-Y H:i') }}</td>
-                                <td>{{ $Divisi->Div_UserID }}</td>
-                                <td>{{ $Divisi->Div_LastUpdate }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-warning edit-btn edit-divisi-btn"
-                                        data-divid="{{ $Divisi->div_auto }}"
-                                        data-divcode="{{ $Divisi->Div_Code }}"
-                                        data-divname="{{ $Divisi->Div_Name }}"
-                                        data-divnik="{{ $Divisi->DIV_NIK }}"
-                                        data-divshiftyn="{{ $Divisi->DIV_SHIFTYN }}"
-                                        data-divbiaya="{{ $Divisi->DIV_BIAYA }}"
-                                        data-divisiurl="{{ route('divisi.update', $Divisi) }}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-danger delete-btn delete-divbtn" 
-                                    data-deldivisiurl="{{ route('divisi.destroy', $Divisi) }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @if(count($Divisis) > 0)
-                <!-- Tampilkan tabel -->
-                @else
-                    <div class="alert alert-info">Tidak ada Data Divisi tersedia.</div>
-                @endif
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="2%">Kode Divisi</th>
+                            <th width="12%">Nama Divisi</th>
+                            <th width="12%">NIK</th>
+                            <th width="5%">Shift (Y/N)</th>
+                            <th width="5%">Biaya</th>
+                            <th width="5%">Entry ID</th>
+                            <th width="12%">Entry Date</th>
+                            <th width="5%">User ID</th>
+                            <th width="12%">Last Update</th>
+                            <th width="15%">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($Divisis as $index => $Divisi)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $Divisi->Div_Code }}</td>
+                            <td>{{ $Divisi->Div_Name }}</td>
+                            <td>{{ $Divisi->DIV_NIK }}</td>
+                            <td>{{ $Divisi->DIV_SHIFTYN }}</td>
+                            <td>{{ $Divisi->DIV_BIAYA }}</td>
+                            <td>{{ $Divisi->Div_EntryID }}</td>
+                            <td>{{ \Carbon\Carbon::parse($Divisi->Div_Entrydate)->format('d-m-Y H:i') }}</td>
+                            <td>{{ $Divisi->Div_UserID }}</td>
+                            <td>{{ $Divisi->Div_LastUpdate }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm btn-view" data-id="{{ $Divisi->div_auto }}" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning edit-btn"
+                                    data-divid="{{ $Divisi->div_auto }}"
+                                    data-divcode="{{ $Divisi->Div_Code }}"
+                                    data-divname="{{ $Divisi->Div_Name }}"
+                                    data-divnik="{{ $Divisi->DIV_NIK }}"
+                                    data-divshift="{{ $Divisi->DIV_SHIFTYN }}"
+                                    data-divbiaya="{{ $Divisi->DIV_BIAYA }}"
+                                    data-toggle="modal"
+                                    data-target="#editDivModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-btn"
+                                    data-divid="{{ $Divisi->div_auto }}"
+                                    data-divname="{{ $Divisi->Div_Name }}"
+                                    data-toggle="modal" data-target="#deleteDivisiModal">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-        </div>
-    </div>
-
-    <!-- Sub-Divisi Card -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Data Sub-Divisi</h6>
-            <a class="btn btn-primary" data-toggle="collapse" href="#collapseSubDivisi" role="button" aria-expanded="false" aria-controls="collapseSubDivisi">
-                <i class="fas fa-chevron-down"></i>
-            </a>
-        </div>
-        <div class="collapse" id="collapseSubDivisi">
-            <div class="card-body">
-                <a href="#" class="btn btn-primary btn-icon-split mb-4" data-toggle="modal" data-target="#addSubDivisiModal">
-                    <span class="icon text-white-100">
-                        <i class="fas fa-plus mt-1"></i>
-                    </span>
-                    <span class="text">Tambah Sub-Divisi</span>
-                </a>
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Divisi</th>
-                                <th>Code Sub-Divisi</th>
-                                <th>Nama Sub-Divisi</th>
-                                <th>NIK</th>
-                                <th>Entry ID</th>
-                                <th>Entry Date</th>
-                                <th>User ID</th>
-                                <th>Last Update</th>
-                                <th>Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>No</th>
-                                <th>Divisi</th>
-                                <th>Code Sub-Divisi</th>
-                                <th>Nama Sub-Divisi</th>
-                                <th>NIK</th>
-                                <th>Entry ID</th>
-                                <th>Entry Date</th>
-                                <th>User ID</th>
-                                <th>Last Update</th>
-                                <th>Tindakan</th>
-                            </tr>
-                        </tfoot>
-                        <tbody>
-                            @foreach($SubDivisis as $index => $SubDivisi)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $SubDivisi->div_divcode }}</td>
-                                <td>{{ $SubDivisi->Div_Code }}</td>
-                                <td>{{ $SubDivisi->Div_Name }}</td>
-                                <td>{{ $SubDivisi->DIV_NIK }}</td>
-                                <td>{{ $SubDivisi->Div_EntryID }}</td>
-                                <td>{{ \Carbon\Carbon::parse($SubDivisi->Div_Entrydate)->format('d-m-Y H:i') }}</td>
-                                <td>{{ $SubDivisi->Div_UserID }}</td>
-                                <td>{{ $SubDivisi->Div_LastUpdate }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-warning edit-btn edit-subdivisi-btn"
-                                        data-subid="{{ $SubDivisi->div_auto }}"
-                                        data-subdivid="{{ $SubDivisi->div_divcode }}"
-                                        data-subdivcode="{{ $SubDivisi->Div_Code }}"
-                                        data-subdivname="{{ $SubDivisi->Div_Name }}"
-                                        data-subdivnik="{{ $SubDivisi->DIV_NIK }}"
-                                        data-subdivisiurl="{{ route('subdivisi.update', $SubDivisi) }}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-danger delete-subdivbtn" 
-                                    data-delsubdivisiurl="{{ route('subdivisi.destroy', $SubDivisi) }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @if(count($SubDivisis) > 0)
-                <!-- Tampilkan tabel -->
-                @else
-                    <div class="alert alert-info">Tidak ada Data Sub-Divisi tersedia.</div>
-                @endif
-            </div>
+            @if(count($Divisis) > 0)
+            <!-- Tampilkan tabel -->
+            @else
+                <div class="alert alert-info">Tidak ada Data Divisi tersedia.</div>
+            @endif
         </div>
     </div>
 </div>
 
-<!-- Modal Tambah Data Divisi -->
- <div class="modal fade" id="addDivisiModal" tabindex="-1" role="dialog" aria-labelledby="addDivisiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<!-- Modal View Divisi Detail -->
+<div class="modal fade" id="viewDivisiModal" tabindex="-1" aria-labelledby="viewDivisiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addDivisiModalLabel"> Tambah Data Divisi </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('divisi.store') }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Code" class="col-sm-3 col-form-label">Kode Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="Div_Code" name="Div_Code" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Name" class="col-sm-3 col-form-label">Nama Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="Div_Name" name="Div_Name" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="DIV_NIK" class="col-sm-3 col-form-label">NIK</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="DIV_NIK" name="DIV_NIK" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="DIV_SHIFTYN" class="col-sm-3 col-form-label">Shift (Y/T)</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="DIV_SHIFTYN" name="DIV_SHIFTYN" required>
-                                        <option selected value="T">Tidak</option>
-                                        <option value="Y">Ya</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="DIV_BIAYA" class="col-sm-3 col-form-label">Biaya</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="DIV_BIAYA" name="DIV_BIAYA">
-                                        <option selected value="" >Pilih</option>
-                                        <option value="T">Tidak</option>
-                                        <option value="Y">Ya</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div> 
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
- </div>
-
-<!-- Modal Edit Divisi -->
-<div class="modal fade" id="editDivisiModal" tabindex="-1" aria-labelledby="editDivisiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDivisiModalLabel"> Edit Data Divisi </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="POST" action=""  id="editDivisiForm">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Code" class="col-sm-3 col-form-label">Kode Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editDivCode" name="Div_Code" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Name" class="col-sm-3 col-form-label">Nama Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editDivName" name="Div_Name" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="DIV_NIK" class="col-sm-3 col-form-label">NIK</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editNIK" name="DIV_NIK" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="DIV_SHIFTYN" class="col-sm-3 col-form-label">Shift (Y/T)</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="editShiftYN" name="DIV_SHIFTYN" required>
-                                        <option value="T">Tidak</option>
-                                        <option value="Y">Ya</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="DIV_BIAYA" class="col-sm-3 col-form-label">Biaya</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="editBiaya" name="DIV_BIAYA">
-                                        <option value="T">Tidak</option>
-                                        <option value="Y">Ya</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </div> 
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Konfirmasi Divisi Hapus -->
-<div class="modal fade" id="confirmDivisiDeleteModal" tabindex="-1" aria-labelledby="confirmDivisiDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="confirmDivisiDeleteModalLabel">Konfirmasi Penghapusan Data Divisi</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="viewDivisiModalLabel">Data Divisi</h5>
             </div>
             <div class="modal-body">
-                Apakah Anda yakin ingin menghapus data ini?
+                {{-- Informasi Divisi --}}
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>ID Divisi:</strong> <span id="viewDivAuto"></span></div>
+                    <div class="col-md-3"><strong>Kode Divisi:</strong> <span id="viewDivCode"></span></div>
+                    <div class="col-md-3"><strong>Nama Divisi:</strong> <span id="viewDivName"></span></div>
+                    <div class="col-md-3"><strong>NIK:</strong> <span id="viewDivNIK"></span></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Shift (Y/N):</strong> <span id="viewDivShift"></span></div>
+                    <div class="col-md-3"><strong>Biaya:</strong> <span id="viewDivBiaya"></span></div>
+                </div>
+                <hr>
+                {{-- Tabel Sub-Divisi --}}
+                <h5 class="mb-3">Data Sub-Divisi</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered" id="viewSubDivTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 5%;" class="text-center">No</th>
+                                <th style="width: 20%;">Kode Sub-Divisi</th>
+                                <th style="width: 20%;">Nama Sub-Divisi</th>
+                                <th style="width: 25%;">NIK</th>
+                            </tr>
+                        </thead>
+                        <tbody id="viewSubDivTableBody">
+                            {{-- Baris detail akan diisi oleh JavaScript --}}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th style="width: 5%;" class="text-center">No</th>
+                                <th style="width: 20%;">Kode Sub-Divisi</th>
+                                <th style="width: 20%;">Nama Sub-Divisi</th>
+                                <th style="width: 25%;">NIK</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
-                <form method="POST" id="deleteDivisiForm">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger" >Hapus</button>
-                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ////////////////////////////////////////////////////////////////////////// -->
 
-<!-- Modal Tambah Data Sub-Divisi -->
-<div class="modal fade" id="addSubDivisiModal" tabindex="-1" role="dialog" aria-labelledby="addSubDivisiModalLabel" aria-hidden="true">
+<!-- Universal Code Modal (untuk Add dan Edit) -->
+<div class="modal fade" id="divModal" tabindex="-1" role="dialog" aria-labelledby="divModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addSubDivisiModalLabel"> Tambah Data Sub-Divisi </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title" id="divModalLabel">Data Divisi</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <form action="{{ route('subdivisi.store') }}" method="POST">
+            <form id="divisiForm" method="POST" action=""> {{-- Action akan di-set oleh JS --}}
                 @csrf
+                <input type="hidden" name="_method" id="formMethod" value=""> {{-- Untuk method PUT/PATCH saat edit --}}
+                <input type="hidden" name="div_auto" id="Divisi_Id" value="">
+
                 <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="div_divcode" class="col-sm-3 col-form-label">ID Divisi</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="div_divcode" name="div_divcode" required>
-                                        <option selected value="" >Pilih</option>
-                                        @foreach($Divisis as $Divisi)
-                                            <option value="{{ $Divisi->div_auto }}">{{ $Divisi->Div_Name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                    <div id="modal-alert" class="alert alert-danger" style="display: none;">
+                         <ul id="modal-error-list"></ul>
+                    </div>
+                    <div class="form-group row">
+                        <label for="modal_div_auto" class="col-sm-3 col-form-label">ID Divisi</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control bg-light small" id="modal_div_auto" name="div_auto">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Code" class="col-sm-3 col-form-label">Kode Sub-Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="Div_Code" name="Div_Code" required>
-                                </div>
-                            </div>
+                    <div class="form-group row">
+                        <label for="modal_Div_Code" class="col-sm-3 col-form-label">Kode Divisi</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control bg-light small" id="modal_Div_Code" name="Div_Code">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Name" class="col-sm-3 col-form-label">Nama Sub-Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="Div_Name" name="Div_Name" required>
-                                </div>
-                            </div>
+                    <div class="form-group row">
+                        <label for="modal_Div_Name" class="col-sm-3 col-form-label">Nama Divisi</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control bg-light small" id="modal_Div_Name" name="Div_Name">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="DIV_NIK" class="col-sm-3 col-form-label">NIK</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="DIV_NIK" name="DIV_NIK">
-                                </div>
-                            </div>
+                    <div class="form-group row">
+                        <label for="modal_DIV_NIK" class="col-sm-3 col-form-label">NIK</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control bg-light small" id="modal_DIV_NIK" name="DIV_NIK">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="modal_DIV_SHIFTYN" class="col-sm-3 col-form-label">Shift (Y/T)</label>
+                        <div class="col-sm-9">
+                            <select class="form-control bg-light small" id="modal_DIV_SHIFTYN" name="DIV_SHIFTYN">
+                                <option selected value="T">Tidak</option>
+                                <option value="Y">Ya</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="modal_DIV_BIAYA" class="col-sm-3 col-form-label">Biaya</label>
+                        <div class="col-sm-9">
+                            <select class="form-control bg-light small" id="modal_DIV_BIAYA" name="DIV_BIAYA">
+                                <option selected value="">Pilih</option>
+                                <option value="T">Tidak</option>
+                                <option value="Y">Ya</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="saveModalButton">Simpan</button>
                 </div>
-            </form>
-        </div>
-    </div>
- </div>
-
-<!-- Modal Edit Sub-Divisi -->
-<div class="modal fade" id="editSubDivisiModal" tabindex="-1" aria-labelledby="editSubDivisiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editSubDivisiModalLabel"> Edit Data Sub-Divisi </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="POST" action=""  id="editSubDivisiForm">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="div_divcode" class="col-sm-3 col-form-label">ID Divisi</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control bg-light small" id="editDividCode" name="div_divcode" required>
-                                        <option selected value="" >Pilih</option>
-                                        @foreach($Divisis as $Divisi)
-                                            <option value="{{ $Divisi->div_auto }}">{{ $Divisi->Div_Name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Code" class="col-sm-3 col-form-label">Kode Sub-Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editSubDivCode" name="Div_Code" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="Div_Name" class="col-sm-3 col-form-label">Nama Sub-Divisi</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editSubDivName" name="Div_Name" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="DIV_NIK" class="col-sm-3 col-form-label">NIK</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control bg-light small" id="editSubDivNIK" name="DIV_NIK">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </div> 
             </form>
         </div>
     </div>
 </div>
 
-<!-- Modal Konfirmasi Sub-Divisi Hapus -->
-<div class="modal fade" id="confirmSubDivisiDeleteModal" tabindex="-1" aria-labelledby="confirmSubDivisiDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="confirmSubDivisiDeleteModalLabel">Konfirmasi Penghapusan Data Sub-Divisi</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Apakah Anda yakin ingin menghapus data ini?
-            </div>
-            <div class="modal-footer">
-                <form method="POST" id="deleteSubDivisiForm">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger" >Hapus</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
 
+@push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    $(document).ready(function() {
+        // DataTable
+        var table = $('#dataTable').DataTable();
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    
+        // Modal & form references
+        const viewModal = new bootstrap.Modal($('#viewDivisiModal'));
+        const divModal    = $('#divModal');
+        const form        = $('#divisiForm');
+        const formAction  = () => form.attr('action');
+        const formMethod  = () => $('#formMethod').val() || 'POST';
 
-        // Edit Divisi 
-        const editDivButtons = document.querySelectorAll('.edit-divisi-btn');
-        const editDivForm = document.getElementById('editDivisiForm');
-        const editDivModal = new bootstrap.Modal(document.getElementById('editDivisiModal'));
+        // Reset form state
+        function resetForm() {
+            form.trigger('reset');
+            $('#formMethod').val('');
+            $('#Divisi_Id').val('');
+            $('#modal_div_auto').val('').prop('disabled', false).prop('readonly', false);
+        }
 
-        editDivButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Ambil URL tujuan update dari data-url di tombol edit
-                const url = this.getAttribute('data-divisiurl');
-                
-                // Ambil data dari atribut data di tombol
-                const divId = this.getAttribute('data-divid');
-                const divCode = this.getAttribute('data-divcode');
-                const divName = this.getAttribute('data-divname');
-                const divNik = this.getAttribute('data-divnik');
-                const divShiftYN = this.getAttribute('data-divshiftyn');
-                const divBiaya = this.getAttribute('data-divbiaya');
 
-                // Set nilai form edit
-                document.getElementById('editDivCode').value = divCode;
-                document.getElementById('editDivName').value = divName;
-                document.getElementById('editNIK').value = divNik;
-                document.getElementById('editShiftYN').value = divShiftYN;
-                document.getElementById('editBiaya').value = divBiaya;
+        // tombol “View” klik
+        $(document).on('click', '.btn-view', function() {
+            const id = $(this).data('id');
 
-                // Ubah action form ke URL update
-                editDivForm.setAttribute('action', url);
+            $.ajax({
+                url: `/presensi/divisi/${id}`,
+                method: 'GET',
+                dataType: 'json',
+            })
+            .done(divisi => {
+                // isi field dasar
+                $('#viewDivAuto').text(divisi.div_auto);
+                $('#viewDivCode').text(divisi.Div_Code);
+                $('#viewDivName').text(divisi.Div_Name);
+                $('#viewDivNIK').text(divisi.DIV_NIK || '-');
+                $('#viewDivShift').text(divisi.DIV_SHIFTYN);
+                $('#viewDivBiaya').text(divisi.DIV_BIAYA || '-');
 
-                // Tampilkan modal edit
-                editDivModal.show();
+                // kosongkan dulu tabel Sub-Divisi
+                const $tbody = $('#viewSubDivTableBody').empty();
+
+                // ambil relasi SubDivisi
+                const subs = divisi.sub_divisi || [];
+
+                if (subs.length) {
+                    subs.forEach((sub, idx) => {
+                        const row = `
+                            <tr>
+                                <td class="text-center">${idx + 1}</td>
+                                <td>${sub.Div_Code || '-'}</td>
+                                <td>${sub.Div_Name || '-'}</td>
+                                <td>${sub.DIV_NIK || '-'}</td>
+                            </tr>
+                        `;
+                        $tbody.append(row);
+                    });
+                } else {
+                    $tbody.append(`
+                        <tr>
+                            <td colspan="4" class="text-center">– Belum ada Sub-Divisi –</td>
+                        </tr>
+                    `);
+                }
+
+                // tampilkan modal
+                viewModal.show();
+            })
+            .fail(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Tidak dapat memuat data divisi.',
+                });
             });
         });
 
-        // Edit Sub-Divisi
-        
-        const editSubDivButtons = document.querySelectorAll('.edit-subdivisi-btn');
-        const editSubDivForm = document.getElementById('editSubDivisiForm');
-        const editSubDivModal = new bootstrap.Modal(document.getElementById('editSubDivisiModal'));
+        // Tambah
+        $('#addDivisiButton').click(function(){
+            resetForm();
+            $('#divModalLabel').text('Tambah Divisi');
+            form.attr('action','/presensi/divisi');
+            $('#formMethod').val('POST');
+            $('#modal_div_auto').closest('.form-group').hide();
+            $('#saveModalButton').text('Simpan');
+            
+            divModal.modal('show');
+        });
 
+        // Edit
+        $(document).on('click','.edit-btn',function(){
+            const id      = $(this).data('divid');
+            const code    = $(this).data('divcode');
+            const name    = $(this).data('divname');
+            const nik     = $(this).data('divnik');
+            const shift   = $(this).data('divshift');
+            const biaya   = $(this).data('divbiaya');
 
-        editSubDivButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Ambil URL tujuan update dari data-url di tombol edit
-                const url = this.getAttribute('data-subdivisiurl');
-                
-                // Ambil data dari atribut data di tombol
-                const subId = this.getAttribute('data-subid');
-                const subdivId = this.getAttribute('data-subdivid');
-                const subdivCode = this.getAttribute('data-subdivcode');
-                const subdivName = this.getAttribute('data-subdivname');
-                const subdivNik = this.getAttribute('data-subdivnik');
+            resetForm();
+            $('#divModalLabel').text('Edit Divisi');
+            form.attr('action', `/presensi/divisi/${id}`);
+            $('#formMethod').val('PUT');
+            $('#saveModalButton').text('Update');
 
-                // Set nilai form edit
-                document.getElementById('editDividCode').value = subdivId;
-                document.getElementById('editSubDivCode').value = subdivCode;
-                document.getElementById('editSubDivName').value = subdivName;
-                document.getElementById('editSubDivNIK').value = subdivNik;
+            $('#modal_div_auto').closest('.form-group').show();
+            $('#modal_div_auto').val(id).prop('disabled', true);
 
-                // Ubah action form ke URL update
-                editSubDivForm.setAttribute('action', url);
-                // Tampilkan modal edit
-                editSubDivModal.show();
+            $('#Divisi_Id').val(id);
+            $('#modal_Div_Code').val(code);
+            $('#modal_Div_Name').val(name);
+            $('#modal_DIV_NIK').val(nik);
+            $('#modal_DIV_SHIFTYN').val(shift);
+            $('#modal_DIV_BIAYA').val(biaya);
+            
+            divModal.modal('show');
+        });
+
+        // Submit (Tambah/Edit)
+        form.on('submit', function(e){
+            e.preventDefault();
+            const url    = formAction();
+            const method = formMethod();
+
+            $.ajax({
+                url: url,
+                type: method === 'POST' ? 'POST' : 'PUT',
+                data: form.serialize(),
+                dataType: 'json',
+            })
+            .done(res => {
+                Swal.fire({ 
+                    icon:'success', 
+                    title:'Berhasil', 
+                    text:res.message, 
+                    timer:1500, 
+                    showConfirmButton:false })
+                .then(()=> location.reload());
+            })
+            .fail(xhr => {
+                let html = '';
+                // Jika ada validasi errors, bentuk jadi <li>…</li>
+                if (xhr.status === 422 && xhr.responseJSON.errors) {
+                const errors = xhr.responseJSON.errors;
+                html = '<ul class="text-left" style="list-style-type: none; padding-left: 0;">';
+                Object.values(errors).flat().forEach(msg => {
+                    html += `<li>${msg}</li>`;
+                });
+                html += '</ul>';
+                } else {
+                // fallback ke message
+                html = xhr.responseJSON?.message || 'Terjadi kesalahan.';
+                }
+                Swal.fire({
+                icon: 'error',
+                title: 'Gagal menyimpan',
+                html: html,
+                });
             });
+        });
+
+        // Delete
+        $(document).on('click','.delete-btn',function(){
+            const id       = $(this).data('divid');
+            const itemName = $(this).data('divname');
+            const deleteUrl = `/presensi/divisi/${id}`;
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                html: `Anda akan menghapus: <strong>${itemName}</strong>.<br><small>Tindakan ini tidak dapat dibatalkan.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33'
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'POST', // Laravel hanya support POST + _method
+                    data: {
+                        _method: 'DELETE',
+                        _token: csrfToken
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Terhapus!',
+                            response.message || 'Data berhasil dihapus.',
+                            'success'
+                        ).then(() => {
+                            // reload untuk memperbarui tabel
+                            location.reload();
+                        });
+                    },
+                    error: function(jqXHR) {
+                        let errorMsg = 'Gagal menghapus data.';
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                            errorMsg = jqXHR.responseJSON.message;
+                        }
+                        Swal.fire(
+                            'Gagal!',
+                            errorMsg,
+                            'error'
+                        );
+                    }
+                });
+            });   
         });
     });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const deleteDivButtons = document.querySelectorAll('.delete-divbtn');
-        const deleteDivForm = document.getElementById('deleteDivisiForm');
-        const modalDiv = new bootstrap.Modal(document.getElementById('confirmDivisiDeleteModal'));
-
-        deleteDivButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const url = this.getAttribute('data-deldivisiurl');
-                deleteDivForm.setAttribute('action', url);
-                modalDiv.show();
-            });
-        });
-
-        const deleteSubDivButtons = document.querySelectorAll('.delete-subdivbtn');
-        const deleteSubDivForm = document.getElementById('deleteSubDivisiForm');
-        const modalSubDiv = new bootstrap.Modal(document.getElementById('confirmSubDivisiDeleteModal'));
-
-        deleteSubDivButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const url = this.getAttribute('data-delsubdivisiurl');
-                deleteSubDivForm.setAttribute('action', url);
-                modalSubDiv.show();
-            });
-        });
-    });
-
 </script>
+@endpush
