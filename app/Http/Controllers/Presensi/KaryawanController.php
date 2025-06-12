@@ -3,16 +3,9 @@
 namespace App\Http\Controllers\Presensi;
 use App\Http\Controllers\Controller;
 use App\Models\Presensi\Employee;
-use App\Models\Presensi\Divisi;
-use App\Models\Presensi\SubDivisi;
-use App\Models\Presensi\Posisi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage; // Penting
-use Illuminate\Support\Facades\File;      // Penting
 
 class KaryawanController extends Controller
 {
@@ -22,10 +15,8 @@ class KaryawanController extends Controller
     public function index()
     {
         $Employees = Employee::all();
-        $Divisis = Divisi::all();
-        $SubDivisis = SubDivisi::all();
-        $Posisis = Posisi::all();  
-        return view('presensi.employee.index', compact('Employees','Divisis','SubDivisis','Posisis'));
+ 
+        return view('presensi.data-karyawan.index', compact('Employees'));
     }
 
     /**
@@ -33,7 +24,7 @@ class KaryawanController extends Controller
      */
     public function create()
     {
-        return view('presensi.employee.create');
+        return view('presensi.data-karyawan.create');
     }
 
     /**
@@ -42,10 +33,10 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'emp_Code' => 'required|string|max:20|',
-            'emp_NID' => 'required|string|max:30',
-            'emp_Name' => 'required|string|max:50',
-            'emp_ActiveYN' => 'required|string|max:1',
+            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($Employee) ? ',' . $Employee->emp_Auto . ',emp_Auto' : ''),
+            'emp_NID' => 'nullable|string|max:30',
+            'emp_Name' => 'nullable|string|max:50',
+            'emp_ActiveYN' => 'nullable|string|max:1',
             'emp_Address' => 'nullable|string|max:200',
             'emp_CityCode' => 'nullable|string|max:20',
             'emp_ProvinceCode' => 'nullable|string|max:20',
@@ -72,7 +63,7 @@ class KaryawanController extends Controller
             'emp_Marital' => 'nullable|string|max:2',
             'emp_Religion' => 'nullable|string|max:30',
             'emp_PlaceBorn' => 'nullable|string|max:30',
-            'emp_DateBorn' => 'required|date',
+            'emp_DateBorn' => 'nullable|date',
             'emp_Enroll' => 'nullable|date',
             'emp_startcontract' => 'nullable|date',
             'emp_Expired' => 'nullable|date',
@@ -102,46 +93,18 @@ class KaryawanController extends Controller
             'emp_LastUpdate' => 'nullable|date',
         ]);
 
-        // Buat password secara otomatis dari tanggal lahir jika ada
-        if (!empty($validated['emp_DateBorn'])) {
-            // Format tanggal menjadi ddmmyyyy. Contoh: 15051990
-            $defaultPassword = Carbon::parse($validated['emp_DateBorn'])->format('dmY');
-            
-            // Hash password yang dibuat otomatis
-            $validated['emp_password'] = Hash::make($defaultPassword);
-        } else {
-            // Pastikan password bernilai null jika tanggal lahir tidak diisi
-            $validated['emp_password'] = null;
-        }
-
-        // Handle Upload Gambar
-        if ($request->hasFile('EMP_PICT')) {
-            $file = $request->file('EMP_PICT');
-            $empCode = $validated['emp_Code'];
-            $date = Carbon::now()->format('Ymd'); // Format tanggal: TahunBulanHari (e.g., 20250611)
-            // $filename = time() . '_' . uniqid() . '.png'; // Gunakan nama unik
-            $filename = $empCode . '_' . uniqid() . '_' . $date . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/employee_pictures', $filename);
-            $validated['EMP_PICT'] = $filename;
-        }
-
-        
         // Tambahkan data user login dan waktu entry
         $validated['emp_ENTRYID'] = Auth::User()->id;
         $validated['emp_FirstEntry'] = Carbon::now();
 
+        if ($request->hasFile('EMP_PICT')) {
+
+            $validated['EMP_PICT'] = file_get_contents($request->file('EMP_PICT'));
+        }
     
         Employee::create($validated);
         
-            if ($request->expectsJson()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data Karyawan berhasil ditambahkan.',
-            ]);
-        }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Karyawan berhasil ditambahkan.');
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -149,10 +112,7 @@ class KaryawanController extends Controller
      */
     public function show(string $id)
     {
-        $Employee = Employee::with(['Divisi', 'SubDivisi', 'Posisi'])
-        ->findOrFail($id);
-
-        return response()->json($Employee);
+        //
     }
 
     /**
@@ -160,7 +120,7 @@ class KaryawanController extends Controller
      */
     public function edit(Employee $Employee)
     {
-        return view('presensi.employee.edit', compact('Employee'));
+        return view('presensi.data-karyawan.edit', compact('Employee'));
     }
 
     /**
@@ -169,10 +129,9 @@ class KaryawanController extends Controller
     public function update(Request $request, Employee $Employee)
     {
         $validated = $request->validate([
-            'emp_Code' => 'nullable|string|max:20|',
+            'emp_Code' => 'nullable|string|max:20|unique:m_employee,emp_Code' . (isset($Employee) ? ',' . $Employee->emp_Auto . ',emp_Auto' : ''),
             'emp_NID' => 'nullable|string|max:30',
             'emp_Name' => 'nullable|string|max:50',
-            'emp_password' => 'nullable|string|min:8|confirmed',
             'emp_ActiveYN' => 'nullable|string|max:1',
             'emp_Address' => 'nullable|string|max:200',
             'emp_CityCode' => 'nullable|string|max:20',
@@ -228,74 +187,36 @@ class KaryawanController extends Controller
             'emp_FirstEntry' => 'nullable|date',
             'emp_UpdateID' => 'nullable|string|max:10',
             'emp_LastUpdate' => 'nullable|date',
-            'delete_photo' => 'nullable|in:0,1',
         ]);
-
-        // Periksa apakah ada input password baru dari form
-        if (!empty($validated['emp_password'])) {
-            // Jika ada, hash password baru
-            $validated['emp_password'] = Hash::make($validated['emp_password']);
-        } else {
-            // Jika tidak ada password baru yang diinput, hapus dari array 
-            // agar tidak menimpa password lama dengan NULL
-            unset($validated['emp_password']); 
-        }
     
-        $currentPhoto = $Employee->EMP_PICT;
-
-        if ($request->input('delete_photo') == '1' && $currentPhoto) {
-            File::delete(storage_path('app/public/employee_pictures/' . $currentPhoto));
-            $validated['EMP_PICT'] = null;
-        }
+        // Jika ada upload file baru
 
         if ($request->hasFile('EMP_PICT')) {
-            if ($currentPhoto) {
-                File::delete(storage_path('app/public/employee_pictures/' . $currentPhoto));
-            }
-            $file = $request->file('EMP_PICT');
-            
-            // === PERUBAHAN DI SINI ===
-            // Membuat nama file baru dengan format: kodekaryawan_uniqid_tanggal.extensi
-            $empCode = $validated['emp_Code'];
-            $date = Carbon::now()->format('Ymd'); // Format tanggal: TahunBulanHari (e.g., 20250611)
-            $filename = $empCode . '_' . uniqid() . '_' . $date . '.' . $file->getClientOriginalExtension();
-
-            $file->storeAs('public/employee_pictures', $filename);
-            $validated['EMP_PICT'] = $filename;
+            $validated['EMP_PICT'] = file_get_contents($request->file('EMP_PICT'));
+        } elseif ($request->input('hapus_gambar') == '1') {
+            $validated['EMP_PICT'] = null;
+        } else {
+            unset($validated['EMP_PICT']);
         }
-        
-        unset($validated['delete_photo']);
-
 
         $validated['emp_UpdateID'] = Auth::user()->id; // ID user yang login
         $validated['emp_LastUpdate'] = Carbon::now(); // Timestamp saat update
         
         $Employee->update($validated);
     
-            if ($request->expectsJson()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data Karyawan berhasil diperbarui.',
-            ]);
-        }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Karyawan berhasil diperbarui.');
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil diperbarui.');
 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $Employee)
+    public function destroy($id)
     {
-        if ($Employee->EMP_PICT) {
-            File::delete(storage_path('app/public/employee_pictures/' . $Employee->EMP_PICT));
-        }
-        
+        $Employee = Employee::findOrFail($id);
         $Employee->delete();
-
-        return response()->json(['message' => 'Data karyawan berhasil dihapus.']);
+ 
+        return redirect()->route('data-karyawan.index')->with('success', 'Data Karyawan berhasil dihapus.');;
     }
 
 }

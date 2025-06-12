@@ -2,6 +2,7 @@
 
 namespace App\Models\Presensi;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Divisi extends Model
@@ -25,13 +26,9 @@ class Divisi extends Model
         'Div_LastUpdate',
     ];
 
-    public function SubDivisi() 
+    public function SubDivisi()
+
     {
         return $this->hasMany(SubDivisi::class, 'div_divcode', 'div_auto');
-    }
-
-    public function Employee()
-    {
-        return $this->hasMany(Employee::class, 'emp_DivCode', 'div_auto');
     }
 }

@@ -51,36 +51,21 @@ Route::get('/profile', 'ProfileController@index')->name('profile');
 Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
 
+// Data Karyawan
+Route::resource('divisi', DivisiController::class)
+    ->parameters(['divisi' => 'Divisi']);
 
-// Data Presensi
-Route::prefix('presensi')->group(function(){
-    // Data Karyawan Routes
-    Route::get('/employee', [KaryawanController::class,'index'])->name('employee.index');
-    Route::post('/employee', [KaryawanController::class,'store'])->name('employee.store');
-    Route::get('/employee/{Employee}', [KaryawanController::class,'show'])->name('employee.show');
-    Route::put('/employee/{Employee}', [KaryawanController::class,'update'])->name('employee.update');
-    Route::delete('/employee/{Employee}', [KaryawanController::class,'destroy'])->name('employee.destroy');
-    // Divisi Routes
-    Route::get('/divisi', [DivisiController::class,'index'])->name('divisi.index');
-    Route::post('/divisi', [DivisiController::class,'store'])->name('divisi.store');
-    Route::get('/divisi/{Divisi}', [DivisiController::class,'show'])->name('divisi.show');
-    Route::put('/divisi/{Divisi}', [DivisiController::class,'update'])->name('divisi.update');
-    Route::delete('/divisi/{Divisi}', [DivisiController::class,'destroy'])->name('divisi.destroy');
-    // Sub-Divisi Routes
-    Route::get('/subdivisi', [SubDivisiController::class,'index'])->name('subdivisi.index');
-    Route::post('/subdivisi', [SubDivisiController::class,'store'])->name('subdivisi.store');
-    Route::get('/subdivisi/{SubDivisi}', [SubDivisiController::class,'show'])->name('subdivisi.show');
-    Route::put('/subdivisi/{SubDivisi}', [SubDivisiController::class,'update'])->name('subdivisi.update');
-    Route::delete('/subdivisi/{SubDivisi}', [SubDivisiController::class,'destroy'])->name('subdivisi.destroy');
-    Route::get('/get-subdivisi/{Divisi}', [SubDivisiController::class, 'getByDivision'])->name('subdivisi.getByDivision');
-    // Posisi Routes
-    Route::get('/posisi', [PosisiController::class,'index'])->name('posisi.index');
-    Route::post('/posisi', [PosisiController::class,'store'])->name('posisi.store');
-    Route::get('/posisi/{Posisi}', [PosisiController::class,'show'])->name('posisi.show');
-    Route::put('/posisi/{Posisi}', [PosisiController::class,'update'])->name('posisi.update');
-    Route::delete('/posisi/{Posisi}', [PosisiController::class,'destroy'])->name('posisi.destroy');
-});
+// Data Sub-Divisi
+Route::resource('subdivisi', SubDivisiController::class)
+    ->parameters(['subdivisi' => 'SubDivisi']);
 
+// Data Posisi
+Route::resource('posisi', PosisiController::class)
+    ->parameters(['posisi' => 'Posisi']);
+
+// Data Karyawan
+Route::resource('data-karyawan', KaryawanController::class)
+    ->parameters(['data-karyawan' => 'Employee']);
 
 
 

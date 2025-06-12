@@ -1,17 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Presensi;
-
 use App\Http\Controllers\Controller;
 use App\Models\Presensi\Divisi;
 use App\Models\Presensi\SubDivisi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // Untuk logging error
-use Illuminate\Support\Facades\Validator; // Untuk validasi
 use Illuminate\Support\Carbon;
 
-use Illuminate\Http\Request;
 
 class DivisiController extends Controller
 {
@@ -49,15 +45,10 @@ class DivisiController extends Controller
 
         Divisi::create($validated);
 
-        if ($request->ajax()) {
-                return response()->json([
-                    'status'  => 'success',
-                    'message' => 'Data divisi berhasil ditambahkan.',
-                ]);
-            }
 
-            return redirect()->route('divisi.index')
-                            ->with('success','Data divisi berhasil ditambahkan.');
+        return redirect()->route('divisi.index')->with('success', 'Data divisi berhasil ditambahkan.');
+
+
     }
 
     /**
@@ -65,12 +56,7 @@ class DivisiController extends Controller
      */
     public function show(string $id)
     {
-        // Muat Divisi beserta relasi SubDivisi
-        $SubDivisis = SubDivisi::all();
-        $divisi = Divisi::with('SubDivisi')
-            ->findOrFail($id);
-
-        return response()->json($divisi);
+        //
     }
 
     /**
@@ -86,28 +72,25 @@ class DivisiController extends Controller
      */
     public function update(Request $request, Divisi $Divisi)
     {
-        $validated = $request->validate([
-            'Div_Code'    => 'required|string|max:20',
-            'Div_Name'    => 'required|string|max:50',
-            'DIV_NIK'     => 'nullable|string|max:20',
-            'DIV_SHIFTYN' => 'required|in:Y,T',
-            'DIV_BIAYA'   => 'nullable|in:Y,T',
-        ]);
 
-        $validated['Div_UserID']     = Auth::id();
+
+        $validated = $request->validate([
+            'Div_Code'      => 'required|string|max:20',
+            'Div_Name'      => 'nullable|string|max:50',
+            'DIV_NIK'       => 'nullable|string|max:20',
+            'DIV_SHIFTYN'   => 'required|in:Y,T',
+            'DIV_BIAYA'     => 'nullable|in:Y,T',
+        ]);
+        
+
+        $validated['Div_UserID'] = Auth::user()->id;
         $validated['Div_LastUpdate'] = now();
+    
+        
         $Divisi->update($validated);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status'  => 'success',
-                'message'=> 'Data Posisi berhasil diperbarui.']);
-        }
-
-        return redirect()->route('divisi.index')
-                        ->with('success','Data Divisi berhasil diperbarui.');
+        return redirect()->route('divisi.index')->with('success', 'Data divisi berhasil diperbarui.');
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -117,16 +100,6 @@ class DivisiController extends Controller
         $Divisi = Divisi::findOrFail($id);
         $Divisi->delete();
     
-        // Jika AJAX, kembalikan JSON
-        if (request()->ajax()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data divisi berhasil dihapus.',
-            ]);
-        }
-
-        // Bila non‐AJAX, redirect seperti biasa
-        return redirect()->route('divisi.index')
-                        ->with('success', 'Data divisi berhasil dihapus.');
+        return redirect()->route('divisi.index')->with('success', 'Data divisi berhasil dihapus.');
     }
 }

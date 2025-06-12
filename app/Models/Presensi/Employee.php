@@ -18,7 +18,6 @@ class Employee extends Model
         'emp_Code',
         'emp_NID',
         'emp_Name',
-        'emp_password',
         'emp_ActiveYN',
         'emp_Address',
         'emp_CityCode',
@@ -75,19 +74,4 @@ class Employee extends Model
         'emp_UpdateID',
         'emp_LastUpdate',    
     ];
-
-    public function Divisi()
-    {
-        return $this->belongsTo(Divisi::class,  'emp_DivCode', 'div_auto');
-    }
-
-    public function SubDivisi()
-    {
-        return $this->belongsTo(SubDivisi::class,  'EMP_SUBDIVCODE', 'div_auto');
-    }
-
-    public function Posisi()
-    {
-        return $this->belongsTo(Posisi::class,  'emp_PosCode', 'pos_auto');
-    }
 }

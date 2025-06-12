@@ -14,11 +14,13 @@
     </div>
     @endif
 
-    <!-- Add New Divisi Button -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="addPosisiButton">
-            <i class="fas fa-plus"></i> Tambah Posisi
-        </button>
+        <a href="#" class="btn btn-primary btn-icon-split" data-toggle="modal" data-target="#addPosisiModal">
+            <span class="icon text-white-100">
+                <i class="fas fa-plus mt-1"></i>
+            </span>
+            <span class="text">Tambah Posisi</span>
+        </a>
     </div>
 
 
@@ -29,16 +31,26 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead class="thead-light">
+                    <thead>
                         <tr>
-                            <th width="5%">No</th>
-                            <th width="15%">Kode Posisi</th>
-                            <th width="20%">Nama Posisi</th>
-                            <th width="15%">User ID</th>
-                            <th width="15%">Last Update</th>
-                            <th width="5%">Tindakan</th>
+                            <th>No</th>
+                            <th>Kode Posisi</th>
+                            <th>Nama Posisi</th>
+                            <th>User ID</th>
+                            <th>Last Update</th>
+                            <th>Tindakan</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode Posisi</th>
+                            <th>Nama Posisi</th>
+                            <th>User ID</th>
+                            <th>Last Update</th>
+                            <th>Tindakan</th>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         @foreach($Posisis as $index => $Posisi)
                         <tr>
@@ -48,18 +60,15 @@
                             <td>{{ $Posisi->Pos_UserID }}</td>
                             <td>{{ $Posisi->Pos_LastUpdate }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning edit-btn"
+                                <button type="button" class="btn btn-sm btn-warning edit-btn edit-posisi-btn"
                                     data-posid="{{ $Posisi->pos_auto }}"
                                     data-poscode="{{ $Posisi->Pos_Code }}"
                                     data-posname="{{ $Posisi->Pos_Name }}"
-                                    data-toggle="modal"
-                                    data-target="#editPosModal">
+                                    data-posisiurl="{{ route('posisi.update', $Posisi) }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-posid="{{ $Posisi->pos_auto }}"
-                                    data-posname="{{ $Posisi->Pos_Name }}"
-                                    data-toggle="modal" data-target="#deletePosisiModal">
+                                <button type="button" class="btn btn-sm btn-danger delete-btn delete-posbtn" 
+                                data-delposisiurl="{{ route('posisi.destroy', $Posisi) }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -77,49 +86,114 @@
     </div>
 </div>
 
-<!-- Universal Code Modal (untuk Add dan Edit) -->
-<div class="modal fade" id="posModal" tabindex="-1" role="dialog" aria-labelledby="posModalLabel" aria-hidden="true">
+<!-- Modal Tambah Data Posisi -->
+<div class="modal fade" id="addPosisiModal" tabindex="-1" role="dialog" aria-labelledby="addPosisiModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="posModalLabel">Data Posisi</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                <h5 class="modal-title" id="addPosisiModalLabel"> Tambah Data Posisi </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="posisiForm" method="POST" action=""> {{-- Action akan di-set oleh JS --}}
+            <form action="{{ route('posisi.store') }}" method="POST">
                 @csrf
-                <input type="hidden" name="_method" id="formMethod" value=""> {{-- Untuk method PUT/PATCH saat edit --}}
-                <input type="hidden" name="pos_auto" id="Posisi_Id" value="">
-
                 <div class="modal-body">
-                    <div id="modal-alert" class="alert alert-danger" style="display: none;">
-                         <ul id="modal-error-list"></ul>
-                    </div>
-                    <div class="form-group row">
-                        <label for="modal_pos_auto" class="col-sm-3 col-form-label">ID Posisi</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control bg-light small" id="modal_pos_auto" name="pos_auto">
+                    <div class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="Pos_Code" class="col-sm-3 col-form-label">Kode Posisi</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control bg-light small" id="Pos_Code" name="Pos_Code" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="modal_Pos_Code" class="col-sm-3 col-form-label">Kode Posisi</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control bg-light small" id="modal_Pos_Code" name="Pos_Code">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="modal_Pos_Name" class="col-sm-3 col-form-label">Nama Posisi</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control bg-light small" id="modal_Pos_Name" name="Pos_Name">
+                    <div class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="Pos_Name" class="col-sm-3 col-form-label">Nama Posisi</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control bg-light small" id="Pos_Name" name="Pos_Name" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="saveModalButton">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Divisi -->
+<div class="modal fade" id="editPosisiModal" tabindex="-1" aria-labelledby="editPosisiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPosisiModalLabel"> Tambah Data Posisi </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action=""  id="editPosisiForm">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="Pos_Code" class="col-sm-3 col-form-label">Kode Posisi</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control bg-light small" id="editPosCode" name="Pos_Code" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="Pos_Name" class="col-sm-3 col-form-label">Nama Posisi</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control bg-light small" id="editPosName" name="Pos_Name" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div> 
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Divisi Hapus -->
+<div class="modal fade" id="confirmPosisiDeleteModal" tabindex="-1" aria-labelledby="confirmPosisiDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmPosisiDeleteModalLabel">Konfirmasi Penghapusan Data Posisi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus data ini?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" id="deletePosisiForm">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger" >Hapus</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -127,152 +201,48 @@
 
 @endsection
 
-@push('scripts')
 <script>
-    $(document).ready(function() {
-        // Initialize DataTable
-        var table = $('#dataTable').DataTable();
-        const csrfToken = $('meta[name="csrf-token"]').attr('content');
-    
-        // Modal & form references
-        const posModal    = $('#posModal');
-        const form        = $('#posisiForm');
-        const formAction  = () => form.attr('action');
-        const formMethod  = () => $('#formMethod').val() || 'POST';
+    document.addEventListener("DOMContentLoaded", function () {
 
-        // Reset form
-        function resetForm(){
-            form.trigger('reset');
-            $('#formMethod').val('');
-            $('#Posisi_Id').val('');
-            $('#modal_pos_auto').val('').prop('disabled', false).prop('readonly', false);
-        }
+        // Edit Divisi 
+        const editPosButtons = document.querySelectorAll('.edit-posisi-btn');
+        const editPosForm = document.getElementById('editPosisiForm');
+        const editPosModal = new bootstrap.Modal(document.getElementById('editPosisiModal'));
 
-        // Tambah
-        $('#addPosisiButton').click(function(){
-            resetForm();
-            $('#posModalLabel').text('Tambah Posisi');
-            form.attr('action','/presensi/posisi');
-            $('#formMethod').val('POST');
-            $('#modal_pos_auto').closest('.form-group').hide();
-            $('#saveModalButton').text('Simpan');
-            posModal.modal('show');
-        });
+        editPosButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Ambil URL tujuan update dari data-url di tombol edit
+                const url = this.getAttribute('data-posisiurl');
+                
+                // Ambil data dari atribut data di tombol
+                const posId = this.getAttribute('data-posid');
+                const posCode = this.getAttribute('data-poscode');
+                const posName = this.getAttribute('data-posname');
 
-        // Edit
-        $(document).on('click','.edit-btn',function(){
-            const id      = $(this).data('posid');
-            const code    = $(this).data('poscode');
-            const name    = $(this).data('posname');
+                // Set nilai form edit
+                document.getElementById('editPosCode').value = posCode;
+                document.getElementById('editPosName').value = posName;
 
-            resetForm();
-            $('#posModalLabel').text('Edit Posisi');
-            form.attr('action', `/presensi/posisi/${id}`);
-            $('#formMethod').val('PUT');
-            $('#saveModalButton').text('Update');
+                // Ubah action form ke URL update
+                editPosForm.setAttribute('action', url);
 
-            $('#modal_pos_auto').closest('.form-group').show();
-            $('#modal_pos_auto').val(id).prop('disabled', true);
-
-
-            $('#Posisi_Id').val(id);
-            $('#modal_Pos_Code').val(code);
-            $('#modal_Pos_Name').val(name);
-
-            posModal.modal('show');
-        });
-
-        // Submit (Tambah/Edit)
-        form.on('submit', function(e){
-            e.preventDefault();
-            const url    = formAction();
-            const method = formMethod();
-
-            $.ajax({
-                url: url,
-                type: method === 'POST' ? 'POST' : 'PUT',
-                data: form.serialize(),
-                dataType: 'json',
-            })
-            .done(res => {
-                Swal.fire({ 
-                    icon:'success', 
-                    title:'Berhasil', 
-                    text:res.message, 
-                    timer:1500, 
-                    showConfirmButton:false })
-                .then(()=> location.reload());
-            })
-            .fail(xhr => {
-                let html = '';
-                // Jika ada validasi errors, bentuk jadi <li>…</li>
-                if (xhr.status === 422 && xhr.responseJSON.errors) {
-                const errors = xhr.responseJSON.errors;
-                html = '<ul class="text-left" style="list-style-type: none; padding-left: 0;">';
-                Object.values(errors).flat().forEach(msg => {
-                    html += `<li> ${msg}</li>`;
-                });
-                html += '</ul>';
-                } else {
-                // fallback ke message
-                html = xhr.responseJSON?.message || 'Terjadi kesalahan.';
-                }
-                Swal.fire({
-                icon: 'error',
-                title: 'Gagal menyimpan',
-                html: html,
-                });
+                // Tampilkan modal edit
+                editPosModal.show();
             });
         });
-        // Delete
-        $(document).on('click','.delete-btn',function(){
-            const id       = $(this).data('posid');
-            const itemName = $(this).data('posname');
-            const deleteUrl = `/presensi/posisi/${id}`;
+    });
 
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                html: `Anda akan menghapus: <strong>${itemName}</strong>.<br><small>Tindakan ini tidak dapat dibatalkan.</small>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33'
-            }).then((result) => {
-                if (!result.isConfirmed) return;
+    document.addEventListener("DOMContentLoaded", function () {
+        const deletePosButtons = document.querySelectorAll('.delete-posbtn');
+        const deletePosForm = document.getElementById('deletePosisiForm');
+        const modalPos = new bootstrap.Modal(document.getElementById('confirmPosisiDeleteModal'));
 
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'POST', // Laravel hanya support POST + _method
-                    data: {
-                        _method: 'DELETE',
-                        _token: csrfToken
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Terhapus!',
-                            response.message || 'Data berhasil dihapus.',
-                            'success'
-                        ).then(() => {
-                            // reload untuk memperbarui tabel
-                            location.reload();
-                        });
-                    },
-                    error: function(jqXHR) {
-                        let errorMsg = 'Gagal menghapus data.';
-                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                            errorMsg = jqXHR.responseJSON.message;
-                        }
-                        Swal.fire(
-                            'Gagal!',
-                            errorMsg,
-                            'error'
-                        );
-                    }
-                });
-            });   
+        deletePosButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const url = this.getAttribute('data-delposisiurl');
+                deletePosForm.setAttribute('action', url);
+                modalPos.show();
+            });
         });
     });
 </script>
-@endpush

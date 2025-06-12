@@ -17,7 +17,7 @@ class DivisiSeeder extends Seeder
         DB::table('ts_div')->insert([
 
             [
-                'div_auto'      => '1',
+                'div_auto'      => '0001',
                 'Div_Code'      => '001',
                 'Div_Name'      => 'Divisi Direksi',
                 'DIV_SHIFTYN'   => 'T',
@@ -25,7 +25,7 @@ class DivisiSeeder extends Seeder
                 'Div_Entrydate' => now(),
             ],
             [
-                'div_auto'      => '2',
+                'div_auto'      => '0002',
                 'Div_Code'      => '002',
                 'Div_Name'      => 'Divisi Opersional',
                 'DIV_SHIFTYN'   => 'T',
@@ -33,7 +33,7 @@ class DivisiSeeder extends Seeder
                 'Div_Entrydate' => now(),
             ],
             [
-                'div_auto'      => '3',
+                'div_auto'      => '0003',
                 'Div_Code'      => '003',
                 'Div_Name'      => 'Divisi Keuangan & Administrasi',
                 'DIV_SHIFTYN'   => 'T',
@@ -41,7 +41,7 @@ class DivisiSeeder extends Seeder
                 'Div_Entrydate' => now(),
             ],
             [
-                'div_auto'      => '4',
+                'div_auto'      => '0004',
                 'Div_Code'      => '004',
                 'Div_Name'      => 'Divisi Teknologi Informasi',
                 'DIV_SHIFTYN'   => 'T',
@@ -49,7 +49,7 @@ class DivisiSeeder extends Seeder
                 'Div_Entrydate' => now(),
             ],
             [
-                'div_auto'      => '5',
+                'div_auto'      => '0005',
                 'Div_Code'      => '005',
                 'Div_Name'      => 'Divisi Penjualan & Pemasaran',
                 'DIV_SHIFTYN'   => 'T',

@@ -19,9 +19,4 @@ class Posisi extends Model
         'Pos_UserID',
         'Pos_LastUpdate',
     ];
-
-    public function Employee()
-    {
-        return $this->hasMany(Employee::class, 'emp_PosCode', 'pos_auto');
-    }
 }

@@ -52,7 +52,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2020-02-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3173020101010001',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -92,7 +92,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2019-03-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3273020202020002',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -132,7 +132,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2021-04-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3373020303030003',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -172,7 +172,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2022-05-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3473020404040004',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -212,7 +212,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2018-06-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3573020505050005',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -252,7 +252,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2017-07-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3673020606060006',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -292,7 +292,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2020-08-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3773020707070007',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -332,7 +332,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2021-09-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3873020808080008',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -372,7 +372,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2022-10-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '3973020909090009',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
             [
@@ -412,7 +412,7 @@ class KaryawanSeeder extends Seeder
                 'emp_datejamsostek' => '2016-11-01',
                 'emp_ktp' => '01',
                 'emp_no_ktp' => '4073021010100010',
-                'emp_ENTRYID' => '1',
+                'emp_ENTRYID' => 'ADMIN',
                 'emp_FirstEntry' => now(),
             ],
         ]);
