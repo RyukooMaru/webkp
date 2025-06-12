@@ -5,6 +5,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Presensi\Posisi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log; // Untuk logging error
+use Illuminate\Support\Facades\Validator; // Untuk validasi
+
 use Illuminate\Http\Request;
 
 class PosisiController extends Controller
@@ -39,7 +42,15 @@ class PosisiController extends Controller
 
         Posisi::create($validated);
 
-        return redirect()->route('posisi.index')->with('success', 'Data Posisi berhasil ditambahkan.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Data Posisi berhasil ditambahkan.',
+            ]);
+        }
+
+        return redirect()->route('posisi.index')
+                        ->with('success','Data Posisi berhasil ditambahkan.');
     }
 
     /**
@@ -63,27 +74,35 @@ class PosisiController extends Controller
      */
     public function update(Request $request, Posisi $Posisi)
     {
+        // hanya nama saja
         $validated = $request->validate([
             'Pos_Code'   => 'required|string|max:60',
-            'Pos_Name'      => 'required|string|max:150',
+            'Pos_Name' => 'required|string|max:150',
         ]);
-        
-        $validated['Pos_UserID'] = Auth::user()->id;
+
+        $validated['Pos_UserID']     = Auth::user()->id;
         $validated['Pos_LastUpdate'] = now();
 
+        // hanya update nama dan user/lastupdate
         $Posisi->update($validated);
 
-        return redirect()->route('posisi.index')->with('success', 'Data Posisi berhasil diperbarui.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message'=> 'Data Posisi berhasil diperbarui.']);
+        }
+
+        return redirect()->route('posisi.index')
+                        ->with('success','Data Posisi berhasil diperbarui.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $Posisi = Posisi::findOrFail($id);
-        $Posisi->delete();
-    
-        return redirect()->route('posisi.index')->with('success', 'Data Posisi berhasil diperbarui.');
+        Posisi::findOrFail($id)->delete();
+        return response()->json(['message' => 'Data Posisi berhasil dihapus.']);
     }
 }

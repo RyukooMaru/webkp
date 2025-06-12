@@ -17,32 +17,32 @@ class PosisiSeeder extends Seeder
         DB::table('ts_position')->insert([
 
             [
-                'pos_auto'      => '0001',
+                'pos_auto'      => '1',
                 'Pos_Code'   => 'SA',
                 'Pos_Name'      => 'Sales Asistant',
             ],
             [
-                'pos_auto'      => '0002',
+                'pos_auto'      => '2',
                 'Pos_Code'   => 'SPV',
                 'Pos_Name'      => 'Supervisor',
             ],
             [
-                'pos_auto'      => '0003',
+                'pos_auto'      => '3',
                 'Pos_Code'   => 'ST',
                 'Pos_Name'      => 'Staff',
             ],
             [
-                'pos_auto'      => '0004',
+                'pos_auto'      => '4',
                 'Pos_Code'   => 'MGR',
                 'Pos_Name'      => 'Manager',
             ],
             [
-                'pos_auto'      => '0005',
+                'pos_auto'      => '5',
                 'Pos_Code'   => 'ASS',
                 'Pos_Name'      => 'Asst. Manager',
             ],
             [
-                'pos_auto'      => '0006',
+                'pos_auto'      => '6',
                 'Pos_Code'   => 'SCO',
                 'Pos_Name'      => 'Staff Counter',
             ],
