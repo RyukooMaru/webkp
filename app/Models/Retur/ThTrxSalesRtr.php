@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Models\SalesReturn;
+namespace App\Models\Retur;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User;
 
-class SalesReturnHeader extends Model
+class ThTrxSalesRtr extends Model
 {
-    protected $table = 'sales_return_headers';                             // nama tabel kustom :contentReference[oaicite:10]{index=10}
-    protected $primaryKey = 'Trx_Auto';                                    // PK kustom
-    public $timestamps = false;                                            // non-standar timestamps
-    protected $fillable = [                                                // kolom yang boleh diisi massal
+    protected $table = 'th_trxsalesrtr';
+    protected $primaryKey = 'Trx_Auto';
+    public $timestamps = false;
+
+    protected $fillable = [
         'Trx_SupCode',
         'Trx_WareCode',
         'trx_jurnal',
@@ -39,8 +41,18 @@ class SalesReturnHeader extends Model
         'Trx_LastUpdate'
     ];
 
+    protected $casts = [
+        'Trx_Date'       => 'date',
+        'Trx_LastUpdate' => 'datetime',
+    ];
+
     public function details(): HasMany
     {
-        return $this->hasMany(SalesReturnDetail::class, 'trx_number', 'trx_number'); // relasi via trx_number :contentReference[oaicite:11]{index=11}
+        return $this->hasMany(TdTrxSalesRtr::class, 'trx_number', 'trx_number');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'Trx_UserID');
     }
 }

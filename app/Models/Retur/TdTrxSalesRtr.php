@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Models\SalesReturn;
+namespace App\Models\Retur;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SalesReturnDetail extends Model
+class TdTrxSalesRtr extends Model
 {
-    protected $table = 'sales_return_details';
+    protected $table = 'td_trxsalesrtr';
+    protected $primaryKey = 'trx_number_dtl';
+    public $incrementing  = true;
+    public $keyType       = 'int';
     public $timestamps = false;
+
     protected $fillable = [
         'Trx_SupCode',
         'trx_number',
@@ -35,6 +39,6 @@ class SalesReturnDetail extends Model
 
     public function header(): BelongsTo
     {
-        return $this->belongsTo(SalesReturnHeader::class, 'trx_number', 'trx_number'); // inverse :contentReference[oaicite:12]{index=12}
+        return $this->belongsTo(ThTrxSalesRtr::class, 'trx_number', 'trx_number');
     }
 }

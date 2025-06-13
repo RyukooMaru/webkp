@@ -1,0 +1,419 @@
+@extends('layouts.admin')
+
+@section('main-content')
+    <div class="container-fluid">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Edit Retur Penjualan</h6>
+            </div>
+            <div class="card-body">
+                <form id="headerForm">@csrf
+                    <input type="hidden" id="headerId" value="{{ $header->Trx_Auto }}">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">No. Retur</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="trxNumber" name="trx_number" class="form-control"
+                                value="{{ $header->trx_number }}" readonly>
+                        </div>
+                        <label class="col-sm-2 col-form-label">Tanggal Retur</label>
+                        <div class="col-sm-4">
+                            <input type="date" name="Trx_Date" id="Trx_Date" class="form-control"
+                                value="{{ old('Trx_Date', $header->Trx_Date?->format('Y-m-d')) }}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Pelanggan</label>
+                        <div class="col-sm-4">
+                            <select name="Trx_SupCode" id="Trx_SupCode" class="form-control" required>
+                                <option value="">Pilih…</option>
+                                <option value="SP-A"
+                                    {{ old('Trx_SupCode', $header->Trx_SupCode) === 'SP-A' ? 'selected' : '' }}>SP-A
+                                </option>
+                                <option value="SP-B"
+                                    {{ old('Trx_SupCode', $header->Trx_SupCode) === 'SP-B' ? 'selected' : '' }}>SP-B
+                                </option>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label">Gudang</label>
+                        <div class="col-sm-4">
+                            <select name="Trx_WareCode" id="Trx_WareCode" class="form-control" required>
+                                <option value="">Pilih…</option>
+                                <option value="WH-A"
+                                    {{ old('Trx_WareCode', $header->Trx_WareCode) === 'WH-A' ? 'selected' : '' }}>WH-A
+                                </option>
+                                <option value="WH-B"
+                                    {{ old('Trx_WareCode', $header->Trx_WareCode) === 'WH-B' ? 'selected' : '' }}>WH-B
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Catatan</label>
+                        <div class="col-sm-10">
+                            <textarea name="Trx_Note" id="Trx_Note" class="form-control" rows="2">{{ old('Trx_Note', $header->Trx_Note) }}</textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mb-3 d-flex">
+            <button type="button" id="addCodeButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
+                data-bs-target="#dtlModal">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button id="btnPublish" class="btn btn-info mr-2">
+                <i class="fas fa-floppy-disk"></i>
+            </button>
+            <a href="{{ route('retur.penjualan.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="table-responsive pb-3">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th width='10%'>Kode</th>
+                                <th width='10%'>Nama Produk</th>
+                                <th width='5%'>Qty</th>
+                                <th width='5%'>Satuan</th>
+                                <th width='10%'>Harga Jual</th>
+                                <th width='10%'>Disc (%)</th>
+                                <th width='10%'>Pajak (%)</th>
+                                <th width='10%'>Nominal</th>
+                                <th width='20%'>Catatan</th>
+                                <th width='10%'>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- isi akan di-render via AJAX --}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dtlModal" tabindex="-1">
+            <div class="modal-dialog">
+                <form id="dtlForm" onsubmit="return false;">@csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detail</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Kode</label>
+                                <div class="col-sm-10">
+                                    <input name="Trx_ProdCode" id="Trx_ProdCode" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Nama Produk</label>
+                                <div class="col-sm-10">
+                                    <input name="trx_prodname" id="trx_prodname" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Satuan</label>
+                                <div class="col-sm-4">
+                                    <select name="trx_uom" id="trx_uom" class="form-control" required>
+                                        <option value="">Pilih…</option>
+                                        <option value="PCS">PCS</option>
+                                        <option value="BOX">BOX</option>
+                                    </select>
+                                </div>
+                                <label class="col-sm-2 col-form-label">Harga Jual</label>
+                                <div class="col-sm-4">
+                                    <input type="number" min="1000" step="1000" name="Trx_GrossPrice"
+                                        id="Trx_GrossPrice" class="form-control calc-trigger" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Pajak (%)</label>
+                                <div class="col-sm-4">
+                                    <input type="number" min="0" step="0.1" name="Trx_Taxes" id="Trx_Taxes"
+                                        class="form-control calc-trigger" required>
+                                </div>
+                                <label class="col-sm-2 col-form-label">Potongan (%)</label>
+                                <div class="col-sm-4">
+                                    <input type="number" min="0" step="0.1" name="Trx_Discount"
+                                        id="Trx_Discount" class="form-control calc-trigger" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Qty</label>
+                                <div class="col-sm-4">
+                                    <input type="number" min="1" name="Trx_QtyTrx" id="Trx_QtyTrx"
+                                        class="form-control calc-trigger" required>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <input type="hidden" id="Trx_NettPrice" name="Trx_NettPrice" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Catatan</label>
+                                <div class="col-sm-10">
+                                    <textarea name="Trx_NoteDetail" id="Trx_NoteDetail" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="dtlSave" type="button" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(function() {
+            const headerId = {{ $header->Trx_Auto }};
+            // Buffer client‐side untuk header & detail
+            let detailBuffer = [];
+            let editMode = false,
+                editIndex = null;
+
+            // Inisialisasi DataTable dari buffer
+            const detailTable = $('#dataTable').DataTable({
+                data: detailBuffer,
+                columns: [{
+                        data: 'Trx_ProdCode'
+                    },
+                    {
+                        data: 'trx_prodname'
+                    },
+                    {
+                        data: 'Trx_QtyTrx'
+                    },
+                    {
+                        data: 'trx_uom'
+                    },
+                    {
+                        data: 'Trx_GrossPrice',
+                        render: d => parseFloat(d).toLocaleString('id-ID')
+                    },
+                    {
+                        data: 'Trx_Discount',
+                        render: d => parseFloat(d).toFixed(2)
+                    },
+                    {
+                        data: 'Trx_Taxes',
+                        render: d => parseFloat(d).toFixed(2)
+                    },
+                    {
+                        data: 'Trx_NettPrice',
+                        render: d => parseFloat(d).toLocaleString('id-ID')
+                    },
+                    {
+                        data: 'Trx_Note'
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: (data, type, row, meta) => {
+                            return `
+                            <button class="btn btn-sm btn-warning edit-btn mb-1" data-idx="${meta.row}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn mb-1" data-idx="${meta.row}">
+                                <i class="fas fa-trash"></i>
+                            </button>`;
+                        }
+                    }
+                ],
+                drawCallback: function() {
+                    $('#btnPublish').prop('disabled', detailBuffer.length === 0);
+                }
+            });
+
+            // Load initial details dari server
+            $.get(`/retur/penjualan/${headerId}/details`, resp => {
+                detailBuffer = resp.data;
+                detailTable.clear().rows.add(detailBuffer).draw();
+            });
+
+            // Hitung harga bersih
+            $('.calc-trigger').on('input', () => {
+                const qty = parseFloat($('#Trx_QtyTrx').val()) || 0;
+                const gross = parseFloat($('#Trx_GrossPrice').val()) || 0;
+                const disc = parseFloat($('#Trx_Discount').val()) || 0;
+                const tax = parseFloat($('#Trx_Taxes').val()) || 0;
+                const sub = qty * gross;
+                const discAmt = sub * (disc / 100);
+                const after = sub - discAmt;
+                const taxAmt = after * (tax / 100);
+                $('#Trx_NettPrice').val((after + taxAmt).toFixed(2));
+            });
+
+            // Validasi header
+            function validateHeaderForm() {
+                let ok = true;
+                $('#headerForm [required]').each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        ok = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                return ok;
+            }
+
+            // Validasi detail
+            function validateDetailForm() {
+                let ok = true;
+                $('#dtlForm [required]').each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        ok = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                if (parseFloat($('#Trx_QtyTrx').val()) <= 0 ||
+                    parseFloat($('#Trx_GrossPrice').val()) < 0) {
+                    ok = false;
+                    Swal.fire('Perhatian', 'Qty & Harga tidak boleh negatif', 'warning');
+                }
+                return ok;
+            }
+
+            // Buka modal tambah
+            $('#addCodeButton').click(function() {
+                if (!validateHeaderForm()) {
+                    return Swal.fire('Perhatian', 'Lengkapi header terlebih dahulu', 'warning');
+                }
+                editMode = false;
+                editIndex = null;
+                $('#dtlForm')[0].reset();
+                $('#Trx_QtyTrx').val(1);
+                $('#Trx_GrossPrice, #Trx_Discount, #Trx_Taxes, #Trx_NettPrice').val(0);
+                $('#dtlModal').modal('show');
+            });
+
+            // Simpan/Edit detail di buffer
+            $('#dtlSave').click(function() {
+                if (!validateDetailForm()) return;
+                $('.calc-trigger').trigger('input');
+                const item = {
+                    Trx_ProdCode: $('#Trx_ProdCode').val(),
+                    trx_prodname: $('#trx_prodname').val(),
+                    trx_uom: $('#trx_uom').val(),
+                    Trx_QtyTrx: parseFloat($('#Trx_QtyTrx').val()),
+                    Trx_GrossPrice: parseFloat($('#Trx_GrossPrice').val()),
+                    Trx_Discount: parseFloat($('#Trx_Discount').val()),
+                    Trx_Taxes: parseFloat($('#Trx_Taxes').val()),
+                    Trx_NettPrice: parseFloat($('#Trx_NettPrice').val()),
+                    Trx_Note: $('#Trx_NoteDetail').val()
+                };
+                if (editMode) {
+                    detailBuffer.splice(editIndex, 1, item);
+                } else {
+                    detailBuffer.push(item);
+                }
+                detailTable.clear().rows.add(detailBuffer).draw();
+                $('#dtlModal').modal('hide');
+            });
+
+            // Prefill untuk edit
+            $('#dataTable').on('click', '.edit-btn', function() {
+                editIndex = +$(this).data('idx');
+                const row = detailBuffer[editIndex];
+                editMode = true;
+                $('#Trx_ProdCode').val(row.Trx_ProdCode);
+                $('#trx_prodname').val(row.trx_prodname);
+                $('#trx_uom').val(row.trx_uom);
+                $('#Trx_QtyTrx').val(row.Trx_QtyTrx);
+                $('#Trx_GrossPrice').val(row.Trx_GrossPrice);
+                $('#Trx_Discount').val(row.Trx_Discount);
+                $('#Trx_Taxes').val(row.Trx_Taxes);
+                $('#Trx_NettPrice').val(row.Trx_NettPrice);
+                $('#Trx_NoteDetail').val(row.Trx_Note);
+                $('#dtlModal').modal('show');
+            });
+
+            // Hapus di buffer
+            // Hapus di buffer dengan konfirmasi
+            $('#dataTable').on('click', '.delete-btn', function() {
+                const idx = +$(this).data('idx');
+                Swal.fire({
+                    title: 'Yakin hapus item?',
+                    text: "Item yang dihapus tidak dapat dikembalikan",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+                    // baru hapus dari buffer
+                    detailBuffer.splice(idx, 1);
+                    detailTable.clear().rows.add(detailBuffer).draw();
+                    Swal.fire({
+                        title: 'Berhasil',
+                        text: 'Item berhasil dihapus',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+            });
+
+            // Publish: kirim sekali ke publishEdit
+            $('#btnPublish').click(function() {
+                if (!validateHeaderForm() || detailBuffer.length === 0) {
+                    return Swal.fire('Perhatian', 'Lengkapi header & detail minimal 1', 'warning');
+                }
+                const payload = {
+                    Trx_Date: $('#Trx_Date').val(),
+                    Trx_SupCode: $('#Trx_SupCode').val(),
+                    Trx_WareCode: $('#Trx_WareCode').val(),
+                    Trx_Note: $('#Trx_Note').val(),
+                    details: detailBuffer
+                };
+                Swal.fire({
+                    title: 'Simpan Perubahan?',
+                    text: "Pastikan data sudah benar",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, simpan!',
+                    cancelButtonText: 'Batal'
+                }).then(res => {
+                    if (!res.isConfirmed) return;
+                    $.ajax({
+                        url: `/retur/penjualan/${headerId}/publish-edit`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                    }).done(() => {
+                        Swal.fire('Berhasil', 'Perubahan disimpan', 'success')
+                            .then(() => window.location.href =
+                                '{{ route('retur.penjualan.index') }}');
+                    }).fail(xhr => {
+                        Swal.fire('Error', 'Gagal simpan: ' + xhr.responseText, 'error');
+                    });
+                });
+            });
+
+        });
+    </script>
+@endpush

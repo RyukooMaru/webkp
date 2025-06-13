@@ -1,0 +1,544 @@
+<?php
+
+namespace App\Http\Controllers\Retur;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Retur\ThTrxSalesRtr;
+use App\Models\Retur\TdTrxSalesRtr;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+class ReturPenjualanController extends Controller
+{
+    // Tampilan index
+    public function index()
+    {
+        return view('retur.penjualan.index');
+    }
+
+    // JSON untuk DataTables index
+    public function dataJson(Request $request)
+    {
+        // Hanya ambil data dengan posting F atau T
+        $query = ThTrxSalesRtr::whereIn('trx_posting', ['F', 'T']);
+
+        // Filter
+        if ($request->filled('filter_date_from')) {
+            $query->whereDate('Trx_Date', '>=', $request->filter_date_from);
+        }
+
+        if ($request->filled('filter_date_to')) {
+            $query->whereDate('Trx_Date', '<=', $request->filter_date_to);
+        }
+
+        if ($request->filled('filter_sup_code')) {
+            $query->where('Trx_SupCode', 'like', '%' . $request->filter_sup_code . '%');
+        }
+
+        $rows = $query->get();
+
+        $data = $rows->map(function ($r) {
+            $userName = $r->Trx_UserID;
+
+            if (!empty($r->Trx_UserID)) {
+                try {
+                    $user = User::find($r->Trx_UserID);
+                    if ($user) {
+                        $userName = $user->name;
+                    }
+                } catch (\Exception $e) {
+                    // Hanya gunakan ID jika ada yang gagal
+                }
+            }
+
+            return [
+                'Trx_Auto'       => $r->Trx_Auto,
+                'Trx_SupCode'    => $r->Trx_SupCode,
+                'trx_number'     => $r->trx_number,
+                'Trx_Date'       => $r->Trx_Date?->format('Y-m-d'),
+                'Trx_GrossPrice' => number_format($r->Trx_GrossPrice, 2),
+                'Trx_TotDiscount' => number_format($r->Trx_TotDiscount, 2),
+                'Trx_Taxes'      => number_format($r->Trx_Taxes, 2),
+                'Trx_NettPrice'  => number_format($r->Trx_NettPrice, 2),
+                'Trx_UserID'     => $userName,
+                'Trx_LastUpdate' => $r->Trx_LastUpdate?->format('Y-m-d H:i:s'),
+                'trx_posting'    => $r->trx_posting,
+            ];
+        });
+        return response()->json(['data' => $data]);
+    }
+
+    // Halaman create
+    public function create()
+    {
+        // kalau sudah ada draft, ambil. kalau belum, buat baru
+        $draft = ThTrxSalesRtr::firstOrCreate(
+            ['trx_posting' => 'D'],
+            [
+                'trx_number'     => $this->generateNextNumber(),
+                'Trx_Date'       => now()->format('Y-m-d'),
+                'Trx_SupCode'    => '',
+                'Trx_WareCode'   => '',
+                'Trx_Note'       => '',
+                'Trx_UserID'     => Auth::id(),
+                'Trx_LastUpdate' => now(),
+            ]
+        );
+
+        // eager load details kosong atau yang ada
+        $draft->load('details');
+
+        return view('retur.penjualan.create', [
+            'header' => $draft,
+            'details' => $draft->details,
+        ]);
+    }
+
+    // helper untuk generate nomor
+    protected function generateNextNumber()
+    {
+        $lastSeq = ThTrxSalesRtr::selectRaw("MAX(CAST(SUBSTRING(trx_number, 5) AS UNSIGNED)) AS seq")
+            ->value('seq') ?? 0;
+        return 'RTJ-' . ($lastSeq + 1);
+    }
+
+    public function edit($id)
+    {
+        // Pastikan hanya dokumen F (belum approve) yang bisa di-edit
+        $header = ThTrxSalesRtr::where('Trx_Auto', $id)
+            ->where('trx_posting', 'F')
+            ->firstOrFail();
+
+        // Eager load
+        $header->load('details');
+
+        return view('retur.penjualan.edit', [
+            'header' => $header,
+            'details' => $header->details,
+        ]);
+    }
+
+    // 4. Metode baru untuk update header
+    public function updateHeader(Request $r, $id)
+    {
+        $r->validate([
+            'Trx_Date'     => 'sometimes|date',
+            'Trx_SupCode'  => 'sometimes|string|max:20',
+            'Trx_WareCode' => 'sometimes|string|max:20',
+            'Trx_Note'     => 'nullable|string',
+        ]);
+
+        $hdr = ThTrxSalesRtr::findOrFail($id);
+
+        // Coba untuk mendapatkan User ID, atau gunakan default (misalnya null)
+        $userId = null;
+        try {
+            if (Auth::check()) {
+                $userId = Auth::id();
+            }
+        } catch (\Exception $e) {
+            // Tangani pengecualian jika auth() tidak berfungsi
+        }
+
+        $hdr->update([
+            'Trx_Date'       => $r->input('Trx_Date', $hdr->Trx_Date),
+            'Trx_SupCode'    => $r->input('Trx_SupCode', $hdr->Trx_SupCode),
+            'Trx_WareCode'   => $r->input('Trx_WareCode', $hdr->Trx_WareCode),
+            'Trx_Note'       => $r->input('Trx_Note', $hdr->Trx_Note),
+            'Trx_UserID'     => $userId ?? null,
+            'Trx_LastUpdate' => now(),
+        ]);
+
+        return response()->json([
+            'header'     => $hdr,
+            'success'    => true
+        ]);
+    }
+
+    // JSON Detail untuk satu header
+    public function detailsJson($id)
+    {
+        $header = ThTrxSalesRtr::with('details')->findOrFail($id);
+        return response()->json(['data' => $header->details]);
+    }
+
+    // Store Detail via AJAX
+    public function storeDetail(Request $r, $id)
+    {
+        $r->validate([
+            'Trx_ProdCode'   => 'required|string',
+            'trx_prodname'   => 'required|string',
+            'trx_uom'        => 'required|string|max:10',
+            'Trx_QtyTrx'     => 'required|numeric|min:0',
+            'Trx_GrossPrice' => 'required|numeric|min:0',
+            'Trx_Discount'   => 'required|numeric|min:0',
+            'Trx_Taxes'      => 'required|numeric|min:0',
+            'Trx_NettPrice'  => 'required|numeric|min:0',
+            'Trx_NoteDetail' => 'nullable|string',
+        ]);
+
+        $hdr    = ThTrxSalesRtr::findOrFail($id);
+        $detail = $hdr->details()->create([
+            'trx_number'     => $hdr->trx_number,
+            'Trx_ProdCode'   => $r->Trx_ProdCode,
+            'trx_prodname'   => $r->trx_prodname,
+            'trx_uom'        => $r->trx_uom,
+            'Trx_QtyTrx'     => $r->Trx_QtyTrx,
+            'Trx_GrossPrice' => $r->Trx_GrossPrice,
+            'Trx_Discount'   => $r->Trx_Discount,
+            'Trx_Taxes'      => $r->Trx_Taxes,
+            'Trx_NettPrice'  => $r->Trx_NettPrice,
+            'Trx_Note'       => $r->input('Trx_NoteDetail'),
+            'trx_posting'    => 'D',
+            'Trx_LastUpdate' => now(),
+        ]);
+
+        // Update juga total di header
+        $this->updateHeaderTotals($hdr->Trx_Auto);
+
+        return response()->json(['detail' => $detail]);
+    }
+
+    // Update Detail via AJAX
+    public function updateDetail(Request $r, $id, $detailId)
+    {
+        $r->validate([
+            'Trx_ProdCode'   => 'required|string',
+            'trx_prodname'   => 'required|string',
+            'trx_uom'        => 'required|string|max:10',
+            'Trx_QtyTrx'     => 'required|numeric|min:0',
+            'Trx_GrossPrice' => 'required|numeric|min:0',
+            'Trx_Discount'   => 'required|numeric|min:0',
+            'Trx_Taxes'      => 'required|numeric|min:0',
+            'Trx_NettPrice'  => 'required|numeric|min:0',
+            'Trx_NoteDetail' => 'nullable|string',
+        ]);
+
+        // update detail
+        $det = TdTrxSalesRtr::findOrFail($detailId);
+        $det->update([
+            'Trx_ProdCode'   => $r->Trx_ProdCode,
+            'trx_prodname'   => $r->trx_prodname,
+            'trx_uom'        => $r->trx_uom,
+            'Trx_QtyTrx'     => $r->Trx_QtyTrx,
+            'Trx_GrossPrice' => $r->Trx_GrossPrice,
+            'Trx_Discount'   => $r->Trx_Discount,
+            'Trx_Taxes'      => $r->Trx_Taxes,
+            'Trx_NettPrice'  => $r->Trx_NettPrice,
+            'Trx_Note'       => $r->input('Trx_NoteDetail'),
+            'Trx_LastUpdate' => now(),
+        ]);
+
+        // Update juga total di header
+        $this->updateHeaderTotals($id);
+
+        return response()->json(['detail' => $det]);
+    }
+
+    // Helper method untuk mengupdate total di header
+    protected function updateHeaderTotals($headerId)
+    {
+        $header = ThTrxSalesRtr::findOrFail($headerId);
+
+        // Menyiapkan kueri untuk mendapatkan detail dari header
+        $details = $header->details()->get();
+
+        // Inisialisasi variabel untuk totals
+        $grossTotal = 0;
+        $discountTotal = 0;
+        $taxesTotal = 0;
+        $nettTotal = 0;
+
+        // Iterasi setiap detail untuk mendapatkan totals
+        foreach ($details as $detail) {
+            $subtotal = $detail->Trx_GrossPrice * $detail->Trx_QtyTrx;
+            $grossTotal += $subtotal;
+
+            // Hitung diskon dan pajak sebagai nilai absolut
+            $discountAmount = $subtotal * ($detail->Trx_Discount / 100);
+            $discountTotal += $discountAmount;
+
+            $afterDiscount = $subtotal - $discountAmount;
+            $taxAmount = $afterDiscount * ($detail->Trx_Taxes / 100);
+            $taxesTotal += $taxAmount;
+
+            $nettTotal += $detail->Trx_NettPrice;
+        }
+
+        // Update header dengan nilai absolut untuk diskon dan pajak
+        $header->update([
+            'Trx_GrossPrice' => $grossTotal,
+            'Trx_TotDiscount'   => $discountTotal,
+            'Trx_Taxes'      => $taxesTotal,
+            'Trx_NettPrice'  => $nettTotal,
+            'Trx_LastUpdate' => now()
+        ]);
+    }
+
+    // Destroy Detail via AJAX
+    public function destroyDetail($id, $detailId)
+    {
+        TdTrxSalesRtr::findOrFail($detailId)->delete();
+
+        // Update juga total di header
+        $this->updateHeaderTotals($id);
+
+        return response()->json(['success' => true]);
+    }
+
+    // Destroy Header & cascade details
+    public function destroyHeader($id)
+    {
+        $header = ThTrxSalesRtr::findOrFail($id);
+
+        // Delete details dulu
+        TdTrxSalesRtr::where('trx_number', $header->trx_number)->delete();
+
+        // Kemudian delete header
+        $header->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    // Publish Draft
+    public function publish(Request $r, $id)
+    {
+        $hdr = ThTrxSalesRtr::findOrFail($id);
+
+        // Cek jika draft punya details
+        $detailCount = TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->count();
+        if ($detailCount == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menyimpan draft kosong. Tambahkan minimal satu item.'
+            ], 422);
+        }
+
+        // Update header
+        $hdr->update([
+            'trx_posting' => 'F',
+            'Trx_UserID'     => Auth::id(),
+            'Trx_LastUpdate' => now()
+        ]);
+
+        // Update semua details agar sama
+        TdTrxSalesRtr::where('trx_number', $hdr->trx_number)
+            ->update([
+                'trx_posting' => 'F',
+                'Trx_LastUpdate' => now()
+            ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    // Publish halaman edit
+    public function publishEdit(Request $r, $id)
+    {
+        $r->validate([
+            'Trx_Date'       => 'required|date',
+            'Trx_SupCode'    => 'required|string|max:20',
+            'Trx_WareCode'   => 'nullable|string|max:20',
+            'Trx_Note'       => 'nullable|string',
+            'details'        => 'required|array|min:1',
+            // validasi tiap field detail
+            'details.*.Trx_ProdCode'   => 'required|string',
+            'details.*.trx_prodname'   => 'required|string',
+            'details.*.trx_uom'        => 'required|string|max:10',
+            'details.*.Trx_QtyTrx'     => 'required|numeric|min:1',
+            'details.*.Trx_GrossPrice' => 'required|numeric|min:0',
+            'details.*.Trx_Discount'   => 'required|numeric|min:0',
+            'details.*.Trx_Taxes'      => 'required|numeric|min:0',
+            'details.*.Trx_NettPrice'  => 'required|numeric|min:0',
+        ]);
+
+        // Ambil header
+        $hdr = ThTrxSalesRtr::findOrFail($id);
+        // Update header fields + set posting=F
+        $hdr->update([
+            'Trx_Date'     => $r->Trx_Date,
+            'Trx_SupCode'  => $r->Trx_SupCode,
+            'Trx_WareCode' => $r->Trx_WareCode,
+            'Trx_Note'     => $r->Trx_Note,
+            'trx_posting'  => 'F',
+            'Trx_UserID'   => Auth::id(),
+            'Trx_LastUpdate' => now(),
+        ]);
+
+        // Hapus semua detail lama, lalu simpan yang baru
+        TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->delete();
+
+        $totGross = $totDisc = $totTax = $totNett = 0;
+        foreach ($r->details as $dt) {
+            $d = $hdr->details()->create(array_merge($dt, [
+                'trx_number'     => $hdr->trx_number,
+                'trx_posting'    => 'F',
+                'Trx_LastUpdate' => now(),
+            ]));
+            $sub = $d->Trx_GrossPrice * $d->Trx_QtyTrx;
+            $discAmt = $sub * ($d->Trx_Discount / 100);
+            $taxAmt  = ($sub - $discAmt) * ($d->Trx_Taxes / 100);
+            $totGross += $sub;
+            $totDisc  += $discAmt;
+            $totTax   += $taxAmt;
+            $totNett  += $d->Trx_NettPrice;
+        }
+
+        // Update totals header
+        $hdr->update([
+            'Trx_GrossPrice'  => $totGross,
+            'Trx_TotDiscount' => $totDisc,
+            'Trx_Taxes'       => $totTax,
+            'Trx_NettPrice'   => $totNett,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    // Approve All 
+    public function approveAll(Request $request)
+    {
+        // Update semua dokumen dengan status 'F' menjadi 'T'
+        $updatedCount = ThTrxSalesRtr::where('trx_posting', 'F')
+            ->update([
+                'trx_posting' => 'T',
+                'Trx_UserID' => Auth::id(),
+                'Trx_LastUpdate' => now()
+            ]);
+
+        // Update semua detail terkait
+        $headerNumbers = ThTrxSalesRtr::where('trx_posting', 'T')
+            ->where('Trx_UserID', Auth::id())
+            ->where('Trx_LastUpdate', '>=', now()->subMinutes(1))
+            ->pluck('trx_number');
+
+        TdTrxSalesRtr::whereIn('trx_number', $headerNumbers)
+            ->update([
+                'trx_posting' => 'T',
+                'Trx_LastUpdate' => now()
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'count' => $updatedCount
+        ]);
+    }
+
+    // 12) Approve Single  
+    public function approve($id)
+    {
+        $hdr = ThTrxSalesRtr::findOrFail($id);
+
+        // Pastikan hanya dokumen yang sudah F yang bisa disetujui
+        if ($hdr->trx_posting !== 'F') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya dokumen yang sudah disimpan yang dapat disetujui.'
+            ], 422);
+        }
+
+        // Update header menjadi status T
+        $hdr->update([
+            'trx_posting' => 'T',
+            'Trx_UserID' => Auth::id(),
+            'Trx_LastUpdate' => now()
+        ]);
+
+        // Update semua detail terkait
+        TdTrxSalesRtr::where('trx_number', $hdr->trx_number)
+            ->update([
+                'trx_posting' => 'T',
+                'Trx_LastUpdate' => now()
+            ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    // Print All
+    public function printAll(Request $request)
+    {
+        $cols = [
+            'Trx_SupCode',
+            'trx_number',
+            'Trx_Date',
+            'Trx_GrossPrice',
+            'Trx_TotDiscount',
+            'Trx_Taxes',
+            'Trx_NettPrice',
+            'Trx_UserID'
+        ];
+
+        $query = ThTrxSalesRtr::select(array_merge(['Trx_Auto', 'trx_posting'], $cols))
+            ->with('user:id,name')
+            ->whereIn('trx_posting', ['F', 'T']); // Hanya ambil data yang sudah disimpan/disetujui
+
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search, $cols) {
+                foreach ($cols as $col) {
+                    $q->orWhere($col, 'like', "%{$search}%");
+                }
+            });
+        }
+
+        // Filter
+        if ($request->filled('filter_date_from')) {
+            $query->whereDate('Trx_Date', '>=', $request->filter_date_from);
+        }
+
+        if ($request->filled('filter_date_to')) {
+            $query->whereDate('Trx_Date', '<=', $request->filter_date_to);
+        }
+
+        if ($request->filled('filter_sup_code')) {
+            $query->where('Trx_SupCode', 'like', '%' . $request->filter_sup_code . '%');
+        }
+
+        $rows = $query->get();
+
+        // Filter catatan yang dihapus dan hitung total
+        $filteredRows = $rows->where('trx_posting', '!=', 'D');
+
+        // Hitung total untuk data yang difilter
+        $totalGrossPrice = $filteredRows->sum('Trx_GrossPrice');
+        $totalDiscount = $filteredRows->sum('Trx_TotDiscount');
+        $totalTaxes = $filteredRows->sum('Trx_Taxes');
+        $totalNettPrice = $filteredRows->sum('Trx_NettPrice');
+
+        $tanggalCetak = now()->setTimezone('Asia/Jakarta')->format('d F Y H:i:s');
+        $currentUser = auth()->user();
+
+        // Cek apakah ada filter yang diterapkan
+        $hasFilters = $request->filled('filter_date_from') ||
+            $request->filled('filter_date_to') ||
+            $request->filled('filter_sup_code') ||
+            $request->filled('search');
+
+        $pdf = Pdf::loadView('retur.penjualan.print', compact(
+            'rows',
+            'totalGrossPrice',
+            'totalDiscount',
+            'totalTaxes',
+            'totalNettPrice',
+            'tanggalCetak',
+            'currentUser'
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('retur-penjualan.pdf');
+    }
+
+    // Print Single
+    public function print($id)
+    {
+        $row = ThTrxSalesRtr::with(['details', 'user:id,name'])->findOrFail($id);
+        $details = $row->details;
+
+        $currentUser = auth()->user();
+        $tanggalCetak = now()->setTimezone('Asia/Jakarta')->format('d F Y H:i:s');
+
+        $pdf = Pdf::loadView('retur.penjualan.print', compact('row', 'details', 'tanggalCetak', 'currentUser'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream("retur-penjualan-{$row->trx_number}.pdf");
+    }
+}
