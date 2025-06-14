@@ -6,7 +6,7 @@ use App\Http\Controllers\Akuntansi\JurnalUmumController;
 use App\Http\Controllers\Inventory\SupplierController;
 use App\Http\Controllers\Keamanan\RoleController;
 use App\Http\Controllers\Presensi\KaryawanController;
-use App\Http\Controllers\SalesReturn\SalesReturnController;
+use App\Http\Controllers\Retur\ReturPenjualanController;
 use App\Http\Controllers\Comprof\SettingMenuController;
 use App\Http\Controllers\Presensi\DivisiController;
 use App\Http\Controllers\Presensi\SubDivisiController;
@@ -160,17 +160,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Route untuk gudang
 Route::resource('warehouse', WarehouseController::class);
 
-// Route untuk DataTables AJAX
-Route::get('sales-returns/data', [SalesReturnController::class, 'data'])
-    ->name('sales-returns.data');
-
-// Route khusus untuk print PDF
-Route::get('sales-returns/print', [SalesReturnController::class, 'print'])
-    ->name('sales-returns.print');
-
-// Resource routes tanpa 'show'
-Route::resource('sales-returns', SalesReturnController::class)
-    ->except(['show']);
+/* Data Retur */
+Route::prefix('retur')->name('retur.')->group(function () {
+    // RETUR PENJUALAN
+    Route::get('penjualan', [ReturPenjualanController::class, 'index'])->name('penjualan.index');
+    Route::get('penjualan/data', [ReturPenjualanController::class, 'dataJson'])->name('penjualan.data');
+    Route::get('penjualan/create', [ReturPenjualanController::class, 'create'])->name('penjualan.create');
+    Route::get('penjualan/{id}/edit', [ReturPenjualanController::class, 'edit'])->name('penjualan.edit');
+    Route::put('penjualan/{id}', [ReturPenjualanController::class, 'updateHeader'])->name('penjualan.update');
+    // DETAIL
+    Route::get('penjualan/{id}/details', [ReturPenjualanController::class, 'detailsJson'])->name('penjualan.details.data');
+    Route::post('penjualan/{id}/details', [ReturPenjualanController::class, 'storeDetail'])->name('penjualan.details.store');
+    Route::put('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'updateDetail'])->name('penjualan.details.update');
+    Route::delete('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'destroyDetail'])->name('penjualan.details.destroy');
+    // DRAFT
+    Route::delete('penjualan/{id}', [ReturPenjualanController::class, 'destroyHeader'])->name('penjualan.destroy');
+    Route::put('penjualan/{id}/publish', [ReturPenjualanController::class, 'publish'])->name('penjualan.publish');
+    Route::put('penjualan/{id}/publish-edit', [ReturPenjualanController::class, 'publishEdit'])->name('penjualan.publishEdit');
+    // APPROVE
+    Route::post('penjualan/approve-all', [ReturPenjualanController::class, 'approveAll'])->name('penjualan.approveAll');
+    Route::post('penjualan/{id}/approve', [ReturPenjualanController::class, 'approve'])->name('penjualan.approve');
+    // PRINT
+    Route::get('penjualan/print-all', [ReturPenjualanController::class, 'printAll'])->name('penjualan.printAll');
+    Route::get('penjualan/{id}/print', [ReturPenjualanController::class, 'print'])->name('penjualan.print');
+});
 
 
 // Company Profile routes group

@@ -110,7 +110,7 @@
                         <a class="collapse-item" href="{{-- route('#') --}}">test</a>
                         <a class="collapse-item" href="{{-- route('#') --}}">test</a>
                         <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">Retur Penjualan</a>
+                        <a class="collapse-item" href="{{ route('retur.penjualan.index') }}">Retur Penjualan</a>
                     </div>
                 </div>
             </li>
@@ -510,7 +510,7 @@
             </div>
         </div>
     </div>
-<!-- Scripts -->
+    <!-- Scripts -->
     {{-- !!! Tambahkan jQuery jika belum ada dan diperlukan oleh plugin lain --}}
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -526,7 +526,6 @@
     <!-- Script Cropper.js untuk Crop Gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 @stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
-
 </body>
 
 </html>
