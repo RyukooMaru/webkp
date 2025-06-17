@@ -18,9 +18,23 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+
+    <!-- Scripts -->
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{--SweetAlert --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+
+    <!-- Bootstrap 5 JS Bundle (sudah termasuk Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
 </head>
 <body id="page-top">
 
@@ -134,8 +148,8 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Mutasi Gudang:</h6>
             <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Permintaan</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Transfer Gudang</a>
+            <a class="collapse-item" href="{{ route('gudangorder.index')}}">Permintaan</a>
+            <a class="collapse-item" href="{{ route('transfergudang.index')}}">Transfer Gudang</a>
             <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
         </div>
     </div>
@@ -456,11 +470,7 @@
         </div>
     </div>
 </div>
+@stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
 
-<!-- Scripts -->
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 </body>
 </html>

@@ -3,9 +3,8 @@ use App\Http\Controllers\DataKaryawan\DivisiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
-
-
-
+use App\Http\Controllers\MutasiGudang\GudangOrderController;
+use App\Http\Controllers\MutasiGudang\TransferGudangController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,4 +35,18 @@ Route::resource('data-karyawan', DivisiController::class)
 
 
 
-Route::resource('warehouse', WarehouseController::class);
+Route::prefix('mutasigudang')->group(function () {
+
+// Gudang
+    Route::resource('warehouse', WarehouseController::class);
+
+// Optional JSON endpoint (untuk AJAX edit)
+    Route::get('/{id}/json', [WarehouseController::class, 'json'])->name('json');
+
+// Gudang Order
+    Route::resource('gudangorder', GudangOrderController::class);
+
+// Transfer Gudang
+    Route::resource('transfergudang', TransferGudangController::class);
+
+});
