@@ -246,8 +246,11 @@
                 <span>{{ __('Profile') }}</span>
             </a>
         </li>
+
+<!-- SIDEBAR LAMA -->
+
         <!-- Nav Item - Keamanan Collapse Menu -->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseKeamanan"
                 aria-expanded="true" aria-controls="collapseKeamanan">
                 <i class="fas fa-fw fa-wrench"></i>
@@ -257,14 +260,13 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Keamanan Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Role</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Permissions</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">User</a>
+                    <a class="collapse-item" href="route('#')">Role</a>
+                    <a class="collapse-item" href="route('#')">Permissions</a>
+                    <a class="collapse-item" href="route('#')">User</a>
                 </div>
             </div>
-        </li>
+        </li> --}}
 
-<!-- SIDEBAR LAMA -->
 <!-- Nav Item - Data Karyawan Collapse Menu -->
 {{-- <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatakaryawan"
@@ -380,7 +382,7 @@
                             <span class="badge badge-danger badge-counter">3+</span>
                         </a> --}}
                         <!-- Dropdown - Alerts -->
-                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                        {{-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                             <h6 class="dropdown-header">
                                 Alerts Center
                             </h6>
@@ -419,7 +421,7 @@
                             </a>
                             <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                         </div>
-                    </li>
+                    </li> --}}
 
                     {{-- <!-- Nav Item - Messages -->
                     <li class="nav-item dropdown no-arrow mx-1">
@@ -429,7 +431,7 @@
                             <span class="badge badge-danger badge-counter">7</span>
                         </a> --}}
                         <!-- Dropdown - Messages -->
-                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
+                        {{-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
                             <h6 class="dropdown-header">
                                 Message Center
                             </h6>
@@ -475,7 +477,7 @@
                             </a>
                             <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                         </div>
-                    </li>
+                    </li> --}}
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
