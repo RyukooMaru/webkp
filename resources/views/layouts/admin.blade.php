@@ -22,6 +22,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
+    <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
@@ -163,9 +164,9 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Mutasi Gudang:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Gudang</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Permintaan</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Transfer Gudang</a>
+            <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
+            <a class="collapse-item" href="{{ route('gudangorder.index')}}">Permintaan</a>
+            <a class="collapse-item" href="{{ route('transfergudang.index')}}">Transfer Gudang</a>
             <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
         </div>
     </div>

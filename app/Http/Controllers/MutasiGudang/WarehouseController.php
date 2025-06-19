@@ -14,11 +14,6 @@ class WarehouseController extends Controller
         return view('mutasigudang.warehouse.index', compact('warehouses'));
     }
 
-    public function create()
-    {
-        return view('mutasigudang.warehouse.create');
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -35,13 +30,7 @@ class WarehouseController extends Controller
         $request->merge(['WARE_EntryDate' => now()]);
         Warehouse::create($request->all());
 
-        return redirect()->route('warehouse.index')->with('success', 'Warehouse created successfully.');
-    }
-
-    public function edit($id)
-    {
-        $warehouse = Warehouse::findOrFail($id);
-        return view('mutasigudang.warehouse.edit', compact('warehouse'));
+        return redirect()->route('warehouse.index')->with('success', 'Gudang berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -61,14 +50,32 @@ class WarehouseController extends Controller
 
         $warehouse->update($request->all());
 
-        return redirect()->route('warehouse.index')->with('success', 'Warehouse updated successfully.');
+        return redirect()->route('warehouse.index')->with('success', 'Gudang berhasil diperbarui.');
     }
 
     public function destroy($id)
-    {
+{
+    try {
         $warehouse = Warehouse::findOrFail($id);
         $warehouse->delete();
 
-        return redirect()->route('warehouse.index')->with('success', 'Warehouse deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Gudang berhasil dihapus.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat menghapus data.'
+        ], 500);
+    }
+}
+
+
+    // Opsional: Untuk kebutuhan AJAX edit (jika pakai fetch)
+    public function json($id)
+    {
+        $warehouse = Warehouse::findOrFail($id);
+        return response()->json($warehouse);
     }
 }
