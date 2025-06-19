@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\keamanan\Member;   // Import model Member
 use App\Models\keamanan\Karyawan; // Import model Karyawan (PENTING: sumber data)
 use App\Models\keamanan\Role;             // Import model Role (untuk mengaitkan role)
+use App\Models\Presensi\Employee;
 use Illuminate\Support\Facades\Hash; // Import Hash facade (PENTING: untuk meng-hash password)
 
 class MemberSeeder extends Seeder
@@ -22,7 +23,7 @@ class MemberSeeder extends Seeder
 
         // 2. Mengambil Semua Data Karyawan
         // Karyawan-karyawan ini harus sudah dibuat oleh KaryawanSeeder sebelumnya.
-        $karyawans = Karyawan::all();
+        $employees = Employee::all();
 
         // 3. Menentukan Daftar Role yang Tersedia untuk Alokasi Otomatis
         // Array ini berisi objek-objek role yang akan diberikan secara bergiliran kepada karyawan.
@@ -33,7 +34,7 @@ class MemberSeeder extends Seeder
         $roleIndex = 0; // Index untuk melacak role mana yang akan diberikan selanjutnya
 
         // 4. Loop Melalui Setiap Karyawan untuk Membuat Akun Member
-        foreach ($karyawans as $karyawan) {
+        foreach ($employees as $employee) {
             // Menentukan role untuk karyawan saat ini berdasarkan urutan `$rolesAvailable`
             // `$roleIndex % count($rolesAvailable)` akan memastikan role berulang jika jumlah karyawan > jumlah role tersedia.
             $assignedRole = $rolesAvailable[$roleIndex % count($rolesAvailable)];
@@ -41,7 +42,7 @@ class MemberSeeder extends Seeder
             // Memastikan role yang akan diberikan tidak null (yaitu, role tersebut benar-benar ditemukan di DB)
             if (!$assignedRole) {
                 // Memberikan informasi di konsol jika role tidak ditemukan, lalu lewati karyawan ini.
-                $this->command->info("Role not found for Karyawan ID: {$karyawan->Kar_ID}. Skipping.");
+                $this->command->info("Role not found for Karyawan ID: {$employee->Kar_ID}. Skipping.");
                 continue;
             }
 
@@ -49,9 +50,9 @@ class MemberSeeder extends Seeder
             // Ini adalah metode Eloquent yang akan mencari record berdasarkan kondisi pertama (Mem_ID)
             // Jika ditemukan, tidak akan membuat baru. Jika tidak, akan membuat record baru dengan data kedua.
             Member::firstOrCreate(
-                ['Mem_ID' => $karyawan->Kar_ID],
+                ['Mem_ID' => $employee->emp_NID],
                 [
-                    'Mem_UserName' => $karyawan->Kar_Nama,
+                    'Mem_UserName' => $employee->emp_Name,
                     'mem_password' => Hash::make('password'),
                     'Mem_ActiveYN' => 'Y',
                     'role_id' => $assignedRole->id,
@@ -65,7 +66,7 @@ class MemberSeeder extends Seeder
                     'Mem_StartPeriod' => null,
                     'Mem_EndPeriod' => null,
                     'Mem_Menu' => null,
-                    'Mem_Note' => "Akun untuk karyawan: {$karyawan->Kar_Nama}",
+                    'Mem_Note' => "Akun untuk karyawan: {$employee->emp_Name}",
                     'mem_count' => 0,
                     'Mem_rECORD' => null,
                 ]
@@ -75,6 +76,6 @@ class MemberSeeder extends Seeder
         }
 
         // Memberikan pesan informasi di konsol setelah seeder selesai
-        $this->command->info('MemberSeeder completed. Created members from Karyawan data.');
+        $this->command->info('MemberSeeder completed. Created members from Employee data.');
     }
 }
