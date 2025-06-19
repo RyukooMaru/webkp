@@ -263,8 +263,10 @@
                 </div>
             </div>
         </li>
+
+<!-- SIDEBAR LAMA -->
 <!-- Nav Item - Data Karyawan Collapse Menu -->
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatakaryawan"
         aria-expanded="true" aria-controls="collapseDatakaryawan">
         <i class="fas fa-fw fa-wrench"></i>
@@ -278,13 +280,13 @@
             <a class="collapse-item" href="{{ route('divisi.index') }}">Divisi</a>
             <a class="collapse-item" href="{{ route('subdivisi.index') }}">Sub-Divisi</a>
             <a class="collapse-item" href="{{ route('posisi.index') }}">Posisi</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+            <a class="collapse-item" href="route('#')">test</a>
+            <a class="collapse-item" href="route('#')">test</a>
         </div>
     </div>
-</li>
+</li> --}}
 <!-- Nav Item - Company Profile Collapse Menu -->
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseComprof"
         aria-expanded="true" aria-controls="collapseComprof">
         <i class="fas fa-fw fa-wrench"></i>
@@ -294,16 +296,17 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Company Profile Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Menu</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Sub Menu</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Slide Bar</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Setting Perusahaan</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Data Staf</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Berita</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kategori Album</a>
+            <a class="collapse-item" href="route('#')">Setting Menu</a>
+            <a class="collapse-item" href="route('#')">Setting Sub Menu</a>
+            <a class="collapse-item" href="route('#')">Setting Slide Bar</a>
+            <a class="collapse-item" href="route('#')">Setting Perusahaan</a>
+            <a class="collapse-item" href="route('#')">Data Staf</a>
+            <a class="collapse-item" href="route('#')">Kategori Berita</a>
+            <a class="collapse-item" href="route('#')">Kategori Album</a>
         </div>
     </div>
-</li>
+</li> --}}
+<!-- SIDEBAR LAMA -->
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -480,10 +483,10 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
-                                <figure class="img-profile rounded-circle avatar font-weight-bold"
-                                    data-initial="{{ Auth::user()->name[0] }}"></figure>
+                                {{-- BARIS INI YANG HARUS DIUBAH --}}
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->Mem_UserName ?? 'Guest' }}</span>
+                                {{-- BARIS INI JUGA --}}
+                                <figure class="img-profile rounded-circle avatar font-weight-bold" data-initial="{{ Auth::user()->Mem_UserName[0] ?? '?' }}"></figure>
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
