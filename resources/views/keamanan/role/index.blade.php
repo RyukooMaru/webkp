@@ -2,66 +2,76 @@
 
 @section('main-content')
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Daftar Role</h1>
-    <p class="mb-4">Manajemen role untuk kontrol akses pengguna.</p>
+    <h1 class="h3 mb-2 text-gray-800">Role</h1>
+    <p class="mb-4">Manajemen role untuk kontrol akses pengguna aplikasi.</p>
 
     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     @endif
 
-    <!-- Add New Role Button -->
     <div class="mb-3">
-        <a href="{{ route('keamanan.role.create') }}" class="btn btn-success btn-lg">
-            <i class="fas fa-plus-circle"></i> Tambah Role
-        </a>
+        @can('tambah', 'keamanan.roles')
+        <button class="btn btn-primary" data-toggle="modal" id="addRoleButton">
+            <i class="fas fa-plus"></i> Tambah Role
+        </button>
+        @endcan
     </div>
 
-    <!-- Role Table -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Daftar Role</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
-                            <th>No</th>
-                            <th>Nama Role</th>
-                            <th>Pengguna</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Aksi</th>
+                            <th width="5%">No</th>
+                            <th width="35%">Nama Role</th>
+                            <th width="10%">Pengguna</th>
+                            <th width="25%">Tanggal Dibuat</th>
+                            <th width="25%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($roles as $index => $role)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $role->name }}</td>
-                            <td>{{ $role->users_count ?? 0 }}</td>
-                            <td>{{ $role->created_at->format('d M Y') }}</td>
-                            <td>
-                                <a href="{{ route('keamanan.role.edit', $role->id) }}" class="btn btn-warning btn-sm btn-icon">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <form action="{{ route('keamanan.role.destroy', $role->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm btn-icon" onclick="return confirm('Yakin ingin menghapus role ini?')">
-                                        <i class="fas fa-trash-alt"></i> Hapus
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $role->name }}</td>
+                                <td>
+                                    <span class="badge badge-info">{{ $role->users_count }}</span>
+                                </td>
+                                <td>
+                                    {{ $role->created_at->format('d M Y') }}<br>
+                                </td>
+                                <td>
+                                    @can('ubah', 'keamanan.roles')
+                                    <button class="btn btn-sm btn-warning edit-btn"
+                                        data-id="{{ $role->id }}"
+                                        data-name="{{ $role->name }}"
+                                        data-toggle="modal"
+                                        title="Edit Role">
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
+                                    @endcan
+                                    @can('hapus', 'keamanan.roles')
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                        data-id="{{ $role->id }}"
+                                        data-name="{{ $role->name }}"
+                                        data-toggle="modal"
+                                        title="Hapus Role">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Belum ada role.</td>
-                        </tr>
+                            <tr><td colspan="5" class="text-center text-muted">Belum ada role.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -69,4 +79,192 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Tambah/Edit Role -->
+<div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            
+            <form id="codeForm" method="POST" action="">
+                @csrf
+                <input type="hidden" name="_method" id="formMethod" value="POST">
+                <input type="hidden" name="role_id" id="kode_id">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">Judul Modal Dinamis</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="modal_name">Nama Role <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="modal_name" name="name">
+                        <small class="form-text text-muted">Contoh: admin, manager, staff, akunting</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="saveModalButton">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+$(function() {
+    const storeUrl = "{{ route('keamanan.roles.store') }}";
+    const updateUrlTpl = "{{ route('keamanan.roles.update', ':id') }}";
+    const deleteUrlTpl = "{{ route('keamanan.roles.destroy', ':id') }}";
+    const csrfToken = "{{ csrf_token() }}";
+
+    // Inisialisasi DataTables
+    $('#dataTable').DataTable();
+
+    // Tampilkan modal tambah role
+    $('#addRoleButton').on('click', function() {
+        showRoleModal('Tambah Role Baru', storeUrl, 'POST', '', 'Simpan');
+    });
+
+    // Edit role
+    $('#dataTable').on('click', '.edit-btn', function() {
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        showRoleModal('Edit Role', updateUrlTpl.replace(':id', id), 'PUT', id, 'Perbarui', name);
+    });
+
+    // Fungsi untuk menampilkan modal role
+    function showRoleModal(title, action, method, id = '', buttonText, name = '') {
+        $('#codeModalLabel').text(title);
+        $('#codeForm').attr('action', action);
+        $('#formMethod').val(method);
+        $('#kode_id').val(id);
+        $('#modal_name').val(name);
+        $('#saveModalButton').text(buttonText);
+        $('#codeModal').modal('show');
+    }
+
+    // Handle form submission
+    $('#codeForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const form = $(this);
+        const url = form.attr('action');
+        const method = $('#formMethod').val();
+        const formData = form.serialize();
+        const isCreate = method === 'POST';
+        
+        // Tampilkan loading state
+        const submitBtn = form.find('button[type="submit"]');
+        const originalBtnText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData + (method !== 'POST' ? '&_method=' + method : ''),
+            success: function(response) {
+                showAlert(
+                    'success', 
+                    isCreate ? 'Berhasil!' : 'Diperbarui!', 
+                    response.message || (isCreate ? 'Role baru berhasil dibuat.' : 'Perubahan role berhasil disimpan.'),
+                    true
+                );
+                $('#codeModal').modal('hide');
+            },
+            error: function(xhr) {
+                handleAjaxError(xhr);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalBtnText);
+            }
+        });
+    });
+
+    // Hapus role
+    $('#dataTable').on('click', '.delete-btn', function(event) {
+        event.preventDefault();
+        const id = $(this).data('id');
+        const name = $(this).data('name') || 'Role ini';
+        
+        showConfirmDialog(
+            'Apakah Anda yakin?',
+            `Anda akan menghapus role: <strong>${name}</strong>.<br><small>Tindakan ini tidak dapat dibatalkan.</small>`,
+            'warning',
+            'Ya, hapus!',
+            'Batal'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: deleteUrlTpl.replace(':id', id),
+                    type: 'POST',
+                    data: {
+                        _method: 'DELETE',
+                        _token: csrfToken
+                    },
+                    success: function(response) {
+                        showAlert('success', 'Terhapus!', response.message || 'Role berhasil dihapus.', true);
+                    },
+                    error: function(xhr) {
+                        handleAjaxError(xhr);
+                    }
+                });
+            }
+        });
+    });
+
+    // Fungsi untuk menampilkan alert
+    function showAlert(icon, title, text, reload = false) {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            timer: 2000,
+            showConfirmButton: false,
+            willClose: () => {
+                if (reload) location.reload();
+            }
+        });
+    }
+
+    // Fungsi untuk menampilkan dialog konfirmasi
+    function showConfirmDialog(title, html, icon, confirmText, cancelText) {
+        return Swal.fire({
+            title: title,
+            html: html,
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmText,
+            cancelButtonText: cancelText
+        });
+    }
+
+    // Fungsi untuk menangani error AJAX
+    function handleAjaxError(xhr) {
+        let message = 'Terjadi kesalahan. Silakan coba lagi.';
+        
+        if (xhr.status === 422) {
+            const errors = xhr.responseJSON.errors || {};
+            message = Object.values(errors).flat().join('<br>') || 'Validasi gagal.';
+            showAlert('error', 'Validasi Gagal', message);
+        } 
+        else if (xhr.status === 409) {
+            message = xhr.responseJSON.message || 'Tidak ada perubahan data.';
+            showAlert('info', 'Informasi', message);
+        }
+        else {
+            message = xhr.responseJSON?.message || message;
+            showAlert('error', 'Error', message);
+        }
+    }
+});
+</script>
+@endpush
+

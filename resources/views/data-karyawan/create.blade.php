@@ -4,7 +4,6 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
-
     <!-- Page Heading -->
     <a href="{{ route('data-karyawan.index') }}" class="btn btn-light mb-3">
         <span class="icon text-gray-600">

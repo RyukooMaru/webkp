@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\keamanan\Member; // Pastikan model Member di-import
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Pastikan Auth facade di-import
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * Membuat instance controller baru.
      */
     public function __construct()
     {
@@ -18,19 +17,23 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * Menampilkan dashboard aplikasi.
      */
     public function index()
     {
-        $users = User::count();
+        // Mendapatkan objek Member yang sedang login
+        // eager load relasi 'role' dan kemudian relasi 'menus' dari 'role'
+        $loggedInMember = Auth::user()->load('role.menus'); 
+
+        $totalMembers = Member::count();
 
         $widget = [
-            'users' => $users,
-            //...
+            'members' => $totalMembers,
+            // Tambahkan widget lain jika ada
         ];
 
-        return view('home', compact('widget'));
+        // Melewatkan data yang sudah dimuat ke view. 
+        // Meskipun Auth::user() bisa diakses global, load() di sini memastikan relasi sudah ada.
+        return view('home', compact('widget', 'loggedInMember')); 
     }
 }
