@@ -52,127 +52,184 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{ Nav::isRoute('home') }}">
-                <a class="nav-link" href="{{ route('home') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>{{ __('Dashboard') }}</span></a>
-            </li>
-            <!-- Nav Item - Data Master Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatamaster"
-                    aria-expanded="true" aria-controls="collapseDatamaster">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Data Master</span>
-                </a>
-                <div id="collapseDatamaster" class="collapse" aria-labelledby="headingDatamaster"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Data Master Menu:</h6>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    </div>
-                </div>
-            </li>
-            <!-- Nav Item - Pembelian Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePembelian"
-                    aria-expanded="true" aria-controls="collapsePembelian">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Pembelian</span>
-                </a>
-                <div id="collapsePembelian" class="collapse" aria-labelledby="headingPembelian"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Pembelian Menu:</h6>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    </div>
-                </div>
-            </li>
-            <!-- Nav Item - Penjualan Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePenjualan"
-                    aria-expanded="true" aria-controls="collapsePenjualan">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Penjualan</span>
-                </a>
-                <div id="collapsePenjualan" class="collapse" aria-labelledby="headingPenjualan"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Penjualan Menu:</h6>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                        <a class="collapse-item" href="{{ route('retur.penjualan.index') }}">Retur Penjualan</a>
-                    </div>
-                </div>
-            </li>
-            <!-- Nav Item - Akunting Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAkunting"
-                    aria-expanded="true" aria-controls="collapseAkunting">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Akunting</span>
-                </a>
-                <div id="collapseAkunting" class="collapse" aria-labelledby="headingAkunting"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Akunting Menu:</h6>
-                        <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
-                        <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
-                        <a class="collapse-item" href="{{ route('bukubesar.index') }}">Daftar Penjurnalan</a>
-                        <a class="collapse-item" href="{{ route('kas-masuk.index') }}">Kas Masuk</a>
-                        <a class="collapse-item" href="{{ route('kas-keluar.index') }}">Kas Keluar</a>
-                    </div>
-                </div>
-            </li>
-<!-- Nav Item - Inventory Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
-        aria-expanded="true" aria-controls="collapseInventory">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Inventory</span>
-    </a>
-    <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
-        data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Inventory Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">Supplier</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Data Produk</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Kelompok Produk</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Satuan Produk</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Purchase Order</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Penerimaan</a>
-        </div>
-    </div>
-</li><!-- Nav Item - Mutasi Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMutasi"
-        aria-expanded="true" aria-controls="collapseMutasi">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Mutasi Gudang</span>
-    </a>
-    <div id="collapseMutasi" class="collapse" aria-labelledby="headingMutasi"
-        data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Mutasi Gudang:</h6>
-            <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
-            <a class="collapse-item" href="{{ route('gudangorder.index')}}">Permintaan</a>
-            <a class="collapse-item" href="{{ route('transfergudang.index')}}">Transfer Gudang</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">Terima Gudang</a>
-        </div>
-    </div>
-</li>
+        <!-- Nav Item - Dashboard (Umum, bisa diakses semua yang login) -->
+        <li class="nav-item {{ Nav::isRoute('home') }}">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Dashboard') }}</span></a>
+        </li>
 
+        {{-- LOGIKA PEMBANGUNAN MENU DINAMIS BERDASARKAN ROLE PENGGUNA --}}
+        @php
+            $userMenus = collect(); // Inisialisasi koleksi kosong
+            // Pastikan user login dan memiliki role
+            if (Auth::check() && Auth::user()->role) {
+                // Ambil menu-menu yang terkait dengan role pengguna, diurutkan berdasarkan 'order'
+                // Relasi 'menus' dari model Role akan mengambil data dari tabel 'role_menu' dan 'menus'
+                $userMenus = Auth::user()->role->menus->sortBy('order');
+            }
+            // Filter hanya menu utama (yang tidak punya parent_id)
+            $mainMenus = $userMenus->whereNull('parent_id');
+        @endphp
 
+        @foreach ($mainMenus as $mainMenu)
+            {{-- Ambil semua submenu dari userMenus yang memiliki parent_id ini --}}
+            @php
+                $childrenMenus = $userMenus->where('parent_id', $mainMenu->id)->sortBy('order');
+            @endphp
+
+            @if ($childrenMenus->isNotEmpty())
+                {{-- Ini adalah menu utama dengan submenu (collapse menu) --}}
+                <li class="nav-item {{ Request::is(Str::after(trim($mainMenu->url, '/'), '/') . '*') ? 'active' : '' }}">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse{{ Str::slug($mainMenu->name) }}"
+                        aria-expanded="true" aria-controls="collapse{{ Str::slug($mainMenu->name) }}">
+                        <i class="{{ $mainMenu->icon ?? 'fas fa-fw fa-folder' }}"></i> {{-- Gunakan ikon dari DB --}}
+                        <span>{{ $mainMenu->name }}</span>
+                    </a>
+                    <div id="collapse{{ Str::slug($mainMenu->name) }}" class="collapse {{ Request::is(Str::after(trim($mainMenu->url, '/'), '/') . '*') ? 'show' : '' }}" aria-labelledby="heading{{ Str::slug($mainMenu->name) }}"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">{{ $mainMenu->name }} Menu:</h6>
+                            @foreach ($childrenMenus as $subMenuItem)
+                                <a class="collapse-item {{ Request::is(trim($subMenuItem->url, '/') . '*') ? 'active' : '' }}" href="{{ $subMenuItem->url ? url($subMenuItem->url) : '#' }}">
+                                    {{ $subMenuItem->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </li>
+            @else
+                {{-- Ini adalah menu utama tanpa submenu (single link) --}}
+                <li class="nav-item {{ Request::is(trim($mainMenu->url, '/') . '*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ $mainMenu->url ? url($mainMenu->url) : '#' }}">
+                        <i class="{{ $mainMenu->icon ?? 'fas fa-fw fa-file' }}"></i> {{-- Gunakan ikon dari DB --}}
+                        <span>{{ $mainMenu->name }}</span>
+                    </a>
+                </li>
+            @endif
+        @endforeach
+
+                        <!-- SIDEBAR LAMA -->
+                        <!-- Nav Item - Dashboard -->
+                        {{-- <li class="nav-item {{ Nav::isRoute('home') }}">
+                            <a class="nav-link" href="{{ route('home') }}">
+                                <i class="fas fa-fw fa-tachometer-alt"></i>
+                                <span>{{ __('Dashboard') }}</span></a>
+                        </li>
+                        <!-- Nav Item - Data Master Collapse Menu -->
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatamaster"
+                                aria-expanded="true" aria-controls="collapseDatamaster">
+                                <i class="fas fa-fw fa-wrench"></i>
+                                <span>Data Master</span>
+                            </a>
+                            <div id="collapseDatamaster" class="collapse" aria-labelledby="headingDatamaster"
+                                data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Data Master Menu:</h6>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Nav Item - Pembelian Collapse Menu -->
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePembelian"
+                                aria-expanded="true" aria-controls="collapsePembelian">
+                                <i class="fas fa-fw fa-wrench"></i>
+                                <span>Pembelian</span>
+                            </a>
+                            <div id="collapsePembelian" class="collapse" aria-labelledby="headingPembelian"
+                                data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Pembelian Menu:</h6>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Nav Item - Penjualan Collapse Menu -->
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePenjualan"
+                                aria-expanded="true" aria-controls="collapsePenjualan">
+                                <i class="fas fa-fw fa-wrench"></i>
+                                <span>Penjualan</span>
+                            </a>
+                            <div id="collapsePenjualan" class="collapse" aria-labelledby="headingPenjualan"
+                                data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Penjualan Menu:</h6>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="{{ route('retur.penjualan.index') }}">Retur Penjualan</a>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- Nav Item - Akunting Collapse Menu -->
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAkunting"
+                                aria-expanded="true" aria-controls="collapseAkunting">
+                                <i class="fas fa-fw fa-wrench"></i>
+                                <span>Akunting</span>
+                            </a>
+                            <div id="collapseAkunting" class="collapse" aria-labelledby="headingAkunting"
+                                data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Akunting Menu:</h6>
+                                    <a class="collapse-item" href="{{ route('kodeakunting.index') }}">Kode Akunting</a>
+                                    <a class="collapse-item" href="{{ route('jurnalumum.index') }}">Jurnal Umum</a>
+                                    <a class="collapse-item" href="{{ route('bukubesar.index') }}">Daftar Penjurnalan</a>
+                                    <a class="collapse-item" href="{{ route('kas-masuk.index') }}">Kas Masuk</a>
+                                    <a class="collapse-item" href="{{ route('kas-keluar.index') }}">Kas Keluar</a>
+                                </div>
+                            </div>
+                        </li>
+            <!-- Nav Item - Inventory Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
+                    aria-expanded="true" aria-controls="collapseInventory">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Inventory</span>
+                </a>
+                <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Inventory Menu:</h6>
+                        <a class="collapse-item" href="route('#')">Supplier</a>
+                        <a class="collapse-item" href="route('#')">Data Produk</a>
+                        <a class="collapse-item" href="route('#')">Kelompok Produk</a>
+                        <a class="collapse-item" href="route('#')">Satuan Produk</a>
+                        <a class="collapse-item" href="route('#')">Purchase Order</a>
+                        <a class="collapse-item" href="route('#')">Penerimaan</a>
+                    </div>
+                </div>
+            </li><!-- Nav Item - Mutasi Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMutasi"
+                    aria-expanded="true" aria-controls="collapseMutasi">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Mutasi Gudang</span>
+                </a>
+                <div id="collapseMutasi" class="collapse" aria-labelledby="headingMutasi"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Mutasi Gudang:</h6>
+                        <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
+                        <a class="collapse-item" href="{{ route('gudangorder.index')}}">Permintaan</a>
+                        <a class="collapse-item" href="{{ route('transfergudang.index')}}">Transfer Gudang</a>
+                        <a class="collapse-item" href="route('#')">Terima Gudang</a>
+                    </div>
+                </div>
+            </li> --}}
+<!-- SIDEBAR LAMA -->
 
             <!-- Divider -->
             <hr class="sidebar-divider">

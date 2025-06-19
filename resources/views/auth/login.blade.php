@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+@extends('layouts.auth') {{-- Pastikan layout ini memuat semua aset yang diperlukan (CSS, JS) --}}
 
 @section('main-content')
 <div class="container">
@@ -14,6 +14,7 @@
                                     <h1 class="h4 text-gray-900 mb-4">{{ __('Login') }}</h1>
                                 </div>
 
+                                {{-- Menampilkan validasi error dari Laravel --}}
                                 @if ($errors->any())
                                     <div class="alert alert-danger border-left-danger" role="alert">
                                         <ul class="pl-4 my-2">
@@ -25,20 +26,48 @@
                                 @endif
 
                                 <form method="POST" action="{{ route('login') }}" class="user">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    @csrf {{-- Token CSRF untuk keamanan form --}}
 
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user" name="email" placeholder="{{ __('E-Mail Address') }}" value="{{ old('email') }}" required autofocus>
+                                        {{-- Input untuk Nama Pengguna / ID Member --}}
+                                        <input type="text" 
+                                               class="form-control form-control-user @error('Mem_UserName') is-invalid @enderror" 
+                                               name="Mem_UserName" 
+                                               id="Mem_UserName" {{-- Tambahkan ID untuk autocomplete --}}
+                                               placeholder="{{ __('Nama Pengguna') }}" 
+                                               value="{{ old('Mem_UserName') }}" 
+                                               required 
+                                               autocomplete="username" {{-- Autocomplete untuk browser --}}
+                                               autofocus>
+
+                                        @error('Mem_UserName')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                     </div>
 
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-user" name="password" placeholder="{{ __('Password') }}" required>
+                                        {{-- Input untuk Password --}}
+                                        <input type="password" 
+                                               class="form-control form-control-user @error('password') is-invalid @enderror" 
+                                               name="mem_password" {{-- Ganti name dari 'password' menjadi 'mem_password' --}}
+                                               id="mem_password" {{-- Tambahkan ID untuk autocomplete --}}
+                                               placeholder="{{ __('Password') }}" 
+                                               required 
+                                               autocomplete="current-password">
+
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                     </div>
 
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox small">
                                             <input type="checkbox" class="custom-control-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="remember">{{ __('Remember Me') }}</label>
+                                            <label class="custom-control-label" for="remember">{{ __('Ingat Saya') }}</label>
                                         </div>
                                     </div>
 
@@ -57,14 +86,8 @@
                                 @if (Route::has('password.request'))
                                     <div class="text-center">
                                         <a class="small" href="{{ route('password.request') }}">
-                                            {{ __('Forgot Password?') }}
+                                            {{ __('Lupa Password?') }}
                                         </a>
-                                    </div>
-                                @endif
-
-                                @if (Route::has('register'))
-                                    <div class="text-center">
-                                        <a class="small" href="{{ route('register') }}">{{ __('Create an Account!') }}</a>
                                     </div>
                                 @endif
                             </div>

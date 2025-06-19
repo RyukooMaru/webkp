@@ -1,63 +1,127 @@
 <?php
 
-namespace App\Http\Controllers\Keamanan;
+namespace App\Http\Controllers\keamanan;
 
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::withCount('users')->get(); // Menampilkan semua roles dengan jumlah pengguna
+        $roles = Role::withCount('users')->get();
         return view('keamanan.role.index', compact('roles'));
-    }
-
-    public function create()
-    {
-        return view('keamanan.role.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|unique:roles,name',
+        ], [
+            'name.unique' => 'Nama role sudah digunakan.',
+            'name.required' => 'Nama role wajib diisi.'
         ]);
 
-        // Menambahkan role baru
-        Role::create(['name' => $request->name]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+                'message' => 'Validasi gagal'
+            ], 422);
+        }
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('keamanan.role.index')->with('success', 'Role berhasil ditambahkan.');
+        $role = Role::create(['name' => $request->name]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Role berhasil ditambahkan.',
+            'data' => $role
+        ]);
     }
 
-    public function edit(Role $role)
+    public function update(Request $request, $id)
     {
-        return view('keamanan.role.edit', compact('role'));
-    }
+        $role = Role::findOrFail($id);
 
-    public function update(Request $request, Role $role)
-    {
-        // Validasi nama role
-        $request->validate([
-            'name' => 'required|unique:roles,name,' . $role->id,
+        // Normalisasi string untuk perbandingan
+        $inputName = strtolower(trim(preg_replace('/\s+/', ' ', $request->name)));
+        $currentName = strtolower(trim(preg_replace('/\s+/', ' ', $role->name)));
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                Rule::unique('roles', 'name')->ignore($role->id),
+                function ($attribute, $value, $fail) use ($currentName, $inputName) {
+                    if ($inputName === $currentName) {
+                        $fail('Nama role sama seperti sebelumnya. Harap masukkan nama yang berbeda.');
+                    }
+                },
+            ],
+        ], [
+            'name.required' => 'Nama role wajib diisi.',
+            'name.unique'   => 'Nama role sudah digunakan.',
         ]);
 
-        // Update nama role
-        $role->name = $request->input('name');
-        $role->save();
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+                'message' => 'Validasi gagal'
+            ], 422);
+        }
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('keamanan.role.index')->with('success', 'Role berhasil diperbarui!');
+        $role->update(['name' => $request->name]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Role berhasil diperbarui.',
+            'data' => $role
+        ]);
     }
+
 
     public function destroy(Role $role)
     {
-        // Hapus role
-        $role->delete();
+        // Validasi 1: Cek jika role adalah default/protected
+        $protectedRoles = ['admin','owner']; // Sesuaikan dengan kebutuhan
+        if (in_array(strtolower($role->name), $protectedRoles)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role sistem default tidak dapat dihapus.'
+            ], 403);
+        }
 
-        // Redirect dengan pesan sukses
-        return redirect()->route('keamanan.role.index')->with('success', 'Role berhasil dihapus!');
+        // Validasi 2: Cek jika role sedang digunakan oleh pengguna
+        if ($role->users()->exists()) {
+            $userCount = $role->users()->count();
+            return response()->json([
+                'success' => false,
+                'message' => "Role ini sedang digunakan oleh $userCount pengguna. Tidak dapat dihapus."
+            ], 422);
+        }
+
+        try {
+            $role->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Role berhasil dihapus.',
+                'data' => [
+                    'deleted_role' => $role->name,
+                    'deleted_at' => now()->toDateTimeString()
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus role: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 }
