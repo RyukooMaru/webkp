@@ -2,16 +2,13 @@
 
 namespace App\Models\Inventory;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Supplier extends Model
 {
-    use HasFactory;
-
     protected $table = 'suppliers';
-    protected $primaryKey = 'id';
-
+    
     protected $fillable = [
         'kode_supplier',
         'nama_supplier',
@@ -19,10 +16,18 @@ class Supplier extends Model
         'contact_person',
         'telp',
         'email',
+        'cara_bayar_id',
+        'lama_bayar',
+        'potongan',
         'tanggal'
     ];
 
     protected $casts = [
-        'tanggal' => 'date'
+        'tanggal' => 'date',
     ];
+
+    public function caraBayar(): BelongsTo
+    {
+        return $this->belongsTo(CaraBayar::class);
+    }
 }

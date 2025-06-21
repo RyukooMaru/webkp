@@ -16,4 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+    Route::get('/products-by-kelompok/{kelompok_id}', function($kelompok_id) {
+        $products = App\Models\Inventory\Dtproduk::where('kelompok_id', $kelompok_id)
+            ->select('id', 'kode_produk', 'nama_produk', 'harga_beli')
+            ->get();
+            
+        return response()->json($products);
+    });
 });

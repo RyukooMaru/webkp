@@ -16,15 +16,11 @@ class CreateSuppliersTable extends Migration
             $table->string('contact_person', 100);
             $table->string('telp', 20);
             $table->string('email', 100)->nullable();
-            $table->enum('cara_bayar', ['Tunai', 'Transfer', 'Cek', 'Kredit']);
+            $table->foreignId('cara_bayar_id')->constrained('carabayar_tabel')->onDelete('set null');
             $table->integer('lama_bayar')->default(0);
             $table->decimal('potongan', 5, 2)->default(0.00);
             $table->date('tanggal');
             $table->timestamps();
-            
-            // Index untuk pencarian
-            $table->index('nama_supplier');
-            $table->index('telp');
         });
     }
 
