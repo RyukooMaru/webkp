@@ -4,9 +4,15 @@
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Jurnal Umum</h1>
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+        @endphp
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" id="btnTambahJurnal">
             <i class="fas fa-plus"></i> Tambah Jurnal
         </button>
+        @endcan
     </div>
     <div class="card mb-4">
         <div class="card-header">
@@ -46,12 +52,16 @@
                                 <button class="btn btn-info btn-sm btn-view" data-id="{{ $jurnal->id }}" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                @can('ubah', $currentMenuSlug)
                                 <button class="btn btn-warning btn-sm btn-edit" data-id="{{ $jurnal->id }}" title="Edit Jurnal">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+                                @can('hapus', $currentMenuSlug)
                                 <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $jurnal->id }}" data-no="{{ $jurnal->no_jurnal }}" title="Hapus Jurnal">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @empty

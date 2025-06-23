@@ -16,9 +16,15 @@
 
     <!-- Add New Code Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+        @endphp
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addCodeButton">
             <i class="fas fa-plus"></i> Tambah Kode
         </button>
+        @endcan
     </div>
 
     <!-- Accounting Code Table -->
@@ -57,6 +63,7 @@
                         <td>{{ \Carbon\Carbon::parse($kode->tanggal)->format('d M Y') }}</td>
                         <td>
                         <div class="d-flex gap-2">
+                            @can('ubah', $currentMenuSlug)
                             <button class="btn btn-sm btn-warning edit-btn"
                                 data-id="{{ $kode->id }}"
                                 data-kiraid="{{ $kode->cls_kiraid }}"
@@ -69,12 +76,15 @@
                                 data-toggle="modal" data-target="#editCodeModal">
                                 <i class="fas fa-edit"></i>
                             </button>
+                            @endcan
+                            @can('hapus', $currentMenuSlug)
                             <button class="btn btn-sm btn-danger delete-btn"
                                 data-id="{{ $kode->id }}"
                                 data-kiraid="{{ $kode->cls_kiraid }}"
                                 data-toggle="modal" data-target="#deleteCodeModal">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            @endcan
                         </div>
                     </td>
                     </tr>
