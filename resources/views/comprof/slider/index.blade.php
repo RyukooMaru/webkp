@@ -2,7 +2,7 @@
 
 @section('main-content')
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Data Staf</h1>
+    <h1 class="h3 mb-2 text-gray-800">Setting Slider</h1>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -12,8 +12,8 @@
     @endif
 
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddStaf">
-            <i class="fas fa-plus"></i> Tambah Data Staf
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddSlider">
+            <i class="fas fa-plus"></i> Tambah Slider
         </button>
     </div>
 
@@ -24,52 +24,42 @@
                     <thead class="thead-light">
                         <tr>
                             <th width="5%">No</th>
-                            <th width="20%">Profil Staf</th>
-                            <th width="55%">Keterangan Staf</th>
-                            <th width="20%">Aksi</th>
+                            <th width="25%">Gambar</th>
+                            <th width="40%">Judul</th>
+                            <th width="15%">Status</th>
+                            <th width="15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($staffs as $index => $staff)
+                        @forelse($sliders as $index => $slider)
                             <tr>
                                 <td class="align-middle text-center">{{ $index + 1 }}</td>
                                 <td class="align-middle text-center">
-                                    <img src="{{ $staff->profile_image_url }}" alt="Profil Staf" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                                    <img src="{{ $slider->image_url }}" alt="Slider Image" class="img-thumbnail" style="width: 250px; height: 125px; object-fit: cover;">
                                 </td>
                                 <td class="align-middle">
-                                    <div class="mb-2">
-                                        <strong>Nama:</strong> {{ $staff->name }}
+                                    <div class="slider-title-preview">
+                                        {!! $slider->title !!}
                                     </div>
-                                    <div class="mb-2">
-                                        <strong>Jabatan:</strong> {{ $staff->jabatan }}
-                                    </div>
-                                    <div class="mb-2">
-                                        <strong>Pendidikan:</strong> {{ $staff->education }}
-                                    </div>
-                                    <div>
-                                        <strong>Deskripsi:</strong> 
-                                        <div class="mt-1">
-                                            {!! \Illuminate\Support\Str::limit($staff->description, 200) !!}
-                                        </div>
-                                    </div>
+                                </td>
+                                <td class="align-middle text-center">
+                                    {!! $slider->status_html !!}
                                 </td>
                                 <td class="align-middle text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <button class="btn btn-sm btn-warning edit-btn"
-                                            data-id="{{ $staff->id }}"
-                                            data-name="{{ $staff->name }}"
-                                            data-jabatan="{{ $staff->jabatan }}"
-                                            data-education="{{ $staff->education }}"
-                                            data-description="{{ $staff->description }}"
-                                            data-profile_image_url="{{ $staff->profile_image_url }}"
-                                            data-status="{{ $staff->status }}"
-                                            title="Edit Staf">
+                                            data-id="{{ $slider->id }}"
+                                            data-title="{{ $slider->title }}"
+                                            data-link="{{ $slider->link }}"
+                                            data-image_url="{{ $slider->image_url }}"
+                                            data-status="{{ $slider->status }}"
+                                            title="Edit Slider">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-sm btn-danger delete-btn"
-                                            data-id="{{ $staff->id }}"
-                                            data-name="{{ $staff->name }}"
-                                            title="Hapus Staf">
+                                            data-id="{{ $slider->id }}"
+                                            data-title="{{ $slider->title }}"
+                                            title="Hapus Slider">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -77,7 +67,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Tidak ada data staf</td>
+                                <td colspan="5" class="text-center text-muted">Tidak ada data slider</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -86,17 +76,16 @@
         </div>
     </div>
 
-    <!-- Universal Modal for Add/Edit -->
+     <!-- Universal Modal for Add/Edit -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <form id="mainForm" method="POST" class="modal-content" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" id="formMethod" name="_method" value="POST">
-                <input type="hidden" id="status" name="status" value="1">
 
                 <div class="modal-header py-2">
-                    <h5 class="modal-title" id="modalTitle">Tambah Data Staf</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah Slider</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Tutup">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -104,37 +93,37 @@
 
                 <div class="modal-body p-3">
                     <div class="row">
+                        <!-- Left Column -->
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label class="small mb-1">Nama Lengkap <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control" required>
+                                <label class="small mb-1">Isi Slider <span class="text-danger">*</span></label>
+                                <textarea id="title" name="title" class="form-control summernote-title" style="height: 120px;" required></textarea>
                             </div>
 
                             <div class="form-group mb-3">
-                                <label class="small mb-1">Jabatan <span class="text-danger">*</span></label>
-                                <input type="text" id="jabatan" name="jabatan" class="form-control" required>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label class="small mb-1">Pendidikan <span class="text-danger">*</span></label>
-                                <textarea id="education" name="education" class="form-control" rows="3" required></textarea>
+                                <label class="small mb-1">Tautan <span class="text-danger">*</span></label>
+                                <input type="url" id="link" name="link" class="form-control" required>
                             </div>
                         </div>
 
+                        <!-- Right Column -->
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label class="small mb-1">Gambar Profil <span class="text-danger" id="imageRequired">*</span></label>
-                                <input type="file" id="profile_image" name="profile_image" class="form-control" accept="image/*">
-                                <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB</small>
+                                <label class="small mb-1">Gambar Slider <span class="text-danger" id="imageRequired">*</span></label>
+                                <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                                <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB | Rasio: 16:9</small>
                                 
                                 <div id="imagePreview" class="mt-3 text-center">
-                                    <img src="" alt="Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; display: none;">
+                                    <img src="" alt="Preview" class="img-thumbnail" style="width: 100%; max-height: 150px; object-fit: contain; display: none;">
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="small mb-1">Deskripsi Staf <span class="text-danger">*</span></label>
-                                <textarea id="description" name="description" class="form-control summernote" rows="5" required></textarea>
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Status <span class="text-danger">*</span></label>
+                                <select id="status" name="status" class="form-control" required>
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Tidak Aktif</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -150,16 +139,10 @@
 </div>
 @endsection
 
+
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <style>
-    .note-editable {
-        min-height: 150px !important;
-    }
-    .note-toolbar {
-        background-color: #f8f9fa !important;
-        border: 1px solid #dee2e6 !important;
-    }
     #imagePreview img {
         max-width: 100%;
         max-height: 200px;
@@ -207,6 +190,54 @@
         text-decoration: none;
         opacity: .75;
     }
+    .badge-active {
+        background-color: #28a745;
+    }
+    .badge-inactive {
+        background-color: #dc3545;
+    }
+    .slider-title-preview {
+        max-height: 125px;
+        overflow: hidden;
+    }
+    .modal-md {
+        max-width: 600px;
+    }
+    
+    /* Summernote Custom Styles */
+    .note-editor.note-frame {
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.25rem !important;
+        margin-bottom: 0;
+    }
+    .note-toolbar {
+        background-color: #f8f9fa !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    .note-btn-group {
+        margin: 0 2px !important;
+    }
+    .note-btn {
+        padding: 0.25rem 0.5rem !important;
+        background: white !important;
+        border-color: #dee2e6 !important;
+    }
+    .note-editable {
+        min-height: 100px !important;
+        max-height: 150px;
+        overflow-y: auto;
+        padding: 0.5rem !important;
+    }
+    .note-dropdown-menu {
+        min-width: 150px !important;
+    }
+    .note-color-palette {
+        line-height: 1 !important;
+    }
+    .note-popover .popover-content {
+        padding: 0.5rem !important;
+    }
 </style>
 @endpush
 
@@ -219,23 +250,33 @@ $(function() {
     const form = $('#mainForm');
     const baseComprofUrl = "{{ url('comprof') }}";
 
-    // Inisialisasi Summernote
-    $('.summernote').summernote({
+    // Enhanced Summernote initialization
+    $('.summernote-title').summernote({
         height: 150,
         toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough']],
+            ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'fontname', 'fontsize', 'color']],
             ['para', ['ul', 'ol', 'paragraph']],
             ['insert', ['link']],
-            ['view', ['codeview']]
-        ]
+            ['view', ['codeview', 'help']]
+        ],
+        fontNames: [
+            'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
+            'Helvetica', 'Impact', 'Tahoma', 'Times New Roman',
+            'Verdana', 'Roboto', 'Open Sans'
+        ],
+        fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36'],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        disableDragAndDrop: true,
+        shortcuts: false,
+        followingToolbar: false
     });
 
     // Inisialisasi DataTables
     $('#dataTable').DataTable();
 
     // Preview gambar saat dipilih
-    $('#profile_image').change(function() {
+    $('#image').change(function() {
         const file = this.files[0];
         const preview = $('#imagePreview img');
         
@@ -246,7 +287,6 @@ $(function() {
             }
             reader.readAsDataURL(file);
         } else {
-            // Tampilkan gambar yang sudah ada jika ada
             const existingImg = preview.data('existing');
             if (existingImg) {
                 preview.attr('src', existingImg).show();
@@ -256,48 +296,45 @@ $(function() {
         }
     });
 
-    // Tambah Data Staf
-    $('#btnAddStaf').click(() => {
+    // Tambah Slider
+    $('#btnAddSlider').click(() => {
         form.trigger('reset');
-        $('#modalTitle').text('Tambah Data Staf');
+        $('#modalTitle').text('Tambah Slider');
         $('#modalSubmit').text('Simpan');
-        form.attr('action', `${baseComprofUrl}/datastaf`);
+        form.attr('action', `${baseComprofUrl}/slider`);
         $('#formMethod').val('POST');
-        $('.summernote').summernote('reset');
+        $('.summernote-title').summernote('reset');
         $('#imagePreview img').hide().removeData('existing');
-        $('#imageRequired').show(); // Tampilkan tanda bintang untuk required
+        $('#imageRequired').show();
         modalInstance.show();
     });
 
-    // Edit Data Staf
+    // Edit Slider
     $('#dataTable').on('click', '.edit-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
-        form.attr('action', `${baseComprofUrl}/datastaf/${id}`);
+        form.attr('action', `${baseComprofUrl}/slider/${id}`);
         
         $('#id').val(id);
-        $('#name').val(btn.data('name'));
-        $('#jabatan').val(btn.data('jabatan'));
-        $('#education').val(btn.data('education'));
-        $('#description').summernote('code', btn.data('description'));
+        $('#title').summernote('code', btn.data('title'));
+        $('#link').val(btn.data('link'));
         $('#status').val(btn.data('status'));
         
-        // Tampilkan gambar yang sudah ada
         const preview = $('#imagePreview img');
-        const profileImageUrl = btn.data('profile_image_url');
+        const imageUrl = btn.data('image_url');
         
-        if (profileImageUrl) {
-            preview.attr('src', profileImageUrl)
+        if (imageUrl) {
+            preview.attr('src', imageUrl)
                    .show()
-                   .data('existing', profileImageUrl);
+                   .data('existing', imageUrl);
         } else {
             preview.hide().removeData('existing');
         }
         
-        $('#modalTitle').text('Edit Data Staf');
+        $('#modalTitle').text('Edit Slider');
         $('#modalSubmit').text('Simpan Perubahan');
         $('#formMethod').val('PUT');
-        $('#imageRequired').hide(); // Sembunyikan tanda bintang saat edit
+        $('#imageRequired').hide();
         modalInstance.show();
     });
 
@@ -308,27 +345,17 @@ $(function() {
         const formData = new FormData(this);
         const isEdit = $('#formMethod').val() === 'PUT';
         
-        // Validasi gambar hanya untuk tambah data
-        if (!isEdit && !formData.get('profile_image')) {
+        const titleContent = $('#title').summernote('code');
+        formData.set('title', titleContent);
+        
+        if (!isEdit && !formData.get('image')) {
             Swal.fire({
                 icon: 'error',
-                title: 'Gambar Profil Diperlukan',
-                text: 'Silakan pilih gambar profil untuk staf baru',
+                title: 'Gambar Slider Diperlukan',
+                text: 'Silakan pilih gambar untuk slider baru',
                 confirmButtonText: 'OK'
             });
             return;
-        }
-        
-        // Ambil konten summernote
-        const descriptionContent = $('#description').summernote('code');
-        formData.set('description', descriptionContent);
-        
-        // Tambahkan status ke FormData
-        formData.set('status', $('#status').val());
-        
-        // Jika edit dan tidak ada file baru, hapus entry profile_image
-        if (isEdit && !$('#profile_image')[0].files[0]) {
-            formData.delete('profile_image');
         }
         
         $.ajax({
@@ -374,16 +401,16 @@ $(function() {
         });
     });
 
-    // Hapus Data Staf
+    // Hapus Slider
     $('#dataTable').on('click', '.delete-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
-        const name = btn.data('name');
+        const title = btn.data('title');
         const row = btn.closest('tr');
 
         Swal.fire({
-            title: 'Hapus Data Staf?',
-            html: `Yakin ingin menghapus data staf <strong>${name}</strong>?`,
+            title: 'Hapus Slider?',
+            html: `Yakin ingin menghapus slider <strong>${title}</strong>?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Ya, Hapus!',
@@ -396,7 +423,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.datastaf.destroy', '') }}/${id}`,
+                    url: `{{ route('comprof.slider.destroy', '') }}/${id}`,
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",
@@ -404,7 +431,6 @@ $(function() {
                     success: function(response) {
                         row.fadeOut(400, function() {
                             row.remove();
-                            // Re-number table
                             $('#dataTable tbody tr').each(function(index) {
                                 $(this).find('td:first').text(index + 1);
                             });
@@ -422,7 +448,7 @@ $(function() {
                         let message = 'Terjadi kesalahan pada server';
 
                         if (xhr.status === 404) {
-                            message = 'Data staf tidak ditemukan';
+                            message = 'Data slider tidak ditemukan';
                         } else if (xhr.responseJSON && xhr.responseJSON.message) {
                             message = xhr.responseJSON.message;
                         }

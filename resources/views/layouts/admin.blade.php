@@ -186,11 +186,11 @@
             <h6 class="collapse-header">Company Profile Menu:</h6>
             <a class="collapse-item" href="{{ route('comprof.settingmenu.index') }}">Setting Menu</a>
             <a class="collapse-item" href="{{ route('comprof.settingsubmenu.index') }}">Setting Sub Menu</a>
-            <a class="collapse-item" href="#">Setting Slide Bar</a>
-            <a class="collapse-item" href="#">Setting Perusahaan</a>
+            <a class="collapse-item" href="{{ route('comprof.slider.index') }}">Setting Slider</a>
+            <a class="collapse-item" href="{{ route('comprof.setperusahaan.index') }}">Setting Perusahaan</a>
             <a class="collapse-item" href="{{ route('comprof.datastaf.index') }}">Data Staf</a>
-            <a class="collapse-item" href="#">Kategori Berita</a>
-            <a class="collapse-item" href="#">Kategori Album</a>
+            <a class="collapse-item" href="{{ route('comprof.kategoriberita.index') }}">Kategori Berita</a>
+            <a class="collapse-item" href="{{ route('comprof.kategorialbum.index') }}">Kategori Album</a>
         </div>
     </div>
 </li>

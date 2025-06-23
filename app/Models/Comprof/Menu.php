@@ -35,7 +35,7 @@ class Menu extends Model
     public function getStatusHtmlAttribute(): string
     {
         return $this->status 
-            ? '<span class="badge bg-success">Aktif</span>' 
-            : '<span class="badge bg-danger">Tidak Aktif</span>';
+            ? '<span class="badge">Aktif</span>' 
+            : '<span class="badge">Tidak Aktif</span>';
     }
 }
