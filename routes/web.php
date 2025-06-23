@@ -105,8 +105,8 @@ Route::prefix('akunting')->group(function () {
     Route::get('jurnal-umum/get-next-no', [JurnalUmumController::class, 'create'])->name('jurnalumum.getNextNo');
 
 // Buku Besar routes
-    Route::get('/akunting/buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
-    Route::get('/akunting/buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
+    Route::get('buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
+    Route::get('buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
 
 // Kas Masuk routes
     Route::resource('kas-masuk', KasMasukController::class);
