@@ -12,7 +12,10 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::withCount('users')->get();
+        // Mengambil semua role, dan menghitung jumlah member yang terkait dengan setiap role
+        // 'members' di sini merujuk pada nama metode relasi di model Role.php
+        $roles = \App\Models\keamanan\Role::withCount('members')->get();
+
         return view('keamanan.role.index', compact('roles'));
     }
 

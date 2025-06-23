@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\keamanan\RightAccess;
 use App\Models\keamanan\Member;
 use App\Models\keamanan\Role;
-use App\Models\keamanan\Karyawan;
+use App\Models\Presensi\Employee;
 use App\Models\keamanan\RoleMenu; // Tetap diperlukan untuk mapping hak akses
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
@@ -25,7 +26,7 @@ class MemberController extends Controller
         $roles = Role::all(); // Semua role untuk dropdown dan tabel hak akses
 
         // Data karyawan untuk dropdown
-        $karyawans = Karyawan::all();
+        $karyawans = Employee::all();
 
         // Variabel untuk mode edit
         $memberToEdit = null;
@@ -227,35 +228,41 @@ class MemberController extends Controller
         }
     }
 
-    public function searchEmployees(Request $request)
+public function searchEmployees(Request $request)
     {
-        $search = $request->query('term'); // Ambil query pencarian
-        $page = $request->query('page', 1); // Ambil nomor halaman untuk paginasi
-        $perPage = 10; // Jumlah item per halaman
+        $search = $request->query('term');
+        $page = $request->query('page', 1);
+        $perPage = 10; 
 
-        $query = Karyawan::query();
+        $query = Employee::query(); 
 
         if ($search) {
-            // Jika ada term pencarian, filter berdasarkan nama atau ID
-            $query->where('Kar_Nama', 'LIKE', '%' . $search . '%')
-                  ->orWhere('Kar_ID', 'LIKE', '%' . $search . '%');
-        } else {
-            // Jika tidak ada term pencarian, kembalikan semua karyawan (dengan paginasi)
-            // Ini akan memungkinkan Select2 menampilkan daftar awal
+            $query->where('emp_Name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('emp_Code', 'LIKE', '%' . $search . '%');
         }
 
-        // Terapkan paginasi pada query
         $employees = $query->paginate($perPage, ['*'], 'page', $page);
 
         $results = [];
         foreach ($employees->items() as $employee) {
+            $formattedBirthDate = null;
+            if ($employee->emp_DateBorn) {
+                try {
+                    // Pastikan emp_DateBorn adalah format yang dapat diparsing Carbon (misal: 'YYYY-MM-DD')
+                    $dateBorn = Carbon::parse($employee->emp_DateBorn);
+                    $formattedBirthDate = $dateBorn->format('Ymd'); // Output: YYYYMMDD
+                } catch (\Exception $e) {
+                    \Log::error("Error parsing birth date for employee {$employee->emp_Code}: {$e->getMessage()}");
+                }
+            }
+
             $results[] = [
-                'id' => $employee->Kar_ID,
-                'text' => $employee->Kar_Nama . ' (' . $employee->Kar_ID . ')',
+                'id' => $employee->emp_Code, 
+                'text' => $employee->emp_Name . ' (' . $employee->emp_Code . ')',
+                'birth_date' => $formattedBirthDate, // Ini yang kita kirim
             ];
         }
 
-        // Select2 mengharapkan format respons dengan 'results' dan 'pagination.more'
         return response()->json([
             'results' => $results,
             'pagination' => [

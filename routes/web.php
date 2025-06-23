@@ -191,79 +191,78 @@ Route::prefix('inventory')->group(function () {
         // Route untuk Role (URL: /keamanan/roles)
         Route::resource('roles', RoleController::class);
 
-        // Route untuk Permission (URL: /keamanan/permission)
-        Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
-        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
+            // Route untuk Permission (URL: /keamanan/permission)
+            Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
 
-        // Route untuk Member (User) (URL: /keamanan/member)
-        Route::get('member', [MemberController::class, 'index'])->name('member.index');
-        Route::post('member', [MemberController::class, 'store'])->name('member.store');
-        Route::get('member/{id}/edit', [MemberController::class, 'edit'])->name('member.edit');
-        Route::put('member/{id}', [MemberController::class, 'update'])->name('member.update');
-        Route::delete('member/{id}', [MemberController::class, 'destroy'])->name('member.destroy');
-        Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
-        Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
+
+            // Route untuk Member (User) (URL: /keamanan/member)
+            Route::get('member', [MemberController::class, 'index'])->name('member.index');
+            Route::post('member', [MemberController::class, 'store'])->name('member.store');
+            Route::get('member/{id}/edit', [MemberController::class, 'edit'])->name('member.edit');
+            Route::put('member/{id}', [MemberController::class, 'update'])->name('member.update');
+            Route::delete('member/{id}', [MemberController::class, 'destroy'])->name('member.destroy');
+            Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
+            Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
+        });
+
+
+    // Route untuk gudang
+    Route::prefix('mutasigudang')->group(function () {
+
+    // Gudang
+        Route::resource('warehouse', WarehouseController::class);
+
+    // Optional JSON endpoint (untuk AJAX edit)
+        Route::get('/{id}/json', [WarehouseController::class, 'json'])->name('json');
+
+    // Gudang Order
+        Route::resource('gudangorder', GudangOrderController::class);
+
+    // Transfer Gudang
+        Route::resource('transfergudang', TransferGudangController::class);
+
     });
 
 
+    /* Data Retur */
+    Route::prefix('retur')->name('retur.')->group(function () {
+        // RETUR PENJUALAN
+        Route::get('penjualan', [ReturPenjualanController::class, 'index'])->name('penjualan.index');
+        Route::get('penjualan/data', [ReturPenjualanController::class, 'dataJson'])->name('penjualan.data');
+        Route::get('penjualan/create', [ReturPenjualanController::class, 'create'])->name('penjualan.create');
+        Route::get('penjualan/{id}/edit', [ReturPenjualanController::class, 'edit'])->name('penjualan.edit');
+        Route::put('penjualan/{id}', [ReturPenjualanController::class, 'updateHeader'])->name('penjualan.update');
+        // DETAIL
+        Route::get('penjualan/{id}/details', [ReturPenjualanController::class, 'detailsJson'])->name('penjualan.details.data');
+        Route::post('penjualan/{id}/details', [ReturPenjualanController::class, 'storeDetail'])->name('penjualan.details.store');
+        Route::put('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'updateDetail'])->name('penjualan.details.update');
+        Route::delete('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'destroyDetail'])->name('penjualan.details.destroy');
+        // DRAFT
+        Route::delete('penjualan/{id}', [ReturPenjualanController::class, 'destroyHeader'])->name('penjualan.destroy');
+        Route::put('penjualan/{id}/publish', [ReturPenjualanController::class, 'publish'])->name('penjualan.publish');
+        Route::put('penjualan/{id}/publish-edit', [ReturPenjualanController::class, 'publishEdit'])->name('penjualan.publishEdit');
+        // APPROVE
+        Route::post('penjualan/approve-all', [ReturPenjualanController::class, 'approveAll'])->name('penjualan.approveAll');
+        Route::post('penjualan/{id}/approve', [ReturPenjualanController::class, 'approve'])->name('penjualan.approve');
+        // PRINT
+        Route::get('penjualan/print-all', [ReturPenjualanController::class, 'printAll'])->name('penjualan.printAll');
+        Route::get('penjualan/{id}/print', [ReturPenjualanController::class, 'print'])->name('penjualan.print');
+    });
 
 
-// Route untuk gudang
-Route::prefix('mutasigudang')->group(function () {
+    // Company Profile routes group
+    Route::prefix('comprof')->name('comprof.')->group(function () {
+    // Setting Menu Routes
+        Route::get('/settingmenu', [SettingMenuController::class, 'index'])->name('settingmenu.index');
+        Route::post('/settingmenu', [SettingMenuController::class, 'store'])->name('settingmenu.store');
+        Route::put('/settingmenu/{settingmenu}', [SettingMenuController::class, 'update'])->name('settingmenu.update');
+        Route::delete('/settingmenu/{settingmenu}', [SettingMenuController::class, 'destroy'])->name('settingmenu.destroy');
 
-// Gudang
-    Route::resource('warehouse', WarehouseController::class);
-
-// Optional JSON endpoint (untuk AJAX edit)
-    Route::get('/{id}/json', [WarehouseController::class, 'json'])->name('json');
-
-// Gudang Order
-    Route::resource('gudangorder', GudangOrderController::class);
-
-// Transfer Gudang
-    Route::resource('transfergudang', TransferGudangController::class);
-
-});
-
-/* Data Retur */
-Route::prefix('retur')->name('retur.')->group(function () {
-    // RETUR PENJUALAN
-    Route::get('penjualan', [ReturPenjualanController::class, 'index'])->name('penjualan.index');
-    Route::get('penjualan/data', [ReturPenjualanController::class, 'dataJson'])->name('penjualan.data');
-    Route::get('penjualan/create', [ReturPenjualanController::class, 'create'])->name('penjualan.create');
-    Route::get('penjualan/{id}/edit', [ReturPenjualanController::class, 'edit'])->name('penjualan.edit');
-    Route::put('penjualan/{id}', [ReturPenjualanController::class, 'updateHeader'])->name('penjualan.update');
-    // DETAIL
-    Route::get('penjualan/{id}/details', [ReturPenjualanController::class, 'detailsJson'])->name('penjualan.details.data');
-    Route::post('penjualan/{id}/details', [ReturPenjualanController::class, 'storeDetail'])->name('penjualan.details.store');
-    Route::put('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'updateDetail'])->name('penjualan.details.update');
-    Route::delete('penjualan/{id}/details/{detailId}', [ReturPenjualanController::class, 'destroyDetail'])->name('penjualan.details.destroy');
-    // DRAFT
-    Route::delete('penjualan/{id}', [ReturPenjualanController::class, 'destroyHeader'])->name('penjualan.destroy');
-    Route::put('penjualan/{id}/publish', [ReturPenjualanController::class, 'publish'])->name('penjualan.publish');
-    Route::put('penjualan/{id}/publish-edit', [ReturPenjualanController::class, 'publishEdit'])->name('penjualan.publishEdit');
-    // APPROVE
-    Route::post('penjualan/approve-all', [ReturPenjualanController::class, 'approveAll'])->name('penjualan.approveAll');
-    Route::post('penjualan/{id}/approve', [ReturPenjualanController::class, 'approve'])->name('penjualan.approve');
-    // PRINT
-    Route::get('penjualan/print-all', [ReturPenjualanController::class, 'printAll'])->name('penjualan.printAll');
-    Route::get('penjualan/{id}/print', [ReturPenjualanController::class, 'print'])->name('penjualan.print');
-});
-
-
-// Company Profile routes group
-Route::prefix('comprof')->name('comprof.')->group(function () {
-// Setting Menu Routes
-    Route::get('/settingmenu', [SettingMenuController::class, 'index'])->name('settingmenu.index');
-    Route::post('/settingmenu', [SettingMenuController::class, 'store'])->name('settingmenu.store');
-    Route::put('/settingmenu/{settingmenu}', [SettingMenuController::class, 'update'])->name('settingmenu.update');
-    Route::delete('/settingmenu/{settingmenu}', [SettingMenuController::class, 'destroy'])->name('settingmenu.destroy');
-
-     // Sub Menu Routes
-    Route::get('/settingsubmenu', [SubMenuController::class, 'index'])->name('settingsubmenu.index');
-    Route::post('/settingsubmenu', [SubMenuController::class, 'store'])->name('settingsubmenu.store');
-    Route::put('/settingsubmenu/{submenu}', [SubMenuController::class, 'update'])->name('settingsubmenu.update');
-    Route::delete('/settingsubmenu/{submenu}', [SubMenuController::class, 'destroy'])->name('settingsubmenu.destroy');
+    // Sub Menu Routes
+        Route::get('/settingsubmenu', [SubMenuController::class, 'index'])->name('settingsubmenu.index');
+        Route::post('/settingsubmenu', [SubMenuController::class, 'store'])->name('settingsubmenu.store');
+        Route::put('/settingsubmenu/{submenu}', [SubMenuController::class, 'update'])->name('settingsubmenu.update');
+        Route::delete('/settingsubmenu/{submenu}', [SubMenuController::class, 'destroy'])->name('settingsubmenu.destroy');
 
     // Data Staf
     Route::get('/datastaf', [DataStafController::class, 'index'])->name('datastaf.index');
@@ -293,5 +292,14 @@ Route::prefix('comprof')->name('comprof.')->group(function () {
     Route::post('/kategorialbum', [KategoriAlbumController::class, 'store'])->name('kategorialbum.store');
     Route::put('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'update'])->name('kategorialbum.update');
     Route::delete('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'destroy'])->name('kategorialbum.destroy');
+});
+
+//route yang tidak perlu acess menu
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('keamanan')->name('keamanan.')->group(function () {
+        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
+        Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
+        Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
+    });
 });
 

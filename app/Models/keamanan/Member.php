@@ -6,10 +6,11 @@ namespace App\Models\keamanan; // Pastikan namespace ini sesuai dengan lokasi fi
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Penting: ini yang membuat model bisa diotentikasi
 use Illuminate\Notifications\Notifiable; // Opsional: jika Anda menggunakan fitur notifikasi Laravel
+use Spatie\Permission\Traits\HasRoles;
 
 class Member extends Authenticatable // Model ini HARUS meng-extend Authenticatable
 {
-    use Notifiable; // Gunakan trait Notifiable jika diperlukan
+    use Notifiable,HasRoles; // Gunakan trait Notifiable jika diperlukan
 
     // Definisikan nama tabel yang digunakan oleh model ini
     protected $table = 'm_members';
@@ -109,5 +110,10 @@ class Member extends Authenticatable // Model ini HARUS meng-extend Authenticata
     public function rightAccesses()
     {
         return $this->hasMany(\App\Models\keamanan\RightAccess::class, 'AC_USER', 'Mem_ID');
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(\App\Models\Presensi\Employee::class, 'emp_Code', 'Mem_ID');
     }
 }
