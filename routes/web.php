@@ -23,6 +23,10 @@ use App\Http\Controllers\Akuntansi\KasMasukController;
 use App\Http\Controllers\Akuntansi\KasKeluarController;
 use App\Http\Controllers\Keamanan\PermissionController;
 use App\Http\Controllers\Keamanan\MemberController;
+use App\Http\Controllers\Comprof\SliderController;
+use App\Http\Controllers\Comprof\SetPerusahaanController;
+use App\Http\Controllers\Comprof\KategoriBeritaController;
+use App\Http\Controllers\Comprof\KategoriAlbumController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
@@ -267,6 +271,27 @@ Route::prefix('comprof')->name('comprof.')->group(function () {
     Route::put('/datastaf/{datastaf}', [DataStafController::class, 'update'])->name('datastaf.update');
     Route::delete('/datastaf/{datastaf}', [DataStafController::class, 'destroy'])->name('datastaf.destroy');
 
+    // Slider Routes
+    Route::get('/slider', [SliderController::class, 'index'])->name('slider.index');
+    Route::post('/slider', [SliderController::class, 'store'])->name('slider.store');
+    Route::put('/slider/{slider}', [SliderController::class, 'update'])->name('slider.update');
+    Route::delete('/slider/{slider}', [SliderController::class, 'destroy'])->name('slider.destroy');
 
+    // Set Perusahaan Routes
+    Route::get('/setperusahaan', [SetPerusahaanController::class, 'index'])->name('setperusahaan.index');
+    Route::post('/setperusahaan', [SetPerusahaanController::class, 'store'])->name('setperusahaan.store');
+    Route::post('/setperusahaan/upload-image', [SetPerusahaanController::class, 'uploadImage'])->name('setperusahaan.upload-image');
+
+    // Kategori Berita Routes
+    Route::get('/kategoriberita', [KategoriBeritaController::class, 'index'])->name('kategoriberita.index');
+    Route::post('/kategoriberita', [KategoriBeritaController::class, 'store'])->name('kategoriberita.store');
+    Route::put('/kategoriberita/{kategoriberita}', [KategoriBeritaController::class, 'update'])->name('kategoriberita.update');
+    Route::delete('/kategoriberita/{kategoriberita}', [KategoriBeritaController::class, 'destroy'])->name('kategoriberita.destroy');
+
+    // Kategori Album Routes
+    Route::get('/kategorialbum', [KategoriAlbumController::class, 'index'])->name('kategorialbum.index');
+    Route::post('/kategorialbum', [KategoriAlbumController::class, 'store'])->name('kategorialbum.store');
+    Route::put('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'update'])->name('kategorialbum.update');
+    Route::delete('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'destroy'])->name('kategorialbum.destroy');
 });
 
