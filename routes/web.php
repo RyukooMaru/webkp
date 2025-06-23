@@ -60,7 +60,7 @@ Route::middleware(['auth','can.access.menu'])->group(function () { // Pastikan h
 
             // Route untuk Permission (URL: /keamanan/permission)
             Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
-            Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
+            
 
             // Route untuk Member (User) (URL: /keamanan/member)
             Route::get('member', [MemberController::class, 'index'])->name('member.index');
@@ -225,6 +225,7 @@ Route::middleware(['auth','can.access.menu'])->group(function () { // Pastikan h
 //route yang tidak perlu acess menu
 Route::middleware(['auth'])->group(function () {
     Route::prefix('keamanan')->name('keamanan.')->group(function () {
+        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
         Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
         Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
     });
