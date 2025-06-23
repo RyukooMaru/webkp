@@ -3,46 +3,65 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inventory\Kelompokproduk;
 use Illuminate\Http\Request;
+use App\Models\Inventory\KelompokProduk;
+use Illuminate\Support\Facades\Validator;
 
-class KelompokprodukController extends Controller
+class KelompokProdukController extends Controller
 {
     public function index()
     {
-        $kelompokProduks = Kelompokproduk::orderBy('nama_kelompok')->get();
+        $kelompokProduks = KelompokProduk::latest()->get();
+
         return view('inventory.kelompokproduk.index', compact('kelompokProduks'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_kelompok' => 'required|string|max:255|unique:kelompokproduk_tabel'
+        $validator = Validator::make($request->all(), [
+            'nama_kelompok' => 'required|unique:kelompokproduk_tabel,nama_kelompok',
         ]);
 
-        Kelompokproduk::create($validated);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return redirect()->route('kelompokproduk.index')
-            ->with('success', 'Kelompok Produk berhasil ditambahkan.');
-    }
-
-    public function update(Request $request, Kelompokproduk $kelompokproduk)
-    {
-        $validated = $request->validate([
-            'nama_kelompok' => 'required|string|max:255|unique:kelompokproduk_tabel,nama_kelompok,'.$kelompokproduk->id
+        KelompokProduk::create([
+            'nama_kelompok' => $request->nama_kelompok,
         ]);
 
-        $kelompokproduk->update($validated);
-
-        return redirect()->route('kelompokproduk.index')
-            ->with('success', 'Kelompok Produk berhasil diperbarui.');
+        return response()->json(['message' => 'Kelompok Produk berhasil ditambahkan.']);
     }
 
-    public function destroy(Kelompokproduk $kelompokproduk)
+    public function update(Request $request, $id)
     {
-        $kelompokproduk->delete();
+        $kelompok = KelompokProduk::findOrFail($id);
 
-        return redirect()->route('kelompokproduk.index')
-            ->with('success', 'Kelompok Produk berhasil dihapus.');
+        $validator = Validator::make($request->all(), [
+            'nama_kelompok' => 'required|unique:kelompokproduk_tabel,nama_kelompok,' . $kelompok->id,
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $kelompok->update([
+            'nama_kelompok' => $request->nama_kelompok,
+        ]);
+
+        return response()->json(['message' => 'Kelompok Produk berhasil diperbarui.']);
+    }
+
+    public function destroy($id)
+    {
+        $kelompok = KelompokProduk::find($id);
+
+        if (!$kelompok) {
+            return response()->json(['message' => 'Data tidak ditemukan.'], 404);
+        }
+
+        $kelompok->delete();
+
+        return response()->json(['message' => 'Kelompok Produk berhasil dihapus.']);
     }
 }
