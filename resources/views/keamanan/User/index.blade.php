@@ -5,17 +5,8 @@
     <h1 class="h3 mb-2 text-gray-800">Hak Akses</h1>
     <p class="mb-4">Atur Hak Akses User</p>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Form Pengguna {{ isset($memberToEdit) ? 'Edit' : 'Baru' }}</h6>
         </div>
         <div class="card-body">
@@ -29,7 +20,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="Mem_ID">Kode Karyawan</label>
-                            <select name="Mem_ID" id="Mem_ID" class="form-control select2-employee" {{ isset($memberToEdit) ? 'disabled' : 'required' }}>
+                            <select name="Mem_ID" id="Mem_ID" class="form-control" {{ isset($memberToEdit) ? 'disabled' : 'required' }}>
                                 @if(isset($memberToEdit))
                                     <option value="{{ $memberToEdit->Mem_ID }}" selected>
                                         {{ $memberToEdit->Mem_UserName }} ({{ $memberToEdit->Mem_ID }})
@@ -52,21 +43,22 @@
                     </div>
                 </div>
 
-                                <div class="row">
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="mem_password" class="font-weight-bold">Password</label>
                             <div class="input-group">
                                 <input type="password" name="mem_password" id="mem_password" class="form-control"
                                     placeholder="{{ isset($memberToEdit) ? 'Kosongkan jika tidak diubah' : '' }}"
-                                    {{ isset($memberToEdit) ? '' : 'required' }}>
+                                    {{ isset($memberToEdit) ? '' : 'required' }}
+                                    minlength="4">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary toggle-password" type="button">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
                             </div>
-                            <small class="form-text text-muted">Minimal 8 karakter</small>
+                            <small class="form-text text-muted">Minimal 4 karakter</small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -74,7 +66,10 @@
                             <label for="confirm_password" class="font-weight-bold">Konfirmasi Password</label>
                             <div class="input-group">
                                 <input type="password" name="confirm_password" id="confirm_password" class="form-control"
-                                    {{ isset($memberToEdit) ? '' : 'required' }}>
+                                    {{ isset($memberToEdit) ? '' : 'required' }}
+                                    minlength="4"
+                                    data-parsley-equalto="#mem_password"
+                                    data-parsley-error-message="Password tidak sama">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary toggle-password" type="button">
                                         <i class="fas fa-eye"></i>
@@ -98,7 +93,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="role_id">Role Utama</label>
-                            <select name="role_id" id="role_id" class="form-control" required onchange="toggleAccessSection(this.value)">
+                            <select name="role_id" id="role_id" class="form-control" required>
                                 <option value="">-- Pilih Role --</option>
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->id }}" {{ old('role_id', $memberToEdit->role_id ?? '') == $role->id ? 'selected' : '' }}>
@@ -139,25 +134,30 @@
                         </table>
                     </div>
                 </div>
+
                 <div class="form-group mt-4">
-                    {{-- Tombol Simpan/Update User --}}
-                    <!-- @can('tambah', 'keamanan.member') {{-- Cek Gate 'tambah' untuk membuat user baru --}} -->
-                    @unless(isset($memberToEdit)) {{-- Hanya tampil jika mode "Buat Baru" --}}
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Simpan Pengguna Baru
-                    </button>
+                    @php
+                        $currentRouteName = Route::currentRouteName();
+                        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+                    @endphp
+
+                    @unless(isset($memberToEdit))
+                        @can('tambah', $currentMenuSlug)
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Simpan Pengguna Baru
+                        </button>
+                        @endcan
                     @endunless
-                    <!-- @endcan -->
 
-                    <!-- @can('ubah', 'keamanan.member') {{-- Cek Gate 'ubah' untuk memperbarui user --}} -->
-                    @if(isset($memberToEdit)) {{-- Hanya tampil jika mode "Edit" --}}
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Perbarui Pengguna
-                    </button>
+                    @if(isset($memberToEdit))
+                        @can('ubah', $currentMenuSlug)
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Perbarui Pengguna
+                        </button>
+                        @endcan
                     @endif
-                    <!-- @endcan -->
 
-                    @if(isset($memberToEdit)) {{-- Tombol Buat Baru/Batal di mode edit --}}
+                    @if(isset($memberToEdit))
                     <a href="{{ route('keamanan.member.index') }}" class="btn btn-secondary" onclick="resetForm()">
                         <i class="fas fa-plus"></i> Buat Baru
                     </a>
@@ -174,7 +174,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
                             <th>Kode</th>
                             <th>Nama</th>
@@ -195,15 +195,13 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                {{-- Tombol Edit User --}}
-                                @can('ubah', 'keamanan.member') {{-- Cek Gate 'ubah' untuk user --}}
+                                @can('ubah', $currentMenuSlug)
                                 <a href="{{ route('keamanan.member.edit', $member->Mem_Auto) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 @endcan
 
-                                {{-- Tombol Delete User --}}
-                                @can('hapus', 'keamanan.member') {{-- Cek Gate 'hapus' untuk user --}}
+                                @can('hapus', $currentMenuSlug)
                                 <form action="{{ route('keamanan.member.destroy', $member->Mem_Auto) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
@@ -224,26 +222,245 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" /> 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> 
+
 
 <script>
+    // Data yang dilewatkan dari Laravel ke JavaScript
+    const allRolesData = @json($roles);
+    const simplifiedAccesses = @json($simplifiedAccesses); 
+    const isEditMode = {{ isset($memberToEdit) ? 'true' : 'false' }};
+
+    /**
+     * Mengisi input Nama Pengguna dan Password berdasarkan pilihan Karyawan dari Select2.
+     * @param {object} data Objek data yang dipilih dari Select2 (sudah termasuk birth_date).
+     */
+    function populateUserDataFromSelect2(data) {
+        const userNameInput = document.getElementById('Mem_UserName');
+        const passwordInput = document.getElementById('mem_password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+
+        if (data && data.text) {
+            // Isi Nama Pengguna
+            const userNameMatch = data.text.match(/^(.*) \((.*)\)$/);
+            userNameInput.value = userNameMatch ? userNameMatch[1] : data.text;
+
+            // Isi Password dan Konfirmasi Password dengan tanggal lahir
+            if (data.birth_date) {
+                passwordInput.value = data.birth_date;
+                confirmPasswordInput.value = data.birth_date;
+            } else {
+                // Jika tanggal lahir tidak ada, kosongkan password atau berikan placeholder
+                passwordInput.value = '';
+                confirmPasswordInput.value = '';
+                passwordInput.placeholder = 'Tanggal lahir tidak tersedia';
+                confirmPasswordInput.placeholder = 'Tanggal lahir tidak tersedia';
+            }
+        } else {
+            // Kosongkan semua jika tidak ada data dipilih
+            userNameInput.value = '';
+            passwordInput.value = '';
+            confirmPasswordInput.value = '';
+            passwordInput.placeholder = '';
+            confirmPasswordInput.placeholder = '';
+        }
+    }
+
+    /**
+     * Mengatur visibilitas bagian hak akses dan mengisi status checkbox.
+     * Dipanggil saat dropdown "Pilih Role Utama" berubah.
+     * @param {string} selectedRoleId ID Role Utama yang dipilih.
+     */
+    function toggleAccessSection(selectedRoleId) {
+        const userAccessSection = document.getElementById('userAccessSection');
+        const selectedRoleNameDisplay = document.getElementById('selectedRoleNameDisplay');
+        const aksesTambahCheckbox = document.getElementById('akses_role_tambah');
+        const aksesUbahCheckbox = document.getElementById('akses_role_ubah');
+        const aksesHapusCheckbox = document.getElementById('akses_role_hapus');
+
+        const oldAksesRoleData = @json(old('akses_role', []));
+
+        if (selectedRoleId) {
+            userAccessSection.classList.remove('d-none');
+            
+            const selectedRole = allRolesData.find(role => role.id == selectedRoleId);
+            selectedRoleNameDisplay.textContent = selectedRole ? selectedRole.name : 'N/A';
+
+            // Determine checkbox states
+            let isTambah = false;
+            let isUbah = false;
+            let isHapus = false;
+
+            if (oldAksesRoleData[selectedRoleId]) {
+                isTambah = oldAksesRoleData[selectedRoleId].tambah === '1';
+                isUbah = oldAksesRoleData[selectedRoleId].ubah === '1';
+                isHapus = oldAksesRoleData[selectedRoleId].hapus === '1';
+            } else if (simplifiedAccesses[selectedRoleId]) {
+                isTambah = simplifiedAccesses[selectedRoleId].tambah === '1';
+                isUbah = simplifiedAccesses[selectedRoleId].ubah === '1';
+                isHapus = simplifiedAccesses[selectedRoleId].hapus === '1';
+            }
+
+            // Update checkboxes
+            aksesTambahCheckbox.checked = isTambah;
+            aksesUbahCheckbox.checked = isUbah;
+            aksesHapusCheckbox.checked = isHapus;
+
+            // Update checkbox names
+            aksesTambahCheckbox.name = `akses_role[${selectedRoleId}][tambah]`;
+            aksesUbahCheckbox.name = `akses_role[${selectedRoleId}][ubah]`;
+            aksesHapusCheckbox.name = `akses_role[${selectedRoleId}][hapus]`;
+        } else {
+            userAccessSection.classList.add('d-none');
+            selectedRoleNameDisplay.textContent = '';
+            
+            // Reset checkboxes
+            aksesTambahCheckbox.checked = false;
+            aksesUbahCheckbox.checked = false;
+            aksesHapusCheckbox.checked = false;
+            
+            // Set default names
+            aksesTambahCheckbox.name = `akses_role[0][tambah]`;
+            aksesUbahCheckbox.name = `akses_role[0][ubah]`;
+            aksesHapusCheckbox.name = `akses_role[0][hapus]`;
+        }
+    }
+
+    /**
+     * Mereset form ke mode "Buat Baru" dan membersihkan input.
+     */
+    function resetForm() {
+        document.getElementById('memberForm').reset();
+        document.getElementById('memberForm').action = "{{ route('keamanan.member.store') }}";
+        
+        // Remove method input if exists
+        const methodInput = document.querySelector('#memberForm input[name="_method"]');
+        if (methodInput) {
+            methodInput.remove();
+        }
+
+        // Reset Select2
+        $('#Mem_ID').val('').trigger('change');
+        $('#Mem_ID').empty().append('<option value="">-- Pilih Karyawan --</option>');
+        $('#Mem_ID').prop('disabled', false);
+        initSelect2();
+
+        // Clear username and password fields
+        document.getElementById('Mem_UserName').value = '';
+        document.getElementById('mem_password').value = '';
+        document.getElementById('confirm_password').value = '';
+        document.getElementById('mem_password').placeholder = '';
+        document.getElementById('confirm_password').placeholder = '';
+
+        // Reset role selection
+        document.getElementById('role_id').value = '';
+        toggleAccessSection('');
+
+        // Hide create new button if exists
+        const createNewButton = document.querySelector('.form-group.mt-4 .btn-secondary');
+        if (createNewButton) {
+            createNewButton.style.display = 'none';
+        }
+
+        // Update browser history
+        history.pushState(null, '', '{{ route('keamanan.member.index') }}');
+    }
+
+    /**
+     * Initializes Select2 with custom configuration
+     */
+function initSelect2() {
+    // Destroy previous Select2 instance if exists
+    if ($('#Mem_ID').hasClass('select2-hidden-accessible')) {
+        $('#Mem_ID').select2('destroy');
+    }
+
+    // Initialize Select2
+    $('#Mem_ID').select2({
+        placeholder: '-- Pilih Karyawan --',
+        allowClear: true,
+        theme: "bootstrap4",
+        width: '100%',
+        minimumInputLength: 0,  // Allow showing options without typing
+        ajax: {
+            url: '{{ route('keamanan.member.searchEmployees') }}',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    term: params.term || '',
+                    page: params.page || 1,
+                    load_all: params.term ? 0 : 1  // Flag to load initial data
+                };
+            },
+            processResults: function(data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.results || [],
+                    pagination: {
+                        more: data.pagination?.more || false
+                    }
+                };
+            },
+            cache: true
+        },
+        templateResult: function(data) {
+            if (data.loading) return data.text;
+            return data.text || '-- Pilih Karyawan --';
+        },
+        templateSelection: function(data) {
+            if (data.id === '') return data.text;
+            if (data.birth_date) {
+                populateUserDataFromSelect2(data);
+            }
+            return data.text || '-- Pilih Karyawan --';
+        }
+    });
+
+    // Handle initial data load when dropdown opens
+    $('#Mem_ID').on('select2:open', function() {
+        const select = $(this);
+        if (select.find('option').length <= 1 && !select.data('initial-load')) {
+            select.data('initial-load', true);
+            
+            // Trigger search with empty term to load initial data
+            select.select2('search', '');
+        }
+    });
+
+    // Handle edit mode initialization
+    if (isEditMode) {
+        const selectedEmployeeId = '{{ $memberToEdit->Mem_ID ?? '' }}';
+        const selectedEmployeeName = '{{ $memberToEdit->Mem_UserName ?? '' }}';
+        const selectedEmployeeBirthDate = '{{ $memberToEdit->employee->emp_DateBorn ?? '' }}';
+
+        if (selectedEmployeeId) {
+            const option = new Option(
+                `${selectedEmployeeName} (${selectedEmployeeId})`,
+                selectedEmployeeId,
+                true,
+                true
+            );
+            $('#Mem_ID').append(option).trigger('change');
+            
+            populateUserDataFromSelect2({
+                id: selectedEmployeeId,
+                text: `${selectedEmployeeName} (${selectedEmployeeId})`,
+                birth_date: selectedEmployeeBirthDate ? 
+                    moment(selectedEmployeeBirthDate).format('YYYYMMDD') : null
+            });
+            
+            $('#Mem_ID').prop('disabled', true);
+        }
+    }
+}
+
+    // Document ready handler
     $(document).ready(function() {
         // Initialize DataTable
         $('#dataTable').DataTable();
-
-        // Toggle password visibility
-        $('.toggle-password').click(function() {
-            const input = $(this).closest('.input-group').find('input');
-            const icon = $(this).find('i');
-            
-            if (input.attr('type') === 'password') {
-                input.attr('type', 'text');
-                icon.removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                input.attr('type', 'password');
-                icon.removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
 
         // Handle notifications
         @if(session('success'))
@@ -282,78 +499,61 @@
         @endif
 
         // Initialize Select2
-        $('#Mem_ID').select2({
-            placeholder: 'Pilih Karyawan',
-            allowClear: true,
-            ajax: {
-                url: '{{ route('keamanan.member.searchEmployees') }}',
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: data.results
-                    };
-                },
-                cache: true
-            }
-        }).on('select2:select', function (e) {
-            const data = e.params.data;
-            $('#Mem_UserName').val(data.text.split(' (')[0]);
-        });
+        initSelect2();
 
-        // Initialize role access section
-        if ($('#role_id').val()) {
-            toggleAccessSection($('#role_id').val());
+        // Initialize access section based on selected role
+        const roleIdSelect = document.getElementById('role_id');
+        if (roleIdSelect && roleIdSelect.value) {
+            toggleAccessSection(roleIdSelect.value);
+        } else {
+            document.getElementById('userAccessSection').classList.add('d-none');
         }
 
-        // Delete confirmation
-        $('.delete-btn').click(function(e) {
-            e.preventDefault();
-            const form = $(this).closest('form');
+        // Role select change handler
+        $('#role_id').on('change', function() {
+            toggleAccessSection(this.value);
+        });
+
+        // Toggle password visibility
+        $('.toggle-password').click(function() {
+            const input = $(this).closest('.input-group').find('input');
+            const icon = $(this).find('i');
             
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        // Delete confirmation
+        $('.delete-btn').click(function() {
+            const form = $(this).closest('form');
             Swal.fire({
-                title: 'Hapus Pengguna?',
-                text: "Data tidak dapat dikembalikan!",
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!'
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
                 }
             });
         });
-    });
 
-    function toggleAccessSection(roleId) {
-        const section = $('#userAccessSection');
-        const roleName = $('#selectedRoleNameDisplay');
-        
-        if (roleId) {
-            const selectedRole = @json($roles->keyBy('id'));
-            roleName.text(selectedRole[roleId]?.name || '');
-            
-            // Update checkbox names with role ID
-            $('#akses_role_tambah').attr('name', `akses_role[${roleId}][tambah]`);
-            $('#akses_role_ubah').attr('name', `akses_role[${roleId}][ubah]`);
-            $('#akses_role_hapus').attr('name', `akses_role[${roleId}][hapus]`);
-            
-            // Set checkbox states based on existing permissions
-            const permissions = @json($simplifiedAccesses);
-            if (permissions[roleId]) {
-                $('#akses_role_tambah').prop('checked', permissions[roleId].tambah == '1');
-                $('#akses_role_ubah').prop('checked', permissions[roleId].ubah == '1');
-                $('#akses_role_hapus').prop('checked', permissions[roleId].hapus == '1');
-            } else {
-                $('input[type="checkbox"]').prop('checked', false);
-            }
-            
-            section.removeClass('d-none');
-        } else {
-            section.addClass('d-none');
-        }
-    }
+        // Form validation
+        $('#memberForm').parsley({
+            errorClass: 'is-invalid',
+            successClass: 'is-valid',
+            errorsWrapper: '<div class="invalid-feedback"></div>',
+            errorTemplate: '<span></span>'
+        });
+    });
 </script>
 @endpush

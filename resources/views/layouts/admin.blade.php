@@ -589,6 +589,7 @@
     <!-- Script Cropper.js untuk Crop Gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 @stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
+@stack('css')
 </body>
 
 </html>

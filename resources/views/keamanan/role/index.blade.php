@@ -6,7 +6,7 @@
     <p class="mb-4">Manajemen role untuk kontrol akses pengguna aplikasi.</p>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -15,7 +15,11 @@
     @endif
 
     <div class="mb-3">
-        @can('tambah', 'keamanan.roles')
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+        @endphp
+        @can('tambah', $currentMenuSlug) {{-- Menggunakan slug dinamis --}}
         <button class="btn btn-primary" data-toggle="modal" id="addRoleButton">
             <i class="fas fa-plus"></i> Tambah Role
         </button>
@@ -33,7 +37,7 @@
                         <tr>
                             <th width="5%">No</th>
                             <th width="35%">Nama Role</th>
-                            <th width="10%">Pengguna</th>
+                            <th width="10%">Pengguna</th> {{-- Kolom ini --}}
                             <th width="25%">Tanggal Dibuat</th>
                             <th width="25%">Aksi</th>
                         </tr>
@@ -44,13 +48,14 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $role->name }}</td>
                                 <td>
-                                    <span class="badge badge-info">{{ $role->users_count }}</span>
+                                    {{-- Mengakses hitungan member melalui members_count --}}
+                                    <span class="badge badge-info">{{ $role->members_count }}</span> 
                                 </td>
                                 <td>
                                     {{ $role->created_at->format('d M Y') }}<br>
                                 </td>
                                 <td>
-                                    @can('ubah', 'keamanan.roles')
+                                    @can('ubah', $currentMenuSlug)
                                     <button class="btn btn-sm btn-warning edit-btn"
                                         data-id="{{ $role->id }}"
                                         data-name="{{ $role->name }}"
@@ -59,7 +64,7 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     @endcan
-                                    @can('hapus', 'keamanan.roles')
+                                    @can('hapus', $currentMenuSlug)
                                     <button class="btn btn-sm btn-danger delete-btn"
                                         data-id="{{ $role->id }}"
                                         data-name="{{ $role->name }}"
@@ -80,11 +85,10 @@
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Role -->
+<!-- Modal Tambah/Edit Role (Tidak ada perubahan di sini) -->
 <div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            
             <form id="codeForm" method="POST" action="">
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
@@ -92,9 +96,9 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title" id="ModalLabel">Judul Modal Dinamis</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
 
                 <div class="modal-body">
@@ -140,7 +144,7 @@ $(function() {
 
     // Fungsi untuk menampilkan modal role
     function showRoleModal(title, action, method, id = '', buttonText, name = '') {
-        $('#codeModalLabel').text(title);
+        $('#ModalLabel').text(title); // Mengganti ID dari #codeModalLabel menjadi #ModalLabel
         $('#codeForm').attr('action', action);
         $('#formMethod').val(method);
         $('#kode_id').val(id);
@@ -202,7 +206,7 @@ $(function() {
             if (result.isConfirmed) {
                 $.ajax({
                     url: deleteUrlTpl.replace(':id', id),
-                    type: 'POST',
+                    type: 'POST', // Menggunakan POST untuk DELETE method override
                     data: {
                         _method: 'DELETE',
                         _token: csrfToken
@@ -218,12 +222,12 @@ $(function() {
         });
     });
 
-    // Fungsi untuk menampilkan alert
+    // Fungsi untuk menampilkan alert (SweetAlert2)
     function showAlert(icon, title, text, reload = false) {
         Swal.fire({
             icon: icon,
             title: title,
-            text: text,
+            html: text,
             timer: 2000,
             showConfirmButton: false,
             willClose: () => {
@@ -232,34 +236,35 @@ $(function() {
         });
     }
 
-    // Fungsi untuk menampilkan dialog konfirmasi
+    // Fungsi untuk menampilkan dialog konfirmasi (SweetAlert2)
     function showConfirmDialog(title, html, icon, confirmText, cancelText) {
         return Swal.fire({
             title: title,
             html: html,
             icon: icon,
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6', // Warna biru untuk konfirmasi
+            cancelButtonColor: '#d33', // Warna merah untuk batal
             confirmButtonText: confirmText,
             cancelButtonText: cancelText
         });
     }
 
-    // Fungsi untuk menangani error AJAX
+    // Fungsi untuk menangani error AJAX (Validasi, Konflik, Umum)
     function handleAjaxError(xhr) {
         let message = 'Terjadi kesalahan. Silakan coba lagi.';
         
-        if (xhr.status === 422) {
+        if (xhr.status === 422) { // Validasi gagal
             const errors = xhr.responseJSON.errors || {};
-            message = Object.values(errors).flat().join('<br>') || 'Validasi gagal.';
+            message = Object.values(errors).flat().map(error => `<li>${error}</li>`).join('');
+            message = `<ul>${message}</ul>`;
             showAlert('error', 'Validasi Gagal', message);
         } 
-        else if (xhr.status === 409) {
+        else if (xhr.status === 409) { // Konflik (misal duplikasi)
             message = xhr.responseJSON.message || 'Tidak ada perubahan data.';
             showAlert('info', 'Informasi', message);
         }
-        else {
+        else { // Error umum
             message = xhr.responseJSON?.message || message;
             showAlert('error', 'Error', message);
         }
@@ -267,4 +272,3 @@ $(function() {
 });
 </script>
 @endpush
-

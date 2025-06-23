@@ -5,56 +5,84 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate; // Import Gate Facade
-use Illuminate\Support\Str; // Import Str Helper
+use Illuminate\Support\Facades\Gate;
 
 class EnsureUserCanAccessMenu
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate->Http->Request  $request
-     * @param  \Closure(\Illuminate->Http->Request): (\Illuminate->Http->Response|\Illuminate->Http->RedirectResponse)  $next
-     * @return \Illuminate->Http\Response|\Illuminate->Http->RedirectResponse
-     */
     public function handle(Request $request, Closure $next)
     {
-        // Pastikan pengguna sudah login
         if (!Auth::check()) {
-            return redirect()->route('login'); // Redirect ke login jika belum login
+            return redirect()->route('login');
         }
 
-        // Dapatkan nama rute saat ini
         $routeName = $request->route()->getName();
 
-        // Jika rute tidak memiliki nama, biarkan saja (atau tangani sesuai kebutuhan)
+        // Jika route tidak memiliki nama atau route khusus yang boleh diakses
         if (is_null($routeName)) {
             return $next($request);
         }
 
-        // Derivasi menu slug dari nama rute (misal: 'keamanan.member.index' menjadi 'keamanan.member')
-        // Ini akan cocok dengan kolom 'slug' di tabel 'menus' Anda.
-        $menuSlug = Str::beforeLast($routeName, '.'); // Contoh: 'keamanan.member.index' -> 'keamanan.member'
-                                                      // Jika route sudah root slug: 'home' -> 'home'
-        // Tangani kasus route root (misal 'home') jika slug di DB adalah 'home'
-        if (empty($menuSlug) && $routeName === 'home') {
-            $menuSlug = 'dashboard'; // Asumsi slug untuk Dashboard adalah 'dashboard'
-        } elseif (empty($menuSlug)) {
-            $menuSlug = $routeName; // Jika tidak ada titik, slug adalah nama rute itu sendiri
+        // Daftar route yang boleh diakses tanpa pengecekan
+        $allowedRoutes = ['home', 'profile', 'logout'];
+        if (in_array($routeName, $allowedRoutes)) {
+            return $next($request);
         }
 
-        // DEBUGGING: Tambahkan ini untuk melihat slug yang terdeteksi
-        // dd("Checking menu slug: {$menuSlug} for route: {$routeName}");
+        // Konversi route name ke menu slug
+        $menuSlug = $this->convertRouteToMenuSlug($routeName);
 
-        // Periksa Gate 'access_menu'
-        // Gate akan memeriksa apakah role pengguna memiliki menu dengan slug ini
+        // --- DEBUGGING: TAMPILKAN HASILNYA ---
+        // Hapus baris dd() ini setelah debugging selesai.
+       // dd([
+        //     'full_route_name' => $routeName,
+        //     'calculated_menu_slug' => $menuSlug,
+        //     'user_role_name' => Auth::user()->role->name ?? 'No Role',
+        //     'menus_allowed_for_user_slugs' => Auth::user()->role->menus->pluck('slug')->toArray() ?? [],
+        //     'is_slug_in_allowed_list' => (Auth::user()->role && Auth::user()->role->menus->contains('slug', $menuSlug)),
+        //     'gate_allows_access' => Gate::allows('access_menu', $menuSlug)
+        // ]);
+        // --- AKHIR DEBUGGING ---
+
+        // Jika user tidak memiliki akses ke menu tersebut
         if (!Gate::allows('access_menu', $menuSlug)) {
-            // Jika tidak memiliki akses, arahkan ke halaman 403 atau kembali dengan error
-            // Anda bisa membuat view kustom untuk halaman 403 (akses ditolak)
-            // return abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
-            return redirect('/home')->with('error', 'Anda tidak memiliki izin untuk mengakses halaman ini.'); // Redirect ke home dengan pesan error
+            return redirect('/home')->with('error', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 
         return $next($request);
+    }
+
+    /**
+     * Convert route name to menu slug
+     */
+    protected function convertRouteToMenuSlug(string $routeName): string
+    {
+        // Mapping khusus untuk route yang tidak mengikuti konvensi
+        $specialMappings = [
+            'home' => 'dashboard',
+            'profile' => 'profile',
+            // Tambahkan mapping khusus lainnya di sini
+        ];
+
+        if (array_key_exists($routeName, $specialMappings)) {
+            return $specialMappings[$routeName];
+        }
+
+        $parts = explode('.', $routeName);
+        $action = end($parts);
+
+        $standardActions = [
+            'index', 'store', 'create', 'show', 'edit', 'update', 'destroy',
+            'json', 'pdf', 'data', 'approve', 'approveAll', 'print', 'printAll',
+            'publish', 'publishEdit', 'getByDivision', 'getSubclasses',
+            'getNamaPerkiraan', 'getNextNo'
+        ];
+
+        if (count($parts) > 1 && in_array($action, $standardActions)) {
+            // Jika route memiliki aksi standar, kembalikan bagian dasar
+            return implode('.', array_slice($parts, 0, -1));
+        }
+
+        // Default: gunakan seluruh route name sebagai slug
+        return $routeName;
     }
 }

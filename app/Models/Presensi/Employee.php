@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models\Presensi;
+
+use App\Models\keamanan\Member;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
@@ -90,4 +92,9 @@ class Employee extends Model
     {
         return $this->belongsTo(Posisi::class,  'emp_PosCode', 'pos_auto');
     }
+     public function member()
+    {
+        return $this->hasOne(Member::class, 'Mem_ID', 'emp_Code');
+    }
+    
 }
