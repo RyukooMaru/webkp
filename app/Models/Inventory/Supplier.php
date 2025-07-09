@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Supplier extends Model
 {
     protected $table = 'suppliers';
-    
+
     protected $fillable = [
         'kode_supplier',
         'nama_supplier',

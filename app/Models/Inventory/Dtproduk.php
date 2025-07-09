@@ -10,7 +10,7 @@ class Dtproduk extends Model
     use HasFactory;
 
     protected $table = 'dataproduk_tabel'; // Sesuai dengan nama tabel migration baru
-    
+
     protected $fillable = [
         'kode_produk',
         'nama_produk',
@@ -26,4 +26,3 @@ class Dtproduk extends Model
         return $this->belongsTo(Supplier::class);
     }
 }
-
