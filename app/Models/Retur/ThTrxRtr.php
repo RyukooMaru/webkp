@@ -5,12 +5,12 @@ namespace App\Models\Retur;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
-use App\Models\Penjualan\Customer;
+use App\Models\Inventory\Supplier;
 use App\Models\MutasiGudang\Warehouse;
 
-class ThTrxSalesRtr extends Model
+class ThTrxRtr extends Model
 {
-    protected $table = 'th_trxsalesrtr';
+    protected $table = 'th_trxrtr';
     protected $primaryKey = 'Trx_Auto';
     public $timestamps = false;
 
@@ -33,6 +33,7 @@ class ThTrxSalesRtr extends Model
         'trx_status',
         'Trx_Note',
         'trx_payment',
+        'trx_sales',
         'trx_clear',
         'trx_posting',
         'Trx_Print',
@@ -40,17 +41,20 @@ class ThTrxSalesRtr extends Model
         'trx_rev',
         'Trx_MerchandiserID',
         'Trx_UserID',
-        'Trx_LastUpdate'
+        'Trx_LastUpdate',
+        'trx_veriuserid',
+        'trx_veridate'
     ];
 
     protected $casts = [
         'Trx_Date'       => 'date',
         'Trx_LastUpdate' => 'datetime',
+        'trx_veridate'   => 'datetime',
     ];
 
     public function details(): HasMany
     {
-        return $this->hasMany(TdTrxSalesRtr::class, 'trx_number', 'trx_number');
+        return $this->hasMany(TdTrxRtr::class, 'trx_number', 'trx_number');
     }
 
     public function user()
@@ -58,9 +62,9 @@ class ThTrxSalesRtr extends Model
         return $this->belongsTo(User::class, 'Trx_UserID');
     }
 
-    public function customer()
+    public function supplier()
     {
-        return $this->belongsTo(Customer::class, 'Trx_SupCode', 'kode_customer');
+        return $this->belongsTo(Supplier::class, 'Trx_SupCode', 'kode_supplier');
     }
 
     public function warehouse()

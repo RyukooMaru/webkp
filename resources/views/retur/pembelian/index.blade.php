@@ -2,7 +2,7 @@
 
 @php
     $currentRouteName = Route::currentRouteName();
-    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
 @endphp
 
 @section('main-content')
@@ -30,9 +30,9 @@
                                     name="filter_date_to">
                             </div>
                             <div class="col-md-4">
-                                <label for="filter_sup_code" class="form-label">Kode Pelanggan</label>
+                                <label for="filter_sup_code" class="form-label">Kode Supplier</label>
                                 <input type="text" class="form-control form-control-sm" id="filter_sup_code"
-                                    name="filter_sup_code" placeholder="Masukkan kode pelanggan">
+                                    name="filter_sup_code" placeholder="Masukkan kode supplier">
                             </div>
                         </div>
                         <div class="row">
@@ -53,9 +53,9 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 @can('tambah', $currentMenuSlug)
-                <a href="{{ route('retur.penjualan.create') }}" class="btn btn-primary btn-sm mr-2 mb-2 mb-md-0">
-                    <i class="fas fa-plus"></i> Tambah Data
-                </a>
+                    <a href="{{ route('retur.pembelian.create') }}" class="btn btn-primary btn-sm mr-2 mb-2 mb-md-0">
+                        <i class="fas fa-plus"></i> Tambah Data
+                    </a>
                 @endcan
                 <button id="btn-approve-all" class="btn btn-success btn-sm mr-2 mb-2 mb-md-0" disabled>
                     <i class="fas fa-check"></i> Setujui Semua
@@ -68,14 +68,14 @@
 
         <div class="card mb-4">
             <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Daftar Retur Penjualan</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Daftar Retur Pembelian</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive pb-3">
                     <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
                         <thead class="thead-light">
                             <tr>
-                                <th width='5%'>Pelanggan</th>
+                                <th width='5%'>Supplier</th>
                                 <th width='5%'>NO</th>
                                 <th width='15%'>Tgl Kembali</th>
                                 <th width='10%'>Bruto</th>
@@ -105,7 +105,7 @@
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: '{!! route('retur.penjualan.data') !!}',
+                    url: '{!! route('retur.pembelian.data') !!}',
                     data: function(d) {
                         // Tambahkan parameter filter ke request
                         d.filter_date_from = $('#filter_date_from').val();
@@ -174,9 +174,9 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            const editUrl = `/retur/penjualan/${data}/edit`;
-                            const printUrl = `/retur/penjualan/${data}/print`;
-                            const approveUrl = `/retur/penjualan/${data}/approve`;
+                            const editUrl = `/retur/pembelian/${data}/edit`;
+                            const printUrl = `/retur/pembelian/${data}/print`;
+                            const approveUrl = `/retur/pembelian/${data}/approve`;
 
                             // Disable tombol edit jika dokumen sudah disetujui (T)
                             const editBtnClass = row.trx_posting === 'T' ?
@@ -189,19 +189,19 @@
                             const approveBtnDisabled = row.trx_posting === 'T' ? 'disabled' : '';
 
                             let buttons = '';
-                            
+
                             // Button Edit dengan permission check
                             @can('ubah', $currentMenuSlug)
-                            buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1" title="Edit" ${editBtnDisabled}>
+                                buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1" title="Edit" ${editBtnDisabled}>
                                 <i class="fas fa-edit"></i>
                             </a>`;
                             @endcan
-                            
+
                             // Button Approve
                             buttons += `<button data-id="${data}" class="btn btn-sm ${approveBtnClass} btn-approve mb-1" title="Approve" ${approveBtnDisabled}>
                                 <i class="fas fa-check"></i>
                             </button>`;
-                            
+
                             // Button Print
                             buttons += `<a href="${printUrl}" class="btn btn-sm btn-info mb-1" title="Print" target="_blank">
                                 <i class="fas fa-print"></i>
@@ -216,14 +216,14 @@
                 ],
             });
 
-            // Inisialisasi Select2 untuk dropdown pelanggan
+            // Inisialisasi Select2 untuk dropdown supplier
             $('#filter_sup_code').select2({
                 theme: 'bootstrap4',
-                placeholder: 'Pilih Pelanggan',
+                placeholder: 'Pilih Supplier',
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '{{ route('retur.penjualan.customers') }}',
+                    url: '{{ route('retur.pembelian.suppliers') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -260,7 +260,7 @@
             $('#filter_sup_code').on('select2:clear', function(e) {
                 // Kembalikan ke placeholder asli saat di-clear
                 $(this).data('select2').$container.find('.select2-selection__placeholder').text(
-                    'Pilih Pelanggan');
+                    'Pilih Supplier');
             });
 
             $('#btn-apply-filter').on('click', function(e) {
@@ -285,7 +285,7 @@
             $('#btn-print-all').on('click', function(e) {
                 e.preventDefault();
                 var keyword = table.search();
-                var url = '{{ route('retur.penjualan.printAll') }}';
+                var url = '{{ route('retur.pembelian.printAll') }}';
                 var params = [];
 
                 // Tambahkan search keyword jika ada
@@ -315,7 +315,7 @@
 
                 Swal.fire({
                     title: 'Konfirmasi',
-                    text: 'Apakah kamu yakin ingin menyetujui semua retur penjualan yang belum disetujui?',
+                    text: 'Apakah kamu yakin ingin menyetujui semua retur pembelian yang belum disetujui?',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -325,7 +325,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '{{ route('retur.penjualan.approveAll') }}',
+                            url: '{{ route('retur.pembelian.approveAll') }}',
                             type: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}'
@@ -334,7 +334,7 @@
                                 if (response.success) {
                                     Swal.fire({
                                         title: 'Berhasil!',
-                                        text: `${response.count} retur penjualan berhasil disetujui.`,
+                                        text: `${response.count} retur pembelian berhasil disetujui.`,
                                         icon: 'success'
                                     });
                                     table.ajax.reload();
@@ -365,7 +365,7 @@
 
                 Swal.fire({
                     title: 'Konfirmasi',
-                    text: 'Apakah kamu yakin ingin menyetujui retur penjualan ini?',
+                    text: 'Apakah kamu yakin ingin menyetujui retur pembelian ini?',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -375,7 +375,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `{{ url('retur/penjualan') }}/${id}/approve`,
+                            url: `{{ url('retur/pembelian') }}/${id}/approve`,
                             type: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}'
@@ -384,7 +384,7 @@
                                 if (response.success) {
                                     Swal.fire({
                                         title: 'Berhasil!',
-                                        text: 'Retur penjualan berhasil disetujui.',
+                                        text: 'Retur pembelian berhasil disetujui.',
                                         icon: 'success'
                                     });
                                     table.ajax.reload();
