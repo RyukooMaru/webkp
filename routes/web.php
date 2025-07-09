@@ -7,6 +7,7 @@ use App\Http\Controllers\Inventory\SupplierController;
 use App\Http\Controllers\Keamanan\RoleController;
 use App\Http\Controllers\Presensi\KaryawanController;
 use App\Http\Controllers\Retur\ReturPenjualanController;
+use App\Http\Controllers\Retur\ReturPembelianController;
 use App\Http\Controllers\Comprof\SettingMenuController;
 use App\Http\Controllers\Presensi\DivisiController;
 use App\Http\Controllers\Presensi\SubDivisiController;
@@ -228,6 +229,10 @@ Route::prefix('inventory')->group(function () {
     Route::prefix('retur')->name('retur.')->group(function () {
         // RETUR PENJUALAN
         Route::get('penjualan', [ReturPenjualanController::class, 'index'])->name('penjualan.index');
+    Route::get('penjualan/customers', [ReturPenjualanController::class, 'getCustomers'])->name('penjualan.customers');
+    Route::get('penjualan/warehouses', [ReturPenjualanController::class, 'getWarehouses'])->name('penjualan.warehouses');
+    Route::get('penjualan/product-data', [ReturPenjualanController::class, 'getProductData'])->name('penjualan.product-data');
+    Route::get('penjualan/uom-options', [ReturPenjualanController::class, 'getUoms'])->name('penjualan.uom-options');
         Route::get('penjualan/data', [ReturPenjualanController::class, 'dataJson'])->name('penjualan.data');
         Route::get('penjualan/create', [ReturPenjualanController::class, 'create'])->name('penjualan.create');
         Route::get('penjualan/{id}/edit', [ReturPenjualanController::class, 'edit'])->name('penjualan.edit');
@@ -247,6 +252,32 @@ Route::prefix('inventory')->group(function () {
         // PRINT
         Route::get('penjualan/print-all', [ReturPenjualanController::class, 'printAll'])->name('penjualan.printAll');
         Route::get('penjualan/{id}/print', [ReturPenjualanController::class, 'print'])->name('penjualan.print');
+
+    // RETUR PEMBELIAN
+    Route::get('pembelian', [ReturPembelianController::class, 'index'])->name('pembelian.index');
+    Route::get('pembelian/suppliers', [ReturPembelianController::class, 'getSuppliers'])->name('pembelian.suppliers');
+    Route::get('pembelian/warehouses', [ReturPembelianController::class, 'getWarehouses'])->name('pembelian.warehouses');
+    Route::get('pembelian/product-data', [ReturPembelianController::class, 'getProductData'])->name('pembelian.product-data');
+    Route::get('pembelian/uom-options', [ReturPembelianController::class, 'getUoms'])->name('pembelian.uom-options');
+    Route::get('pembelian/data', [ReturPembelianController::class, 'dataJson'])->name('pembelian.data');
+    Route::get('pembelian/create', [ReturPembelianController::class, 'create'])->name('pembelian.create');
+    Route::get('pembelian/{id}/edit', [ReturPembelianController::class, 'edit'])->name('pembelian.edit');
+    Route::put('pembelian/{id}', [ReturPembelianController::class, 'updateHeader'])->name('pembelian.update');
+    // DETAIL
+    Route::get('pembelian/{id}/details', [ReturPembelianController::class, 'detailsJson'])->name('pembelian.details.data');
+    Route::post('pembelian/{id}/details', [ReturPembelianController::class, 'storeDetail'])->name('pembelian.details.store');
+    Route::put('pembelian/{id}/details/{detailId}', [ReturPembelianController::class, 'updateDetail'])->name('pembelian.details.update');
+    Route::delete('pembelian/{id}/details/{detailId}', [ReturPembelianController::class, 'destroyDetail'])->name('pembelian.details.destroy');
+    // DRAFT
+    Route::delete('pembelian/{id}', [ReturPembelianController::class, 'destroyHeader'])->name('pembelian.destroy');
+    Route::put('pembelian/{id}/publish', [ReturPembelianController::class, 'publish'])->name('pembelian.publish');
+    Route::put('pembelian/{id}/publish-edit', [ReturPembelianController::class, 'publishEdit'])->name('pembelian.publishEdit');
+    // APPROVE
+    Route::post('pembelian/approve-all', [ReturPembelianController::class, 'approveAll'])->name('pembelian.approveAll');
+    Route::post('pembelian/{id}/approve', [ReturPembelianController::class, 'approve'])->name('pembelian.approve');
+    // PRINT
+    Route::get('pembelian/print-all', [ReturPembelianController::class, 'printAll'])->name('pembelian.printAll');
+    Route::get('pembelian/{id}/print', [ReturPembelianController::class, 'print'])->name('pembelian.print');
     });
 
 

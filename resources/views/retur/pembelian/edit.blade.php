@@ -2,14 +2,14 @@
 
 @php
     $currentRouteName = Route::currentRouteName();
-    $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
 @endphp
 
 @section('main-content')
     <div class="container-fluid">
         <div class="card mb-4">
             <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Edit Retur Penjualan</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Edit Retur Pembelian</h6>
             </div>
             <div class="card-body">
                 <form id="headerForm">@csrf
@@ -27,14 +27,14 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label">Pelanggan</label>
+                        <label class="col-sm-2 col-form-label">Supplier</label>
                         <div class="col-sm-4">
                             <select name="Trx_SupCode" id="Trx_SupCode" class="form-control" required>
                                 @if ($header->Trx_SupCode)
                                     <option value="{{ $header->Trx_SupCode }}" selected>
                                         {{ $header->Trx_SupCode }}
-                                        @if ($header->customer)
-                                            - {{ $header->customer->nama_customer }}
+                                        @if ($header->supplier)
+                                            - {{ $header->supplier->nama_supplier }}
                                         @endif
                                     </option>
                                 @endif
@@ -66,15 +66,15 @@
 
         <div class="mb-3 d-flex">
             @can('tambah', $currentMenuSlug)
-                <button type="button" id="addCodeButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
-                    data-bs-target="#dtlModal">
-                    <i class="fas fa-plus"></i>
-                </button>
+            <button type="button" id="addCodeButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
+                data-bs-target="#dtlModal">
+                <i class="fas fa-plus"></i>
+            </button>
             @endcan
             <button id="btnPublish" class="btn btn-info mr-2">
                 <i class="fas fa-floppy-disk"></i>
             </button>
-            <a href="{{ route('retur.penjualan.index') }}" class="btn btn-secondary">
+            <a href="{{ route('retur.pembelian.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i>
             </a>
         </div>
@@ -89,7 +89,7 @@
                                 <th width='10%'>Nama Produk</th>
                                 <th width='5%'>Qty</th>
                                 <th width='5%'>Satuan</th>
-                                <th width='10%'>Harga Jual</th>
+                                <th width='10%'>Harga Beli</th>
                                 <th width='10%'>Disc (%)</th>
                                 <th width='10%'>Pajak (%)</th>
                                 <th width='10%'>Nominal</th>
@@ -135,7 +135,7 @@
                                         {{-- isi akan di-render via AJAX --}}
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Harga Jual</label>
+                                <label class="col-sm-2 col-form-label">Harga Beli</label>
                                 <div class="col-sm-4">
                                     <input type="number" min="1000" step="1000" name="Trx_GrossPrice"
                                         id="Trx_GrossPrice" class="form-control calc-trigger" readonly required>
@@ -236,21 +236,21 @@
                     {
                         data: null,
                         orderable: false,
-                        render: (data, type, row, meta) => {
+                        render: function(data, type, row, meta) {
                             let buttons = '';
-
+                            
                             @can('ubah', $currentMenuSlug)
-                                buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1" data-idx="${meta.row}">
+                            buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1" data-idx="${meta.row}">
                                 <i class="fas fa-edit"></i>
                             </button>`;
                             @endcan
-
+                            
                             @can('hapus', $currentMenuSlug)
-                                buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1" data-idx="${meta.row}">
+                            buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1" data-idx="${meta.row}">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                             @endcan
-
+                            
                             return buttons;
                         }
                     }
@@ -261,7 +261,7 @@
             });
 
             // Load initial details dari server
-            $.get(`/retur/penjualan/${headerId}/details`, resp => {
+            $.get(`/retur/pembelian/${headerId}/details`, resp => {
                 detailBuffer = resp.data;
                 detailTable.clear().rows.add(detailBuffer).draw();
             });
@@ -287,7 +287,7 @@
             // Load UOM options untuk dropdown
             function loadUomOptions() {
                 $.ajax({
-                    url: '{{ route('retur.penjualan.uom-options') }}',
+                    url: '{{ route('retur.pembelian.uom-options') }}',
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -319,7 +319,7 @@
                 $('#stock_info').text('Loading...');
 
                 $.ajax({
-                    url: '{{ route('retur.penjualan.product-data') }}',
+                    url: '{{ route('retur.pembelian.product-data') }}',
                     method: 'GET',
                     data: {
                         kode_produk: kode
@@ -328,7 +328,7 @@
                         if (response.success) {
                             const data = response.data;
                             $('#trx_prodname').val(data.nama_produk);
-                            $('#Trx_GrossPrice').val(data.harga_jual);
+                            $('#Trx_GrossPrice').val(data.harga_beli);
                             $('#stock_info').text(data.qty + ' ' + data.uom_code);
 
                             // Set default UOM jika ada
@@ -473,7 +473,7 @@
                     detailBuffer.splice(idx, 1);
                     detailTable.clear().rows.add(detailBuffer).draw();
                     Swal.fire({
-                        title: 'Berhasil',
+                        title: 'Terhapus!',
                         text: 'Item berhasil dihapus',
                         icon: 'success',
                         timer: 1500,
@@ -496,7 +496,7 @@
                     _method: 'PUT'
                 };
                 Swal.fire({
-                    title: 'Simpan perubahan retur penjualan?',
+                    title: 'Simpan perubahan retur pembelian?',
                     text: 'Pastikan data sudah benar',
                     icon: 'question',
                     showCancelButton: true,
@@ -507,7 +507,7 @@
                 }).then(res => {
                     if (!res.isConfirmed) return;
                     $.ajax({
-                        url: '{{ route('retur.penjualan.publishEdit', $header->Trx_Auto) }}',
+                        url: '{{ route('retur.pembelian.publishEdit', $header->Trx_Auto) }}',
                         type: 'POST',
                         data: payload,
                         success: function(response) {
@@ -515,10 +515,10 @@
                                 Swal.fire('Berhasil!', response.message, 'success')
                                     .then(() => {
                                         window.location.href =
-                                            '{{ route('retur.penjualan.index') }}';
+                                            '{{ route('retur.pembelian.index') }}';
                                     });
                             } else {
-                                Swal.fire('Error', 'Gagal memperbarui retur penjualan',
+                                Swal.fire('Error', 'Gagal memperbarui retur pembelian',
                                     'error');
                             }
                         },
@@ -534,14 +534,14 @@
                 });
             });
 
-            // Inisialisasi Select2 untuk dropdown pelanggan
+            // Inisialisasi Select2 untuk dropdown supplier
             $('#Trx_SupCode').select2({
                 theme: 'bootstrap4',
-                placeholder: 'Pilih Pelanggan',
+                placeholder: 'Pilih Supplier',
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '{{ route('retur.penjualan.customers') }}',
+                    url: '{{ route('retur.pembelian.suppliers') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -574,7 +574,7 @@
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '{{ route('retur.penjualan.warehouses') }}',
+                    url: '{{ route('retur.pembelian.warehouses') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {

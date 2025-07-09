@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Retur;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Retur\ThTrxSalesRtr;
-use App\Models\Retur\TdTrxSalesRtr;
-use App\Models\Penjualan\Customer;
+use App\Models\Retur\ThTrxRtr;
+use App\Models\Retur\TdTrxRtr;
+use App\Models\Inventory\Supplier;
 use App\Models\MutasiGudang\Warehouse;
 use App\Models\Inventory\Dtproduk;
 use App\Models\Inventory\SatuanProduk;
@@ -15,19 +15,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class ReturPenjualanController extends Controller
+class ReturPembelianController extends Controller
 {
     // Tampilan index
     public function index()
     {
-        return view('retur.penjualan.index');
+        return view('retur.pembelian.index');
     }
 
     // JSON untuk DataTables index
     public function dataJson(Request $request)
     {
         // Hanya ambil data dengan posting F atau T
-        $query = ThTrxSalesRtr::whereIn('trx_posting', ['F', 'T']);
+        $query = ThTrxRtr::whereIn('trx_posting', ['F', 'T']);
 
         // Filter
         if ($request->filled('filter_date_from')) {
@@ -75,37 +75,37 @@ class ReturPenjualanController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    // Method untuk mengambil data customer untuk Select2
-    public function getCustomers(Request $request)
+    // Method untuk mengambil data supplier untuk Select2
+    public function getSuppliers(Request $request)
     {
         $search = $request->get('q', '');
         $page = $request->get('page', 1);
         $perPage = 10;
 
-        $query = Customer::query();
+        $query = Supplier::query();
 
         // Jika ada search term, filter berdasarkan search
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('kode_customer', 'like', "%{$search}%")
-                    ->orWhere('nama_customer', 'like', "%{$search}%");
+                $q->where('kode_supplier', 'like', "%{$search}%")
+                    ->orWhere('nama_supplier', 'like', "%{$search}%");
             });
         }
 
-        $customers = $query->select('kode_customer', 'nama_customer')
-            ->orderBy('kode_customer')
+        $suppliers = $query->select('kode_supplier', 'nama_supplier')
+            ->orderBy('kode_supplier')
             ->paginate($perPage, ['*'], 'page', $page);
 
-        $items = $customers->map(function ($customer) {
+        $items = $suppliers->map(function ($supplier) {
             return [
-                'id' => $customer->kode_customer,
-                'text' => $customer->kode_customer . ' - ' . $customer->nama_customer
+                'id' => $supplier->kode_supplier,
+                'text' => $supplier->kode_supplier . ' - ' . $supplier->nama_supplier
             ];
         });
 
         return response()->json([
             'items' => $items,
-            'total_count' => $customers->total()
+            'total_count' => $suppliers->total()
         ]);
     }
 
@@ -147,7 +147,7 @@ class ReturPenjualanController extends Controller
     public function create()
     {
         // kalau sudah ada draft, ambil. kalau belum, buat baru
-        $draft = ThTrxSalesRtr::firstOrCreate(
+        $draft = ThTrxRtr::firstOrCreate(
             ['trx_posting' => 'D'],
             [
                 'trx_number'     => $this->generateNextNumber(),
@@ -161,9 +161,9 @@ class ReturPenjualanController extends Controller
         );
 
         // eager load details kosong atau yang ada
-        $draft->load(['details', 'warehouse', 'customer']);
+        $draft->load(['details', 'warehouse', 'supplier']);
 
-        return view('retur.penjualan.create', [
+        return view('retur.pembelian.create', [
             'header' => $draft,
             'details' => $draft->details,
         ]);
@@ -172,23 +172,23 @@ class ReturPenjualanController extends Controller
     // helper untuk generate nomor
     protected function generateNextNumber()
     {
-        $lastSeq = ThTrxSalesRtr::selectRaw("MAX(CAST(SUBSTRING(trx_number, 5) AS UNSIGNED)) AS seq")
+        $lastSeq = ThTrxRtr::selectRaw("MAX(CAST(SUBSTRING(trx_number, 5) AS UNSIGNED)) AS seq")
             ->value('seq') ?? 0;
-        return 'RTJ-' . ($lastSeq + 1);
+        return 'RTB-' . ($lastSeq + 1);
     }
 
     public function edit($id)
     {
         // Pastikan hanya dokumen F (belum approve) yang bisa di-edit
-        $header = ThTrxSalesRtr::where('Trx_Auto', $id)
+        $header = ThTrxRtr::where('Trx_Auto', $id)
             ->where('trx_posting', 'F')
-            ->with(['details', 'warehouse', 'customer'])
+            ->with(['details', 'warehouse', 'supplier'])
             ->firstOrFail();
 
         // Eager load
         $header->load('details');
 
-        return view('retur.penjualan.edit', [
+        return view('retur.pembelian.edit', [
             'header' => $header,
             'details' => $header->details,
         ]);
@@ -204,7 +204,7 @@ class ReturPenjualanController extends Controller
             'Trx_Note'     => 'nullable|string',
         ]);
 
-        $hdr = ThTrxSalesRtr::findOrFail($id);
+        $hdr = ThTrxRtr::findOrFail($id);
 
         // Coba untuk mendapatkan User ID, atau gunakan default (misalnya null)
         $userId = null;
@@ -234,7 +234,7 @@ class ReturPenjualanController extends Controller
     // JSON Detail untuk satu header
     public function detailsJson($id)
     {
-        $header = ThTrxSalesRtr::with('details')->findOrFail($id);
+        $header = ThTrxRtr::with('details')->findOrFail($id);
         return response()->json(['data' => $header->details]);
     }
 
@@ -253,7 +253,7 @@ class ReturPenjualanController extends Controller
             'Trx_NoteDetail' => 'nullable|string',
         ]);
 
-        $hdr    = ThTrxSalesRtr::findOrFail($id);
+        $hdr    = ThTrxRtr::findOrFail($id);
         $detail = $hdr->details()->create([
             'trx_number'     => $hdr->trx_number,
             'Trx_ProdCode'   => $r->Trx_ProdCode,
@@ -291,7 +291,7 @@ class ReturPenjualanController extends Controller
         ]);
 
         // update detail
-        $det = TdTrxSalesRtr::findOrFail($detailId);
+        $det = TdTrxRtr::findOrFail($detailId);
         $det->update([
             'Trx_ProdCode'   => $r->Trx_ProdCode,
             'trx_prodname'   => $r->trx_prodname,
@@ -314,7 +314,7 @@ class ReturPenjualanController extends Controller
     // Helper method untuk mengupdate total di header
     protected function updateHeaderTotals($headerId)
     {
-        $header = ThTrxSalesRtr::findOrFail($headerId);
+        $header = ThTrxRtr::findOrFail($headerId);
 
         // Menyiapkan kueri untuk mendapatkan detail dari header
         $details = $header->details()->get();
@@ -354,7 +354,7 @@ class ReturPenjualanController extends Controller
     // Destroy Detail via AJAX
     public function destroyDetail($id, $detailId)
     {
-        TdTrxSalesRtr::findOrFail($detailId)->delete();
+        TdTrxRtr::findOrFail($detailId)->delete();
 
         // Update juga total di header
         $this->updateHeaderTotals($id);
@@ -365,10 +365,10 @@ class ReturPenjualanController extends Controller
     // Destroy Header & cascade details
     public function destroyHeader($id)
     {
-        $header = ThTrxSalesRtr::findOrFail($id);
+        $header = ThTrxRtr::findOrFail($id);
 
         // Delete details dulu
-        TdTrxSalesRtr::where('trx_number', $header->trx_number)->delete();
+        TdTrxRtr::where('trx_number', $header->trx_number)->delete();
 
         // Kemudian delete header
         $header->delete();
@@ -379,10 +379,10 @@ class ReturPenjualanController extends Controller
     // Publish Draft
     public function publish(Request $r, $id)
     {
-        $hdr = ThTrxSalesRtr::findOrFail($id);
+        $hdr = ThTrxRtr::findOrFail($id);
 
         // Cek jika draft punya details
-        $detailCount = TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->count();
+        $detailCount = TdTrxRtr::where('trx_number', $hdr->trx_number)->count();
         if ($detailCount == 0) {
             return response()->json([
                 'success' => false,
@@ -398,7 +398,7 @@ class ReturPenjualanController extends Controller
         ]);
 
         // Update semua details agar sama
-        TdTrxSalesRtr::where('trx_number', $hdr->trx_number)
+        TdTrxRtr::where('trx_number', $hdr->trx_number)
             ->update([
                 'trx_posting' => 'F',
                 'Trx_LastUpdate' => now()
@@ -428,7 +428,7 @@ class ReturPenjualanController extends Controller
         ]);
 
         // Ambil header
-        $hdr = ThTrxSalesRtr::findOrFail($id);
+        $hdr = ThTrxRtr::findOrFail($id);
         // Update header fields + set posting=F
         $hdr->update([
             'Trx_Date'     => $r->Trx_Date,
@@ -441,7 +441,7 @@ class ReturPenjualanController extends Controller
         ]);
 
         // Hapus semua detail lama, lalu simpan yang baru
-        TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->delete();
+        TdTrxRtr::where('trx_number', $hdr->trx_number)->delete();
 
         $totGross = $totDisc = $totTax = $totNett = 0;
         foreach ($r->details as $dt) {
@@ -474,7 +474,7 @@ class ReturPenjualanController extends Controller
     public function approveAll(Request $request)
     {
         // Ambil semua header yang akan diapprove
-        $headers = ThTrxSalesRtr::where('trx_posting', 'F')->get();
+        $headers = ThTrxRtr::where('trx_posting', 'F')->get();
 
         foreach ($headers as $hdr) {
             // Update header menjadi status T
@@ -485,7 +485,7 @@ class ReturPenjualanController extends Controller
             ]);
 
             // Update semua detail terkait dan update stok
-            $details = TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->get();
+            $details = TdTrxRtr::where('trx_number', $hdr->trx_number)->get();
 
             foreach ($details as $detail) {
                 // Update posting status
@@ -494,12 +494,12 @@ class ReturPenjualanController extends Controller
                     'Trx_LastUpdate' => now()
                 ]);
 
-                // Update stok produk (retur penjualan = stok bertambah)
+                // Update stok produk (retur pembelian = stok berkurang)
                 $product = Dtproduk::where('kode_produk', $detail->Trx_ProdCode)->first();
                 if ($product) {
                     // Pastikan stok tidak negatif
                     if ($product->qty >= $detail->Trx_QtyTrx) {
-                        $product->increment('qty', $detail->Trx_QtyTrx);
+                        $product->decrement('qty', $detail->Trx_QtyTrx);
                     } else {
                         // Log warning jika stok tidak mencukupi
                         Log::warning("Stok tidak mencukupi untuk produk {$detail->Trx_ProdCode}. Stok tersedia: {$product->qty}, Qty retur: {$detail->Trx_QtyTrx}");
@@ -518,7 +518,7 @@ class ReturPenjualanController extends Controller
     // Approve Single  
     public function approve($id)
     {
-        $hdr = ThTrxSalesRtr::findOrFail($id);
+        $hdr = ThTrxRtr::findOrFail($id);
 
         // Pastikan hanya dokumen yang sudah F yang bisa disetujui
         if ($hdr->trx_posting !== 'F') {
@@ -536,7 +536,7 @@ class ReturPenjualanController extends Controller
         ]);
 
         // Update semua detail terkait dan update stok
-        $details = TdTrxSalesRtr::where('trx_number', $hdr->trx_number)->get();
+        $details = TdTrxRtr::where('trx_number', $hdr->trx_number)->get();
 
         foreach ($details as $detail) {
             // Update posting status
@@ -545,12 +545,12 @@ class ReturPenjualanController extends Controller
                 'Trx_LastUpdate' => now()
             ]);
 
-            // Update stok produk (retur penjualan = stok bertambah)
+            // Update stok produk (retur pembelian = stok berkurang)
             $product = Dtproduk::where('kode_produk', $detail->Trx_ProdCode)->first();
             if ($product) {
                 // Pastikan stok tidak negatif
                 if ($product->qty >= $detail->Trx_QtyTrx) {
-                    $product->increment('qty', $detail->Trx_QtyTrx);
+                    $product->decrement('qty', $detail->Trx_QtyTrx);
                 } else {
                     // Log warning jika stok tidak mencukupi
                     Log::warning("Stok tidak mencukupi untuk produk {$detail->Trx_ProdCode}. Stok tersedia: {$product->qty}, Qty retur: {$detail->Trx_QtyTrx}");
@@ -576,7 +576,7 @@ class ReturPenjualanController extends Controller
             'Trx_UserID'
         ];
 
-        $query = ThTrxSalesRtr::select(array_merge(['Trx_Auto', 'trx_posting'], $cols))
+        $query = ThTrxRtr::select(array_merge(['Trx_Auto', 'trx_posting'], $cols))
             ->with('user:id,name')
             ->whereIn('trx_posting', ['F', 'T']);
 
@@ -621,7 +621,7 @@ class ReturPenjualanController extends Controller
             $request->filled('filter_sup_code') ||
             $request->filled('search');
 
-        $pdf = Pdf::loadView('retur.penjualan.print', compact(
+        $pdf = Pdf::loadView('retur.pembelian.print', compact(
             'rows',
             'totalGrossPrice',
             'totalDiscount',
@@ -631,22 +631,22 @@ class ReturPenjualanController extends Controller
             'currentUser'
         ))->setPaper('a4', 'landscape');
 
-        return $pdf->stream('retur-penjualan.pdf');
+        return $pdf->stream('retur-pembelian.pdf');
     }
 
     // Print Single
     public function print($id)
     {
-        $row = ThTrxSalesRtr::with(['details', 'user:id,name', 'customer:kode_customer,nama_customer'])->findOrFail($id);
+        $row = ThTrxRtr::with(['details', 'user:id,name', 'supplier:kode_supplier,nama_supplier'])->findOrFail($id);
         $details = $row->details;
 
         $currentUser = auth()->user();
         $tanggalCetak = now()->setTimezone('Asia/Jakarta')->format('d F Y H:i:s');
 
-        $pdf = Pdf::loadView('retur.penjualan.print', compact('row', 'details', 'tanggalCetak', 'currentUser'))
+        $pdf = Pdf::loadView('retur.pembelian.print', compact('row', 'details', 'tanggalCetak', 'currentUser'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream("retur-penjualan-{$row->trx_number}.pdf");
+        return $pdf->stream("retur-pembelian-{$row->trx_number}.pdf");
     }
 
     // autocomplete produk

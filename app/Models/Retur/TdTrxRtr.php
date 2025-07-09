@@ -5,11 +5,11 @@ namespace App\Models\Retur;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Inventory\Dtproduk;
-use App\Models\Penjualan\Customer;
+use App\Models\Inventory\Supplier;
 
-class TdTrxSalesRtr extends Model
+class TdTrxRtr extends Model
 {
-    protected $table = 'td_trxsalesrtr';
+    protected $table = 'td_trxrtr';
     protected $primaryKey = 'trx_number_dtl';
     public $incrementing  = true;
     public $keyType       = 'int';
@@ -17,6 +17,8 @@ class TdTrxSalesRtr extends Model
 
     protected $fillable = [
         'Trx_SupCode',
+        'Trx_warecode',
+        'trx_sourcenumber',
         'trx_number',
         'Trx_date',
         'Trx_ProdCode',
@@ -39,9 +41,14 @@ class TdTrxSalesRtr extends Model
         'Trx_LastUpdate'
     ];
 
+    protected $casts = [
+        'Trx_date'       => 'date',
+        'Trx_LastUpdate' => 'datetime',
+    ];
+
     public function header(): BelongsTo
     {
-        return $this->belongsTo(ThTrxSalesRtr::class, 'trx_number', 'trx_number');
+        return $this->belongsTo(ThTrxRtr::class, 'trx_number', 'trx_number');
     }
 
     public function product()
@@ -49,8 +56,8 @@ class TdTrxSalesRtr extends Model
         return $this->belongsTo(Dtproduk::class, 'Trx_ProdCode', 'kode_produk');
     }
 
-    public function customer()
+    public function supplier()
     {
-        return $this->belongsTo(Customer::class, 'Pro_SupCode', 'kode_customer');
+        return $this->belongsTo(Supplier::class, 'Trx_SupCode', 'kode_supplier');
     }
 }

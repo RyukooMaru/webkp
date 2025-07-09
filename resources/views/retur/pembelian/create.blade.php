@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <div class="card mb-4">
             <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Form Retur Penjualan</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Form Retur Pembelian</h6>
             </div>
             <div class="card-body">
                 <form id="headerForm">@csrf
@@ -27,14 +27,14 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label">Pelanggan</label>
+                        <label class="col-sm-2 col-form-label">Supplier</label>
                         <div class="col-sm-4">
                             <select name="Trx_SupCode" id="Trx_SupCode" class="form-control" required>
                                 @if ($header->Trx_SupCode)
                                     <option value="{{ $header->Trx_SupCode }}" selected>
                                         {{ $header->Trx_SupCode }}
-                                        @if ($header->customer)
-                                            - {{ $header->customer->nama_customer }}
+                                        @if ($header->supplier)
+                                            - {{ $header->supplier->nama_supplier }}
                                         @endif
                                     </option>
                                 @endif
@@ -77,7 +77,7 @@
             <button id="btnCancelDraft" class="btn btn-danger mr-2">
                 <i class="fas fa-times"></i>
             </button>
-            <a href="{{ route('retur.penjualan.index') }}" class="btn btn-secondary">
+            <a href="{{ route('retur.pembelian.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i>
             </a>
         </div>
@@ -92,7 +92,7 @@
                                 <th width='10%'>Nama Produk</th>
                                 <th width='5%'>Qty</th>
                                 <th width='5%'>Satuan</th>
-                                <th width='10%'>Harga Jual</th>
+                                <th width='10%'>Harga Beli</th>
                                 <th width='10%'>Disc (%)</th>
                                 <th width='10%'>Pajak (%)</th>
                                 <th width='10%'>Nominal</th>
@@ -138,7 +138,7 @@
                                         {{-- isi akan di-render via AJAX --}}
                                     </select>
                                 </div>
-                                <label class="col-sm-2 col-form-label">Harga Jual</label>
+                                <label class="col-sm-2 col-form-label">Harga Beli</label>
                                 <div class="col-sm-4">
                                     <input type="number" min="1000" step="1000" name="Trx_GrossPrice"
                                         id="Trx_GrossPrice" class="form-control calc-trigger" readonly required>
@@ -231,7 +231,7 @@
             // Load UOM options untuk dropdown
             function loadUomOptions() {
                 $.ajax({
-                    url: '{{ route('retur.penjualan.uom-options') }}',
+                    url: '{{ route('retur.pembelian.uom-options') }}',
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -263,7 +263,7 @@
                 $('#stock_info').text('Loading...');
 
                 $.ajax({
-                    url: '{{ route('retur.penjualan.product-data') }}',
+                    url: '{{ route('retur.pembelian.product-data') }}',
                     method: 'GET',
                     data: {
                         kode_produk: kode
@@ -272,7 +272,7 @@
                         if (response.success) {
                             const data = response.data;
                             $('#trx_prodname').val(data.nama_produk);
-                            $('#Trx_GrossPrice').val(data.harga_jual);
+                            $('#Trx_GrossPrice').val(data.harga_beli);
                             $('#stock_info').text(data.qty + ' ' + data.uom_code);
 
                             // Set default UOM jika ada
@@ -304,14 +304,14 @@
                 $('#trx_uom').val('');
             }
 
-            // Inisialisasi Select2 untuk dropdown pelanggan
+            // Inisialisasi Select2 untuk dropdown supplier
             $('#Trx_SupCode').select2({
                 theme: 'bootstrap4',
-                placeholder: 'Pilih Pelanggan',
+                placeholder: 'Pilih Supplier',
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '{{ route('retur.penjualan.customers') }}',
+                    url: '{{ route('retur.pembelian.suppliers') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -344,7 +344,7 @@
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '{{ route('retur.penjualan.warehouses') }}',
+                    url: '{{ route('retur.pembelian.warehouses') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -384,7 +384,7 @@
 
                 const data = $('#headerForm').serialize();
                 $.ajax({
-                    url: `/retur/penjualan/${headerId}`,
+                    url: `/retur/pembelian/${headerId}`,
                     type: 'PUT',
                     data: data,
                     success: function(response) {},
@@ -411,7 +411,7 @@
             // Inisialisasi DataTable DETAIL
             const detailTable = $('#dataTable').DataTable({
                 ajax: {
-                    url: `/retur/penjualan/${headerId}/details`,
+                    url: `/retur/pembelian/${headerId}/details`,
                     dataSrc: 'data'
                 },
                 columns: [{
@@ -535,14 +535,14 @@
                     if (editMode) {
                         // UPDATE
                         await $.ajax({
-                            url: `/retur/penjualan/${headerId}/details/${currentDetailId}`,
+                            url: `/retur/pembelian/${headerId}/details/${currentDetailId}`,
                             type: 'PUT',
                             data: payload
                         });
                     } else {
                         // CREATE
                         await $.post(
-                            `/retur/penjualan/${headerId}/details`,
+                            `/retur/pembelian/${headerId}/details`,
                             payload
                         );
                     }
@@ -638,7 +638,7 @@
                     if (!result.isConfirmed) return;
 
                     $.ajax({
-                        url: `/retur/penjualan/${headerId}/details/${detailId}`,
+                        url: `/retur/pembelian/${headerId}/details/${detailId}`,
                         type: 'DELETE'
                     }).done(() => {
                         detailTable.ajax.reload(null, false);
@@ -672,7 +672,7 @@
                     if (!result.isConfirmed) return;
 
                     $.ajax({
-                        url: `/retur/penjualan/${headerId}`,
+                        url: `/retur/pembelian/${headerId}`,
                         type: 'DELETE'
                     }).done(() => {
                         Swal.fire({
@@ -683,7 +683,7 @@
                             showConfirmButton: false
                         }).then(() => {
                             window.location.href =
-                                '{{ route('retur.penjualan.index') }}';
+                                '{{ route('retur.pembelian.index') }}';
                         });
                     }).fail((xhr) => {
                         Swal.fire('Error', 'Gagal membatalkan draft: ' + xhr.responseText,
@@ -702,7 +702,7 @@
                 }
 
                 Swal.fire({
-                    title: 'Simpan Retur Penjualan?',
+                    title: 'Simpan Retur Pembelian?',
                     text: "Pastikan data sudah benar",
                     icon: 'question',
                     showCancelButton: true,
@@ -714,18 +714,18 @@
                     if (!result.isConfirmed) return;
 
                     $.ajax({
-                        url: `/retur/penjualan/${headerId}/publish`,
+                        url: `/retur/pembelian/${headerId}/publish`,
                         type: 'PUT'
                     }).done(() => {
                         Swal.fire({
                             title: 'Berhasil',
-                            text: 'Retur Penjualan telah disimpan',
+                            text: 'Retur Pembelian telah disimpan',
                             icon: 'success',
                             timer: 5000,
                             showConfirmButton: false
                         }).then(() => {
                             window.location.href =
-                                '{{ route('retur.penjualan.index') }}';
+                                '{{ route('retur.pembelian.index') }}';
                         });
                     }).fail((xhr) => {
                         Swal.fire('Error', xhr.responseJSON?.message ||
@@ -735,7 +735,7 @@
             });
 
             // Periksa apakah memiliki rincian saat halaman dimuat untuk mengaktifkan/mematikan tombol
-            $.get(`/retur/penjualan/${headerId}/details`, function(response) {
+            $.get(`/retur/pembelian/${headerId}/details`, function(response) {
                 const hasDetails = response.data && response.data.length > 0;
                 $('#btnPublish').prop('disabled', !hasDetails);
             });

@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         @if (isset($row))
-            Retur Penjualan {{ $row->trx_number }}
+            Retur Pembelian {{ $row->trx_number }}
         @else
-            Daftar Retur Penjualan
+            Daftar Retur Pembelian
         @endif
     </title>
     <style>
@@ -180,9 +180,9 @@
 <body>
     <div class="container">
         @if (isset($row))
-            {{-- Single Sales Return - Header sama seperti Print All --}}
+            {{-- Single Purchase Return - Header sama seperti Print All --}}
             <div class="header-section">
-                <h1>Retur Penjualan {{ $row->trx_number }}</h1>
+                <h1>Retur Pembelian {{ $row->trx_number }}</h1>
                 <p>CV.PRIMA BELLA PANEN REJEKI</p>
                 <p>{{ $tanggalCetak }}</p>
             </div>
@@ -221,7 +221,7 @@
                         <table style="border: none; width: 100%; margin: 0; border-spacing: 0; ">
                             <tr style="border: none;">
                                 <td style="border: none; width: 100px; padding: 2px 0; margin: 0;">
-                                    <strong>Kode Pelanggan</strong>
+                                    <strong>Kode Supplier</strong>
                                 </td>
                                 <td style="border: none; width: 10px; padding: 2px 0; margin: 0;">
                                     <strong>:</strong>
@@ -231,13 +231,13 @@
                             </tr>
                             <tr style="border: none;">
                                 <td style="border: none; width: 100px; padding: 2px 0; margin: 0; ">
-                                    <strong>Nama Pelanggan</strong>
+                                    <strong>Nama Supplier</strong>
                                 </td>
                                 <td style="border: none; width: 10px; padding: 2px 0; margin: 0; ">
                                     <strong>:</strong>
                                 </td>
                                 <td style="border: none; padding: 2px 0; margin: 0;">
-                                    {{ $row->customer->nama_customer }}</td>
+                                    {{ $row->supplier->nama_supplier }}</td>
                             </tr>
                         </table>
                     </td>
@@ -263,29 +263,29 @@
                             <th>Nama Produk</th>
                             <th class="text-right">Qty</th>
                             <th>Satuan</th>
-                            <th class="text-right">Harga Jual</th>
+                            <th class="text-right">Harga Beli</th>
                             <th class="text-right">Disc (%)</th>
                             <th class="text-right">Pajak (%)</th>
                             <th class="text-right">Nominal</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($details as $i => $d)
+                        @foreach ($details as $i => $detail)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td>{{ $d->Trx_ProdCode }}</td>
-                                <td>{{ $d->trx_prodname }}</td>
-                                <td class="text-right">{{ number_format($d->Trx_QtyTrx, 2, ',', '.') }}</td>
-                                <td>{{ $d->trx_uom }}</td>
-                                <td class="text-right">{{ number_format($d->Trx_GrossPrice, 2, ',', '.') }}</td>
-                                <td class="text-right">{{ number_format($d->Trx_Discount, 2, ',', '.') }}</td>
-                                <td class="text-right">{{ number_format($d->Trx_Taxes, 2, ',', '.') }}</td>
-                                <td class="text-right">{{ number_format($d->Trx_NettPrice, 2, ',', '.') }}</td>
+                                <td>{{ $detail->Trx_ProdCode }}</td>
+                                <td>{{ $detail->trx_prodname }}</td>
+                                <td class="text-right">{{ number_format($detail->Trx_QtyTrx, 2, ',', '.') }}</td>
+                                <td>{{ $detail->trx_uom }}</td>
+                                <td class="text-right">{{ number_format($detail->Trx_GrossPrice, 2, ',', '.') }}</td>
+                                <td class="text-right">{{ number_format($detail->Trx_Discount, 2, ',', '.') }}</td>
+                                <td class="text-right">{{ number_format($detail->Trx_Taxes, 2, ',', '.') }}</td>
+                                <td class="text-right">{{ number_format($detail->Trx_NettPrice, 2, ',', '.') }}</td>
                             </tr>
-                            @if (!empty($d->Trx_Note))
+                            @if (!empty($detail->Trx_Note))
                                 <tr class="item-note">
                                     <td colspan="9" style="border-top: none; padding-top: 2px; padding-bottom: 6px;">
-                                        <em>Catatan: {{ $d->Trx_Note }}</em>
+                                        <em>Catatan: {{ $detail->Trx_Note }}</em>
                                     </td>
                                 </tr>
                             @endif
@@ -319,7 +319,7 @@
             </div>
         @else
             <div class="header-section">
-                <h1>Daftar Retur Penjualan</h1>
+                <h1>Daftar Retur Pembelian</h1>
                 <p>CV.PRIMA BELLA PANEN REJEKI</p>
                 <p>{{ $tanggalCetak }}</p>
             </div>
@@ -328,7 +328,7 @@
                 <thead>
                     <tr>
                         <th style="width: 30px;">No</th>
-                        <th>Pelanggan</th>
+                        <th>Supplier</th>
                         <th>NO#</th>
                         <th>Tgl. Kembali</th>
                         <th class="text-right">Bruto</th>
@@ -342,7 +342,7 @@
                 <tbody>
                     @if ($rows->isEmpty())
                         <tr>
-                            <td colspan="10" class="text-center">Tidak ada data retur penjualan.</td>
+                            <td colspan="10" class="text-center">Tidak ada data retur pembelian.</td>
                         </tr>
                     @else
                         @php $no = 1; @endphp
