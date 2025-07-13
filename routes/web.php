@@ -187,15 +187,12 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::resource('roles', RoleController::class);
         // Route for Permission (URL: /keamanan/permission)
         Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
-        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
         // Route for Member (User) (URL: /keamanan/member)
         Route::get('member', [MemberController::class, 'index'])->name('member.index');
         Route::post('member', [MemberController::class, 'store'])->name('member.store');
         Route::get('member/{id}/edit', [MemberController::class, 'edit'])->name('member.edit');
         Route::put('member/{id}', [MemberController::class, 'update'])->name('member.update');
         Route::delete('member/{id}', [MemberController::class, 'destroy'])->name('member.destroy');
-        Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
-        Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
     });
 
     // --- Gudang Routes ---
