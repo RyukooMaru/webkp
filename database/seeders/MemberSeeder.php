@@ -50,7 +50,7 @@ class MemberSeeder extends Seeder
             // Ini adalah metode Eloquent yang akan mencari record berdasarkan kondisi pertama (Mem_ID)
             // Jika ditemukan, tidak akan membuat baru. Jika tidak, akan membuat record baru dengan data kedua.
             Member::firstOrCreate(
-                ['Mem_ID' => $employee->emp_NID],
+                ['Mem_ID' => $employee->emp_Code],
                 [
                     'Mem_UserName' => $employee->emp_Name,
                     'mem_password' => Hash::make('password'),

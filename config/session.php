@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'encrypt' => false,
+    'encrypt' => env('APP_ENCRYPT_SESSION', false), // Ensure this is 'true' in a production environment
 
     /*
     |--------------------------------------------------------------------------
