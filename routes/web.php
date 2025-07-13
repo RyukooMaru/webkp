@@ -30,8 +30,8 @@ use App\Http\Controllers\Comprof\KategoriBeritaController;
 use App\Http\Controllers\Comprof\KategoriAlbumController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
-
 use App\Http\Controllers\MutasiGudang\GudangOrderController;
 use App\Http\Controllers\MutasiGudang\TransferGudangController;
 /*
