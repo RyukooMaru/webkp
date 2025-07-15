@@ -24,7 +24,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th width=5% >No</th>
-                            <th>Nama</th>
+                            <th>Gudang</th>
                             <th>Alamat</th>
                             <th>Telepon</th>
                             <th>Fax</th>
@@ -99,7 +99,7 @@
                         <legend class="w-auto px-2 fw-bold">Master Warehouse</legend>
 
                         <div class="row mb-3">
-                            <label class="col-sm-3 col-form-label">Nama</label>
+                            <label class="col-sm-3 col-form-label">Gudang</label>
                             <div class="col-sm-9">
                                 <input type="text" name="WARE_Name" class="form-control" required>
                             </div>

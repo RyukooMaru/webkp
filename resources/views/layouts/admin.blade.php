@@ -227,7 +227,7 @@
                         <a class="collapse-item" href="{{ route('warehouse.index') }}">Gudang</a>
                         <a class="collapse-item" href="{{ route('gudangorder.index')}}">Permintaan</a>
                         <a class="collapse-item" href="{{ route('transfergudang.index')}}">Transfer Gudang</a>
-                        <a class="collapse-item" href="route('#')">Terima Gudang</a>
+                        <a class="collapse-item" href="{{ route('terimagudang.index')}}">Terima Gudang</a>
                     </div>
                 </div>
             </li> --}}
@@ -597,7 +597,7 @@
         const warningThreshold = 10; // Warn 10 seconds before logout
 
         let warningTimeout;
-        let intervalId; 
+        let intervalId;
 
         function resetTimer() {
             idleTime = 0;

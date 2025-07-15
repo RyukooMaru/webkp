@@ -34,6 +34,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
 use App\Http\Controllers\MutasiGudang\GudangOrderController;
 use App\Http\Controllers\MutasiGudang\TransferGudangController;
+use App\Http\Controllers\MutasiGudang\TerimaGudangController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
-    
+
     Route::prefix('keamanan')->name('keamanan.')->group(function () {
         Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
         Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
@@ -205,6 +206,11 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::resource('gudangorder', GudangOrderController::class);
         // Transfer Gudang
         Route::resource('transfergudang', TransferGudangController::class);
+
+        // PenerimaanGudang
+        Route::get('terimagudang', [TerimaGudangController::class, 'index'])->name('terimagudang.index');
+        Route::post('terimagudang', [TerimaGudangController::class, 'store'])->name('terimagudang.store');
+        Route::post('terimagudang/approve/{id}', [TerimaGudangController::class, 'approve'])->name('terimagudang.approve');
     });
 
     // --- Data Retur Routes ---

@@ -22,25 +22,26 @@
     <div class="table-responsive">
     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead class="thead-light">
-            <tr>
-                <th>Dari</th>
-                <th>Permintaan</th>
-                <th>Tujuan</th>
-                <th>NO#</th>
-                <th>Tgl. Permintaan</th>
-                <th>Bruto</th>
-                <th>Disc</th>
-                <th>Pajak</th>
-                <th>Netto</th>
-                <th>Pengguna</th>
-                <th>Tanggal</th>
-            </tr>
+            <tr >
+            <th colspan="2" class="text-center align-middle">Permintaan</th>
+            <th rowspan="2" class="text-center align-middle">NO#</th>
+            <th rowspan="2" class="text-center align-middle">Tgl. Permintaan</th>
+            <th rowspan="2" class="text-center align-middle">Bruto</th>
+            <th rowspan="2" class="text-center align-middle">Disc</th>
+            <th rowspan="2" class="text-center align-middle">Pajak</th>
+            <th rowspan="2" class="text-center align-middle">Netto</th>
+            <th rowspan="2" class="text-center align-middle">Pengguna</th>
+            <th rowspan="2" class="text-center align-middle">Tanggal</th>
+        </tr>
+        <tr>
+            <th>Dari</th>
+            <th>Tujuan</th>
+        </tr>
         </thead>
         <tbody>
             @foreach($orders as $order)
             <tr>
                 <td>{{ $order->Pur_SupCode ?? '-' }}</td>
-                <td>{{ $order->pur_emp ?? '-' }}</td>
                 <td>{{ $order->pur_warehouse ?? '-' }}</td>
                 <td>{{ $order->pur_ordernumber }}</td>
                 <td>{{ \Carbon\Carbon::parse($order->Pur_Date)->format('d-m-Y') }}</td>
@@ -72,7 +73,7 @@
         <div class="modal-body">
           <div class="row">
               <div class="col-md-6 mb-3">
-                  <label>Nomor Order</label>
+                  <label>Kode Produk</label>
                   <input type="text" name="pur_ordernumber" class="form-control" required>
               </div>
               <div class="col-md-6 mb-3">
@@ -80,7 +81,7 @@
                   <input type="text" name="pur_warehouse" class="form-control" required>
               </div>
               <div class="col-md-6 mb-3">
-                  <label>Pegawai (Permintaan)</label>
+                  <label>Permintaan</label>
                   <input type="text" name="pur_emp" class="form-control" required>
               </div>
               <div class="col-md-6 mb-3">
@@ -104,7 +105,7 @@
                   <input type="number" step="0.01" name="Pur_NettPrice" class="form-control" required>
               </div>
               <div class="col-md-6 mb-3">
-                  <label>Pengguna</label>
+                  <label>Nama Produk</label>
                   <input type="text" name="Pur_UpdateID" class="form-control">
               </div>
               <div class="col-md-6 mb-3">

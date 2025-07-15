@@ -34,6 +34,7 @@ class TransferGudang extends Model
         'Transfer_Rev',
         'Transfer_UpdateID',
         'Transfer_LastUpdate',
+        'pur_ordernumber', // sambungan ke permintaan
     ];
 
 public function fromWarehouse()
@@ -45,5 +46,11 @@ public function toWarehouse()
 {
     return $this->belongsTo(\App\Models\MutasiGudang\Warehouse::class, 'Transfer_ToWarehouse', 'WARE_Auto');
 }
+
+public function permintaan()
+{
+    return $this->belongsTo(GudangOrder::class, 'pur_ordernumber', 'pur_ordernumber');
+}
+
 
 }

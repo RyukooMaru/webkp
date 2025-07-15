@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MutasiGudang;
 use Illuminate\Http\Request;
 use App\Models\MutasiGudang\TransferGudang;
 use App\Models\MutasiGudang\Warehouse;
+use App\Models\MutasiGudang\GudangOrder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -16,8 +17,9 @@ class TransferGudangController extends Controller
     {
     $transfers = TransferGudang::with(['fromWarehouse', 'toWarehouse'])->get();
     $warehouses = Warehouse::all(); // Ambil semua gudang
+    $gudangorders = GudangOrder::all();
 
-    return view('mutasigudang.transfergudang.index', compact('transfers','warehouses'));
+    return view('mutasigudang.transfergudang.index', compact('transfers','warehouses','gudangorders'));
     }
 
     // Menyimpan data baru dari form modal
