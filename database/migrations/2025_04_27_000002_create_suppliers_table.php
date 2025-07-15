@@ -16,7 +16,7 @@ class CreateSuppliersTable extends Migration
             $table->string('contact_person', 100);
             $table->string('telp', 20);
             $table->string('email', 100)->nullable();
-            $table->foreignId('cara_bayar_id')->constrained('carabayar_tabel')->onDelete('set null');
+            $table->unsignedBigInteger('cara_bayar_id')->nullable();
             $table->integer('lama_bayar')->default(0);
             $table->decimal('potongan', 5, 2)->default(0.00);
             $table->date('tanggal');

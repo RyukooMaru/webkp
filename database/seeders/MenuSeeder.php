@@ -54,23 +54,23 @@ class MenuSeeder extends Seeder
 
         $inventory = Menu::firstOrCreate(
             ['slug' => 'inventory'],
-            ['name' => 'Inventory', 'url' => null, 'icon' => 'fas fa-boxes', 'order' => 50, 'parent_id' => null] 
+            ['name' => 'Inventory', 'url' => null, 'icon' => 'fas fa-boxes', 'order' => 50, 'parent_id' => null]
         );
         // Submenu Inventory
         if ($inventory) {
-            Menu::firstOrCreate(['slug' => 'supplier'], ['name' => 'Supplier', 'url' => '/inventory/supplier', 'icon' => 'fas fa-truck', 'order' => 1, 'parent_id' => $inventory->id]); 
-            Menu::firstOrCreate(['slug' => 'kelompokproduk'], ['name' => 'Kelompok Produk', 'url' => '/inventory/kelompokproduk', 'icon' => 'fas fa-cubes', 'order' => 2, 'parent_id' => $inventory->id]); 
-            Menu::firstOrCreate(['slug' => 'satuanproduk'], ['name' => 'Satuan Produk', 'url' => '/inventory/satuanproduk', 'icon' => 'fas fa-balance-scale', 'order' => 3, 'parent_id' => $inventory->id]); 
-            Menu::firstOrCreate(['slug' => 'dataproduk'], ['name' => 'Data Produk', 'url' => '/inventory/dataproduk', 'icon' => 'fas fa-box', 'order' => 4, 'parent_id' => $inventory->id]); 
-            Menu::firstOrCreate(['slug' => 'penerimaan'], ['name' => 'Penerimaan', 'url' => '/inventory/penerimaan', 'icon' => 'fas fa-loading', 'order' => 5, 'parent_id' => $inventory->id]); 
-            Menu::firstOrCreate(['slug' => 'purchase-orders'], ['name' => 'Purchase Orders', 'url' => '/inventory/purchase-orders', 'icon' => 'fas fa-shopping-cart', 'order' => 6, 'parent_id' => $inventory->id]); 
+            Menu::firstOrCreate(['slug' => 'supplier'], ['name' => 'Supplier', 'url' => '/inventory/supplier', 'icon' => 'fas fa-truck', 'order' => 1, 'parent_id' => $inventory->id]);
+            Menu::firstOrCreate(['slug' => 'kelompokproduk'], ['name' => 'Kelompok Produk', 'url' => '/inventory/kelompokproduk', 'icon' => 'fas fa-cubes', 'order' => 2, 'parent_id' => $inventory->id]);
+            Menu::firstOrCreate(['slug' => 'satuanproduk'], ['name' => 'Satuan Produk', 'url' => '/inventory/satuanproduk', 'icon' => 'fas fa-balance-scale', 'order' => 3, 'parent_id' => $inventory->id]);
+            Menu::firstOrCreate(['slug' => 'dataproduk'], ['name' => 'Data Produk', 'url' => '/inventory/dataproduk', 'icon' => 'fas fa-box', 'order' => 4, 'parent_id' => $inventory->id]);
+            Menu::firstOrCreate(['slug' => 'penerimaan'], ['name' => 'Penerimaan', 'url' => '/inventory/penerimaan', 'icon' => 'fas fa-loading', 'order' => 5, 'parent_id' => $inventory->id]);
+            Menu::firstOrCreate(['slug' => 'purchase-orders'], ['name' => 'Purchase Orders', 'url' => '/inventory/purchase-orders', 'icon' => 'fas fa-shopping-cart', 'order' => 6, 'parent_id' => $inventory->id]);
             Menu::firstOrCreate(['slug' => 'retur.pembelian'], ['name' => 'Retur Pembelian', 'url' => '/retur/pembelian', 'icon' => 'fas fa-cash-undo-alt', 'order' => 7, 'parent_id' => $inventory->id]);
         }
 
 
         $penjualan = Menu::firstOrCreate(
             ['slug' => 'penjualan'],
-            ['name' => 'penjualan', 'url' => null, 'icon' => 'fas fa-shopping-cart', 'order' => 50, 'parent_id' => null] 
+            ['name' => 'penjualan', 'url' => null, 'icon' => 'fas fa-shopping-cart', 'order' => 50, 'parent_id' => null]
         );
         // Submenu Penjualan
         if ($penjualan) {
@@ -87,6 +87,7 @@ class MenuSeeder extends Seeder
             Menu::firstOrCreate(['slug' => 'warehouse'], ['name' => 'Warehouse', 'url' => '/mutasigudang/warehouse', 'icon' => 'fas fa-warehouse', 'order' => 1, 'parent_id' => $mutasiGudang->id]);
             Menu::firstOrCreate(['slug' => 'gudangorder'], ['name' => 'Gudang Order', 'url' => '/mutasigudang/gudangorder', 'icon' => 'fas fa-clipboard-list', 'order' => 2, 'parent_id' => $mutasiGudang->id]);
             Menu::firstOrCreate(['slug' => 'transfergudang'], ['name' => 'Transfer Gudang', 'url' => '/mutasigudang/transfergudang', 'icon' => 'fas fa-exchange-alt', 'order' => 3, 'parent_id' => $mutasiGudang->id]);
+            Menu::firstOrCreate(['slug' => 'terimagudang'], ['name' => 'Terima Gudang', 'url' => '/mutasigudang/terimagudang', 'icon' => 'fas fa-exchange-alt', 'order' => 4, 'parent_id' => $mutasiGudang->id]);
         }
 
 
@@ -103,6 +104,6 @@ class MenuSeeder extends Seeder
             Menu::firstOrCreate(['slug' => 'comprof.kategoriberita'], ['name' => 'Kategori Berita', 'url' => '/comprof/kategoriberita', 'icon' => 'fas fa-newspaper', 'order' => 5, 'parent_id' => $companyProfile->id]);
             Menu::firstOrCreate(['slug' => 'comprof.setperusahaan'], ['name' => 'Setting Perusahaan', 'url' => '/comprof/setperusahaan', 'icon' => 'fas fa-building', 'order' => 6, 'parent_id' => $companyProfile->id]);
             Menu::firstOrCreate(['slug' => 'comprof.slider'], ['name' => 'Setting Slider', 'url' => '/comprof/slider', 'icon' => 'fas fa-sliders-h', 'order' => 7, 'parent_id' => $companyProfile->id]);
-        }       
+        }
     }
 }

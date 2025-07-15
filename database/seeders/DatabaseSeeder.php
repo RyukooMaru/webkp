@@ -13,11 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([RoleSeeder::class,     
-                            MenuSeeder::class,     
-                            RoleMenuSeeder::class, 
-                            KaryawanSeeder::class, 
-                            MemberSeeder::class, 
+        $this->call([RoleSeeder::class,
+                            MenuSeeder::class,
+                            RoleMenuSeeder::class,
+                            KaryawanSeeder::class,
+                            MemberSeeder::class,
                             RightAccessSeeder::class,]);
 
 
@@ -35,6 +35,5 @@ class DatabaseSeeder extends Seeder
         //      'email' => 'test@example.com',
         //  ]);
 
-        $this->call([\Database\Seeders\RelSeeder::class,]);
     }
 }
