@@ -103,8 +103,15 @@
 
           <div class="mb-3">
             <label>No. Permintaan</label>
-            <input type="text" name="Transfer_ByEmp" class="form-control">
-          </div>
+            <select name="pur_ordernumber" class="form-control" required>
+            <option value="">-- Pilih No. Permintaan --</option>
+            @foreach($gudangorders as $order)
+            <option value="{{ $order->pur_ordernumber }}">
+                {{ $order->pur_ordernumber }} - {{ $order->Pur_Date->format('d/m/Y') }}
+            </option>
+        @endforeach
+        </select>
+        </div>
 
           <div class="mb-3">
             <label>Catatan</label>
@@ -113,7 +120,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-success">Simpan</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
       </div>
     </form>

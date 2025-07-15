@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MutasiGudang\WarehouseController;
 use App\Http\Controllers\MutasiGudang\GudangOrderController;
 use App\Http\Controllers\MutasiGudang\TransferGudangController;
+use App\Http\Controllers\MutasiGudang\TerimaGudangController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,4 +50,10 @@ Route::prefix('mutasigudang')->group(function () {
 // Transfer Gudang
     Route::resource('transfergudang', TransferGudangController::class);
 
+// PenerimaanGudang
+    Route::get('terimagudang', [TerimaGudangController::class, 'index'])->name('terimagudang.index');
+    Route::post('terimagudang', [TerimaGudangController::class, 'store'])->name('terimagudang.store');
+    Route::post('terimagudang/approve/{id}', [TerimaGudangController::class, 'approve'])->name('terimagudang.approve');
 });
+
+
