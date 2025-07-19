@@ -33,7 +33,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($Absensis as $index => $absensi)
+                        @foreach($Absensis as $index => $absensi)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 {{-- Menampilkan nama dari relasi 'employee' --}}
@@ -100,11 +100,7 @@
                                     </button>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">Tidak ada data absensi.</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -270,7 +266,23 @@ $(document).ready(function() {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({
+        language: {
+            emptyTable: "Tidak ada data yang tersedia di dalam tabel",
+            zeroRecords: "Tidak ditemukan data yang sesuai",
+            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+            infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+            infoFiltered: "(disaring dari _MAX_ total entri)",
+            lengthMenu: "Tampilkan _MENU_ entri",
+            search: "Cari:",
+            paginate: {
+                "first": "Pertama",
+                "last": "Terakhir",
+                "next": "Selanjutnya",
+                "previous": "Sebelumnya"
+            },
+        }
+    });
 
     function checkSchedule() {
         const employeeId = $('#TS_EMP').val();
@@ -304,20 +316,6 @@ $(document).ready(function() {
         });
     }
 
-    const table = $('#absensiTable').DataTable({
-        // processing: true,
-        // serverSide: true,
-        ajax: "{{ route('absensi.index') }}",
-        columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'employee.emp_Name', name: 'employee.emp_Name'}, // Menampilkan nama dari relasi
-            {data: 'TS_TANGGAL', name: 'TS_TANGGAL'},
-            {data: 'TS_JAMIN', name: 'TS_JAMIN'},
-            {data: 'TS_JAMOUT', name: 'TS_JAMOUT'},
-            {data: 'TS_NOTE', name: 'TS_NOTE'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
-        ]
-    });
 
     // --- SCRIPT UNTUK PETA LOKASI ---
     let map;

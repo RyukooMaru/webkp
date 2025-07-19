@@ -8,6 +8,7 @@ use App\Models\Presensi\Employee;
 use App\Models\Presensi\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 class AbsensiController extends Controller
@@ -83,11 +84,11 @@ class AbsensiController extends Controller
 
     public function edit($id)
     {
-        $absensi = RealAbsensi::findOrFail($id);
+        // $absensi = RealAbsensi::findOrFail($id);
         return response()->json($absensi);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, RealAbsensi $absensi)
     {
         $validatedData = $request->validate([
             'TS_EMP' => 'required|exists:m_employee,emp_Auto',
@@ -126,8 +127,7 @@ class AbsensiController extends Controller
         //     }
         // }
 
-        $absensi = RealAbsensi::findOrFail($id);
-        $data = $request->except(['TS_FOTO', 'TS_FILE_PENDUKUNG', 'delete_foto', 'delete_file_pendukung']);
+        $data = $request->except(['_method', 'TS_FOTO', 'TS_FILE_PENDUKUNG', 'delete_foto', 'delete_file_pendukung']);
 
         $employee = Employee::find($request->TS_EMP);
         if ($employee) {
