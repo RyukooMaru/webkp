@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
             SubDivisiSeeder::class,
             PosisiSeeder::class,
             KaryawanSeeder::class,
+            ShiftSeeder::class,
+            LiburNasionalSeeder::class,
         ]);
     }
 }

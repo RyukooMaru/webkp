@@ -22,6 +22,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
+        // === TAMBAHKAN BARIS INI ===
+        // Menjalankan perintah 'absensi:mark-absent' setiap hari pada pukul 23:00 (11 malam).
+        // Anda bisa menyesuaikan waktunya sesuai kebutuhan.
+        $schedule->command('absensi:mark-absent')->everyTenMinutes();
     }
 
     /**

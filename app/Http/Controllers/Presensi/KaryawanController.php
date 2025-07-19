@@ -42,7 +42,7 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'emp_Code' => 'required|string|max:20|',
+            'emp_Code' => 'required|string|max:20|unique:m_employee,emp_Code',
             'emp_NID' => 'required|string|max:30',
             'emp_Name' => 'required|string|max:50',
             'emp_ActiveYN' => 'required|string|max:1',
@@ -133,15 +133,12 @@ class KaryawanController extends Controller
     
         Employee::create($validated);
         
-            if ($request->expectsJson()) {
+        if ($request->expectsJson()) {
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data Karyawan berhasil ditambahkan.',
             ]);
         }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -272,23 +269,20 @@ class KaryawanController extends Controller
         
         $Employee->update($validated);
     
-            if ($request->expectsJson()) {
+        if ($request->expectsJson()) {
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data Karyawan berhasil diperbarui.',
             ]);
         }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Karyawan berhasil diperbarui.');
-
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $Employee)
+    public function destroy(string $id)
     {
+        $Employee = Employee::findOrFail($id);
         if ($Employee->EMP_PICT) {
             File::delete(storage_path('app/public/employee_pictures/' . $Employee->EMP_PICT));
         }

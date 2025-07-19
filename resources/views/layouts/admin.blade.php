@@ -219,8 +219,8 @@
             <a class="collapse-item" href="{{ route('divisi.index') }}">Divisi</a>
             <a class="collapse-item" href="{{ route('subdivisi.index') }}">Sub-Divisi</a>
             <a class="collapse-item" href="{{ route('posisi.index') }}">Posisi</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+            <a class="collapse-item" href="{{ route('jadwal.index') }}">Shifting</a>
+            <a class="collapse-item" href="{{ route('absensi.index') }}">Absensi</a>
         </div>
     </div>
 </li>

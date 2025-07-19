@@ -56,22 +56,24 @@
                             <td>{{ $SubDivisi->Div_UserID }}</td>
                             <td>{{ $SubDivisi->Div_LastUpdate }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning edit-btn"
-                                    data-subdivid="{{ $SubDivisi->div_auto }}"
-                                    data-divid="{{ $SubDivisi->div_divcode }}"
-                                    data-subdivcode="{{ $SubDivisi->Div_Code }}"
-                                    data-subdivname="{{ $SubDivisi->Div_Name }}"
-                                    data-subdivnik="{{ $SubDivisi->DIV_NIK }}"
-                                    data-toggle="modal"
-                                    data-target="#editSubDivModal">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-subdivid="{{ $SubDivisi->div_auto }}"
-                                    data-subdivname="{{ $SubDivisi->Div_Name }}"
-                                    data-toggle="modal" data-target="#deleteSubDivisiModal">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-warning edit-btn"
+                                        data-subdivid="{{ $SubDivisi->div_auto }}"
+                                        data-divid="{{ $SubDivisi->div_divcode }}"
+                                        data-subdivcode="{{ $SubDivisi->Div_Code }}"
+                                        data-subdivname="{{ $SubDivisi->Div_Name }}"
+                                        data-subdivnik="{{ $SubDivisi->DIV_NIK }}"
+                                        data-toggle="modal"
+                                        data-target="#editSubDivModal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                        data-subdivid="{{ $SubDivisi->div_auto }}"
+                                        data-subdivname="{{ $SubDivisi->Div_Name }}"
+                                        data-toggle="modal" data-target="#deleteSubDivisiModal">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         @endforeach

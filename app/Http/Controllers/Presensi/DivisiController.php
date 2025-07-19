@@ -36,7 +36,7 @@ class DivisiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Div_Code'      => 'required|string|max:20',
+            'Div_Code'      => 'required|string|max:20|unique:ts_div,Div_Code',
             'Div_Name'      => 'required|string|max:50',
             'DIV_NIK'       => 'nullable|string|max:20',
             'DIV_SHIFTYN'   => 'required|in:Y,T',
@@ -49,15 +49,12 @@ class DivisiController extends Controller
 
         Divisi::create($validated);
 
-        if ($request->ajax()) {
-                return response()->json([
-                    'status'  => 'success',
-                    'message' => 'Data divisi berhasil ditambahkan.',
-                ]);
-            }
-
-            return redirect()->route('divisi.index')
-                            ->with('success','Data divisi berhasil ditambahkan.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Data divisi berhasil ditambahkan.',
+            ]);
+        }
     }
 
     /**
@@ -98,35 +95,23 @@ class DivisiController extends Controller
         $validated['Div_LastUpdate'] = now();
         $Divisi->update($validated);
 
-        if ($request->expectsJson()) {
+        if ($request->ajax()) {
             return response()->json([
                 'status'  => 'success',
-                'message'=> 'Data Posisi berhasil diperbarui.']);
+                'message'=> 'Data Divisi berhasil diperbarui.'
+            ]);
         }
-
-        return redirect()->route('divisi.index')
-                        ->with('success','Data Divisi berhasil diperbarui.');
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $Divisi = Divisi::findOrFail($id);
         $Divisi->delete();
     
-        // Jika AJAX, kembalikan JSON
-        if (request()->ajax()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data divisi berhasil dihapus.',
-            ]);
-        }
-
-        // Bila non‐AJAX, redirect seperti biasa
-        return redirect()->route('divisi.index')
-                        ->with('success', 'Data divisi berhasil dihapus.');
+        return response()->json(['message' => 'Data Divisi berhasil dihapus.']);
     }
 }
