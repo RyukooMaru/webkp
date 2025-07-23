@@ -58,7 +58,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <small class="form-text text-muted">Minimal 4 karakter</small>
+                            <small class="form-text text-muted">Minimal 6 karakter</small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -196,7 +196,7 @@
                             </td>
                             <td class="text-center">
                                 @can('ubah', $currentMenuSlug)
-                                <a href="{{ route('keamanan.member.edit', $member->Mem_Auto) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('keamanan.member.edit', $member->Mem_Auto) }}" class="btn btn-sm btn-warning edit-btn">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 @endcan

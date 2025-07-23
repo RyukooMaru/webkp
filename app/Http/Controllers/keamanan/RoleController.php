@@ -98,15 +98,6 @@ class RoleController extends Controller
             ], 403);
         }
 
-        // Validasi 2: Cek jika role sedang digunakan oleh pengguna
-        if ($role->users()->exists()) {
-            $userCount = $role->users()->count();
-            return response()->json([
-                'success' => false,
-                'message' => "Role ini sedang digunakan oleh $userCount pengguna. Tidak dapat dihapus."
-            ], 422);
-        }
-
         try {
             $role->delete();
             

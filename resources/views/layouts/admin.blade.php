@@ -593,110 +593,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
         let idleTime = 0;
-        const idleLimit = 120; // in seconds (1 minute)
-        const warningThreshold = 10; // Warn 10 seconds before logout
-
-        let warningTimeout;
+        const idleLimit = 7200; 
         let intervalId;
 
         function resetTimer() {
             idleTime = 0;
-            clearTimeout(warningTimeout);
-            // Optionally, close a SweetAlert warning if it was shown
-            if (Swal.isVisible()) {
-                Swal.close();
-            }
         }
 
         function startIdleTimer() {
-            // Clear any existing interval to prevent duplicates
-            if (intervalId) {
-                clearInterval(intervalId);
-            }
-            intervalId = setInterval(timerIncrement, 1000);
-        }
-
-        function timerIncrement() {
-            idleTime++;
-            if (idleTime >= (idleLimit - warningThreshold) && idleTime < idleLimit) {
-                // Show warning if it's time and not already shown
-                if (!Swal.isVisible()) {
-                    showWarningDialog();
+            intervalId = setInterval(() => {
+                idleTime++;
+                if (idleTime >= idleLimit) {
+                    clearInterval(intervalId);
+                    logoutUser();
                 }
-            } else if (idleTime >= idleLimit) {
-                clearInterval(intervalId); // Stop checking once limit is reached
-                if (Swal.isVisible()) {
-                    Swal.close(); // Close warning if still open
-                }
-                logoutUser();
-            }
-        }
-
-        function showWarningDialog() {
-            Swal.fire({
-                title: 'Anda Diam Terlalu Lama!',
-                html: `Anda akan otomatis keluar dalam <strong id="idleCountdown">${warningThreshold}</strong> detik.`,
-                icon: 'warning',
-                showCancelButton: false,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                timer: warningThreshold * 1000,
-                timerProgressBar: true,
-                didOpen: () => {
-                    const countdownElement = Swal.getHtmlContainer().querySelector('#idleCountdown');
-                    let remainingTime = warningThreshold;
-                    warningTimeout = setInterval(() => {
-                        remainingTime--;
-                        if (countdownElement) {
-                            countdownElement.textContent = remainingTime;
-                        }
-                    }, 1000);
-                },
-                willClose: () => {
-                    clearInterval(warningTimeout);
-                    // No explicit logout here; the main timerIncrement handles it
-                }
-            });
+            }, 1000);
         }
 
         function logoutUser() {
-            fetch('/logout', { // Ensure this URL is correct, use {{ route('logout') }} if within Blade
+            fetch('/logout', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                credentials: 'same-origin' // Send cookies (like session cookie)
-            }).then(response => {
-                // Check if the response is OK, if not, log error
-                if (!response.ok) {
-                    console.error('Logout failed with status:', response.status);
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response.json(); // Or response.text() if your logout endpoint doesn't return JSON
+                credentials: 'same-origin'
             }).then(() => {
-                // Redirect to login page after successful logout
-                window.location.href = '/login'; // Ensure this URL is correct, use {{ route('login') }} if within Blade
-            }).catch(err => {
-                console.error('Logout failed:', err);
-                // Fallback: just redirect if AJAX fails or errors
+                window.location.href = '/login';
+            }).catch(() => {
                 window.location.href = '/login';
             });
         }
 
-        // Attach event listeners to reset the timer
-        // Use document.body to ensure events are captured globally
         ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, resetTimer, true); // `true` for capturing phase
+            document.addEventListener(event, resetTimer, true);
         });
 
-        // Start the timer when the document is ready
         document.addEventListener('DOMContentLoaded', startIdleTimer);
-        // Also reset on tab focus in case user was away
         window.addEventListener('focus', resetTimer);
-    </script>
+</script>
 
 @stack('scripts') {{-- Script custom akan dimuat setelah jQuery & BS5 --}}
 @stack('css')

@@ -45,30 +45,24 @@ class PermissionController extends Controller
 
         DB::beginTransaction();
         try {
-            // Detach semua menu yang ada saat ini untuk role ini dari tabel role_menu
-            $role->menus()->detach(); 
+            // Tambahkan parent_id jika ada
+            $allMenuIds = $selectedMenuIds;
 
-            // Loop setiap menu_id yang dicentang di form
             foreach ($selectedMenuIds as $menuId) {
-                $menu = Menu::find($menuId); // Dapatkan objek menu
-
-                if ($menu) {
-                    // Attach menu itu sendiri ke role_menu
-                    // Laravel attach() akan mencegah duplikasi jika ada UNIQUE constraint di tabel pivot
-                    $role->menus()->attach($menu->id); 
-
-                    // --- BARIS INI YANG DIHAPUS / DIKOMENTARI ---
-                    // if ($menu->parent_id) {
-                    //     // Logika ini yang menambahkan parent menu secara otomatis
-                    //     $role->menus()->attach($menu->parent_id);
-                    // }
-                    // --- AKHIR BARIS YANG DIHAPUS / DIKOMENTARI ---
+                $menu = Menu::find($menuId);
+                if ($menu && $menu->parent_id) {
+                    $allMenuIds[] = $menu->parent_id; // Tambahkan parent menu
                 }
             }
 
+            // Hilangkan duplikat ID
+            $allMenuIds = array_unique($allMenuIds);
+
+            // Sync semua menu dan parent-nya
+            $role->menus()->sync($allMenuIds);
+
             DB::commit(); // Commit transaksi
             return redirect()->back()->with('success', 'Akses menu berhasil diperbarui.');
-
         } catch (\Exception $e) {
             DB::rollback(); // Rollback jika ada kesalahan
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
