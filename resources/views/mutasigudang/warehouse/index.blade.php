@@ -8,7 +8,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         <div class="mb-3">
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#warehouseModal" onclick="openCreateForm()">
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#warehouseModal">
                 <i class="fas fa-plus"></i> Tambah Gudang
             </button>
         </div>
@@ -171,24 +171,25 @@
 $(document).ready(function() {
     $('#dataTable').DataTable();
 
-    // Klik tombol "Tambah"
-    $('.btn-primary').on('click', function() {
+    // Saat tombol "Tambah Gudang" diklik, siapkan modal untuk mode 'create'
+    $('.btn-primary[data-bs-target="#warehouseModal"]').on('click', function() {
         $('#warehouseModalLabel').text('Tambah Gudang');
         $('#warehouseForm').attr('action', '{{ route('warehouse.store') }}');
         $('#formMethod').val('POST');
         $('#warehouseForm')[0].reset();
     });
 
-    // Klik tombol "Edit"
+    // Saat tombol "Edit" diklik, siapkan modal untuk mode 'edit'
     $('.edit-btn').on('click', function() {
         const modal = $('#warehouseModal');
         const form = $('#warehouseForm');
+        const id = $(this).data('id');
 
         $('#warehouseModalLabel').text('Edit Gudang');
-        form.attr('action', `/warehouse/${$(this).data('id')}`);
-        $('#formMethod').val('PUT');
+        form.attr('action', `/warehouse/${id}`); // URL untuk update
+        $('#formMethod').val('PUT'); // Method untuk update
 
-        // Isi field dari data-attributes
+        // Isi semua field form dari data-attributes tombol
         form.find('[name="WARE_Name"]').val($(this).data('name'));
         form.find('[name="WARE_Address"]').val($(this).data('address'));
         form.find('[name="WARE_Phone"]').val($(this).data('phone'));
@@ -198,60 +199,89 @@ $(document).ready(function() {
         form.find('[name="ware_note1"]').val($(this).data('note1'));
         form.find('[name="ware_note2"]').val($(this).data('note2'));
 
-
-        // Tampilkan modal
         modal.modal('show');
     });
 
-    // Tampilkan modal
-    $('.delete-btn').on('click', function (event) {
-    event.preventDefault();
+    $('#warehouseForm').on('submit', function(event) {
+        event.preventDefault(); // Mencegah halaman reload!
 
-    const $button = $(this); // ✅ FIX di sini
-    const id = $button.data('id');
-    const itemName = $button.data('name') || 'item ini';
-    const deleteUrl = $button.data('url'); // gunakan $button yang sudah didefinisikan
-    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+        const form = $(this);
+        const url = form.attr('action');
+        const method = form.find('input[name="_method"]').val(); // Ambil method (POST/PUT)
+        const data = form.serialize(); // Ambil semua data form
 
-    console.log({ id, deleteUrl, csrfToken });
-
-    if (!id) {
-        Swal.fire('Error!', 'ID tidak ditemukan.', 'error');
-        return;
-    }
-
-    Swal.fire({
-        title: 'Apakah Anda yakin?',
-        html: `Anda akan menghapus: <strong>${itemName}</strong><br><small>Tindakan ini tidak dapat dibatalkan.</small>`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: deleteUrl,
-                type: 'POST',
-                data: {
-                    _method: 'DELETE',
-                    _token: csrfToken
-                },
-                success: function (response) {
-                    Swal.fire('Terhapus!', response.message || 'Data berhasil dihapus.', 'success')
-                        .then(() => location.reload());
-                },
-                error: function (xhr) {
-                    const message = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus.';
-                    Swal.fire('Gagal!', message, 'error');
+        $.ajax({
+            url: url,
+            type: 'POST', // AJAX selalu POST, method asli (PUT/DELETE) dikirim di data
+            data: data,
+            success: function(response) {
+                $('#warehouseModal').modal('hide'); // Sembunyikan modal
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: response.message || 'Data berhasil disimpan.',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload(); // Muat ulang halaman untuk melihat data baru
+                });
+            },
+            error: function(xhr) {
+                // Tampilkan error validasi jika ada
+                const errors = xhr.responseJSON.errors;
+                let errorMessages = '';
+                if (errors) {
+                    $.each(errors, function(key, value) {
+                        errorMessages += `<li>${value[0]}</li>`;
+                    });
+                    Swal.fire('Gagal!', `<ul>${errorMessages}</ul>`, 'error');
+                } else {
+                    Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.', 'error');
                 }
-            });
-        }
+            }
+        });
+    });
+
+    // Saat tombol "Delete" diklik
+    $('.delete-btn').on('click', function (event) {
+        event.preventDefault();
+
+        const button = $(this);
+        const itemName = button.data('name') || 'item ini';
+        const deleteUrl = button.data('url');
+        const csrfToken = '{{ csrf_token() }}'; // Cara lebih aman mengambil token
+
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            html: `Anda akan menghapus: <strong>${itemName}</strong><br><small>Tindakan ini tidak dapat dibatalkan.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'POST',
+                    data: {
+                        _method: 'DELETE',
+                        _token: csrfToken
+                    },
+                    success: function (response) {
+                        Swal.fire('Terhapus!', response.message || 'Data berhasil dihapus.', 'success')
+                            .then(() => location.reload());
+                    },
+                    error: function (xhr) {
+                        const message = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus.';
+                        Swal.fire('Gagal!', message, 'error');
+                    }
+                });
+            }
+        });
     });
 });
-});
-
 </script>
 @endpush
 
