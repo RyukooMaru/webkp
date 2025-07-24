@@ -8,12 +8,33 @@
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Data Realtime Presensi</h1>
+    <p class="mb-4">Manajemen Data Presensi untuk aplikasi.</p>
+
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
+
+    <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug)
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="addDivisiButton">
+            <i class="fas fa-plus"></i> Tambah Divisi
+        </button>
+        @endcan
+    </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <button id="btn-tambah-absensi" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Presensi Manual
-            </button>
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Data Presensi</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -88,22 +109,95 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{-- Tambahkan kelas unik untuk event listener --}}
                                     <button class="btn btn-info btn-sm btn-view viewAbsensi" data-id="{{ $absensi->TS_AUTO }}" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </button>
+
+                                    @can('ubah', $currentMenuSlug)
                                     <button class="btn btn-warning btn-sm btn-edit editAbsensi" data-id="{{ $absensi->TS_AUTO }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endcan
+
+                                    @can('hapus', $currentMenuSlug)
                                     <button class="btn btn-danger btn-sm deleteAbsensi" data-id="{{ $absensi->TS_AUTO }}" data-nama="{{ $absensi->TS_NAME }}" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endcan
+                                    
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Rekap Laporan Absensi</h6>
+        </div>
+        <div class="card-body">
+            <form id="rekapForm">
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        <label for="rekap_start_date">Tanggal Awal</label>
+                        <input type="date" id="rekap_start_date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="rekap_end_date">Tanggal Akhir</label>
+                        <input type="date" id="rekap_end_date" name="end_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="rekap_divisi">Divisi</label>
+                        <select id="rekap_divisi" name="divisi_id" class="form-control">
+                            <option value="">Semua</option>
+                            @foreach($divisi as $div)
+                                <option value="{{ $div->div_auto }}">{{ $div->Div_Name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="rekap_gender">Gender</label>
+                        <select id="rekap_gender" name="gender" class="form-control">
+                            <option value="">Semua</option>
+                            <option value="M">Laki-laki</option>
+                            <option value="F">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="rekap_status">Status</label>
+                        <select id="rekap_status" name="status" class="form-control">
+                            <option value="">Semua</option>
+                            <option value="HADIR">Hadir</option>
+                            <option value="SAKIT">Sakit</option>
+                            <option value="IZIN">Izin</option>
+                            <option value="CUTI">Cuti</option>
+                            <option value="ALPA">Alpa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12 text-right">
+                        <button type="button" id="btn-tampilkan-rekap" class="btn btn-primary"><i class="fas fa-search"></i> Tampilkan Laporan</button>
+                        <button type="submit" id="btn-cetak-pdf" class="btn btn-danger"><i class="fas fa-print"></i> Cetak PDF</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Container untuk menampilkan hasil rekap --}}
+    <div class="card shadow mb-4" id="rekap-result-card" style="display: none;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Hasil Laporan</h6>
+        </div>
+        <div class="card-body">
+            <div id="rekap-loading" class="text-center my-5" style="display: none;">
+                <i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-2">Memproses Laporan...</p>
+            </div>
+            <div id="rekap-container" class="table-responsive"></div>
         </div>
     </div>
 </div>
@@ -205,18 +299,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- <div class="form-group">
-                        <label>Lokasi</label>
-                        <div class="input-group">
-                            <input type="text" id="location_display" class="form-control" placeholder="Pilih lokasi dari peta" readonly>
-                            <div class="input-group-append">
-                                <button type="button" id="btn-pilih-lokasi" class="btn btn-outline-secondary">Pilih Peta</button>
-                            </div>
-                        </div>
-                        <input type="hidden" name="TS_LATITUDE" id="TS_LATITUDE">
-                        <input type="hidden" name="TS_LONGITUDE" id="TS_LONGITUDE">
-                    </div> -->
 
                     <div class="form-group">
                         <label for="TS_FILE_PENDUKUNG">Dokumen Pendukung (Izin/Sakit)</label>
@@ -350,24 +432,47 @@ $(document).ready(function() {
     $('#TS_EMP, #TS_TANGGAL').on('change', checkSchedule);
 
     $('body').on('click', '.viewAbsensi', function() {
-        var absensiId = $(this).data('id');
+    var absensiId = $(this).data('id');
+    
+    $.get("{{ url('presensi/absensi') }}/" + absensiId, function (data) {
+        $('#viewAbsensiModalLabel').text('Detail Absensi - ' + (data.employee ? data.employee.emp_Name : data.TS_NAME));
         
-        $.get("{{ url('presensi/absensi') }}/" + absensiId, function (data) {
-            $('#viewAbsensiModalLabel').text('Detail Absensi - ' + (data.employee ? data.employee.emp_Name : data.TS_NAME));
-            
-            // Mengisi data teks
-            $('#view_nama').text(data.employee ? data.employee.emp_Name : data.TS_NAME);
-            $('#view_tanggal').text(new Date(data.TS_TANGGAL).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
-            $('#view_status').html(data.TS_STATUS ? `<span class="badge badge-warning">${data.TS_STATUS}</span>` : `<span class="badge badge-success">Hadir</span>`);
-            $('#view_jam_in').text(data.TS_JAMIN ? data.TS_JAMIN.substring(0,5) : '-');
-            $('#view_jam_out').text(data.TS_JAMOUT ? data.TS_JAMOUT.substring(0,5) : '-');
-            $('#view_note').text(data.TS_NOTE || '-');
+        // --- PERBAIKAN DIMULAI DI SINI ---
 
-            // Mengisi Lokasi
-            if (data.TS_LATITUDE && data.TS_LONGITUDE) {
-                $('#view_lokasi').html(`<a href="https://maps.google.com/?q=${data.TS_LATITUDE},${data.TS_LONGITUDE}" target="_blank">Lihat di Peta</a>`);
-            } else {
-                $('#view_lokasi').text('-');
+        // 1. Tentukan status dan warna default
+        let status = data.TS_STATUS || 'HADIR'; // Jika status null, anggap 'HADIR'
+        let badgeClass = '';
+        
+        // 2. Buat perbandingan case-insensitive
+        let lowerCaseStatus = status.toLowerCase();
+
+        // 3. Tentukan kelas badge berdasarkan status
+        if (lowerCaseStatus === 'hadir') {
+            badgeClass = 'badge-success'; // Hijau
+        } else if (['izin', 'dispensasi', 'cuti', 'sakit'].includes(lowerCaseStatus)) {
+            badgeClass = 'badge-warning'; // Kuning
+        } else if (['alpa', 'tidak hadir'].includes(lowerCaseStatus)) {
+            badgeClass = 'badge-danger';  // Merah
+        } else {
+            badgeClass = 'badge-secondary'; // Warna default jika ada status lain
+        }
+
+        // Mengisi data teks
+        $('#view_nama').text(data.employee ? data.employee.emp_Name : data.TS_NAME);
+        $('#view_tanggal').text(new Date(data.TS_TANGGAL).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
+        // Terapkan status dan warna yang sudah ditentukan
+        $('#view_status').html(`<span class="badge ${badgeClass}">${status.toUpperCase()}</span>`);
+        $('#view_jam_in').text(data.TS_JAMIN ? data.TS_JAMIN.substring(0,5) : '-');
+        $('#view_jam_out').text(data.TS_JAMOUT ? data.TS_JAMOUT.substring(0,5) : '-');
+        $('#view_note').text(data.TS_NOTE || '-');
+
+        // --- PERBAIKAN SELESAI ---
+
+        // Mengisi Lokasi
+        if (data.TS_LATITUDE && data.TS_LONGITUDE) {
+            $('#view_lokasi').html(`<a href="https://maps.google.com/?q=${data.TS_LATITUDE},${data.TS_LONGITUDE}" target="_blank">Lihat di Peta</a>`);
+        } else {
+            $('#view_lokasi').text('-');
             }
 
             // Mengisi Dokumen Pendukung
@@ -428,6 +533,8 @@ $(document).ready(function() {
 
     $('body').on('click', '.editAbsensi', function () {
         var id = $(this).data('id');
+        
+        // Menggunakan $.get dengan .fail() untuk menangani error
         $.get(`{{ url('presensi/absensi') }}/${id}/edit`, function (data) {
             resetAbsensiForm();
             $('#schedule-info').hide();
@@ -444,7 +551,6 @@ $(document).ready(function() {
             $('#location_display').val(data.TS_LATITUDE ? `Lat: ${data.TS_LATITUDE}, Long: ${data.TS_LONGITUDE}` : '');
 
             if(data.TS_FOTO){
-                // Tambahkan parameter acak untuk mencegah cache browser menampilkan gambar rusak
                 const imageUrl = `/storage/absensi_fotos/${data.TS_FOTO}?t=${new Date().getTime()}`;
                 $('#image-preview').attr('src', imageUrl).removeClass('d-none');
                 $('#remove-image-btn').show();
@@ -455,6 +561,12 @@ $(document).ready(function() {
             }
 
             $('#absensiModal').modal('show');
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            // Log error ke console untuk debugging
+            console.error("AJAX Error:", textStatus, errorThrown);
+            console.error("Response Text:", jqXHR.responseText);
+            // Tampilkan pesan error ke pengguna
+            Swal.fire('Error!', 'Gagal mengambil data untuk diedit. Cek console untuk detail.', 'error');
         });
     });
 
@@ -502,8 +614,8 @@ $(document).ready(function() {
             html: `Anda akan menghapus absensi untuk <strong>${nama}</strong>.`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#858796',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {
@@ -524,8 +636,70 @@ $(document).ready(function() {
         });
     });
 
-    // Logika untuk Tambah, Edit, Hapus (mirip dengan CRUD Shift/Libur)
-    // ...
+    // --- SCRIPT BARU UNTUK REKAP LAPORAN ---
+    $('#btn-tampilkan-rekap').on('click', function() {
+        if (!document.getElementById('rekapForm').checkValidity()) {
+            Swal.fire('Peringatan', 'Tanggal awal dan akhir wajib diisi.', 'warning');
+            return;
+        }
+
+        $('#rekap-result-card').show();
+        $('#rekap-loading').show();
+        $('#rekap-container').html('');
+
+        $.ajax({
+            url: '{{ route("rekap.generate") }}',
+            type: 'POST',
+            data: $('#rekapForm').serialize(),
+            success: function(response) {
+                renderRekapTable(response);
+            },
+            error: function(xhr) {
+                Swal.fire('Error', 'Gagal memuat data rekapitulasi.', 'error');
+            },
+            complete: function() {
+                $('#rekap-loading').hide();
+            }
+        });
+    });
+
+    function renderRekapTable(data) {
+        if (data.length === 0) {
+            $('#rekap-container').html('<p class="text-center text-muted">Tidak ada data yang cocok dengan filter Anda.</p>');
+            return;
+        }
+
+        let tableHtml = '<table class="table table-bordered" id="rekapTable"><thead><tr><th>Nama Karyawan</th><th>Hadir</th><th>Sakit</th><th>Izin</th><th>Cuti</th><th>Alpa</th></tr></thead><tbody>';
+        
+        data.forEach(function(item) {
+            tableHtml += `
+                <tr>
+                    <td>${item.employee.emp_Name}</td>
+                    <td>${item.summary.Hadir}</td>
+                    <td>${item.summary.Sakit}</td>
+                    <td>${item.summary.Izin}</td>
+                    <td>${item.summary.Cuti}</td>
+                    <td>${item.summary.Alpa}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#rekap-container').html(tableHtml);
+        $('#rekapTable').DataTable();
+    }
+
+    $('#rekapForm').on('submit', function(e) {
+        e.preventDefault();
+        if (!this.checkValidity()) {
+            Swal.fire('Peringatan', 'Tanggal awal dan akhir wajib diisi.', 'warning');
+            return;
+        }
+        
+        const formData = $(this).serialize();
+        const pdfUrl = '{{ route("rekap.generate") }}?' + formData + '&print=true';
+        window.open(pdfUrl, '_blank');
+    });
 });
 </script>
 @endpush

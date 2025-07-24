@@ -19,9 +19,16 @@
 
     <!-- Tambah Data Karyawan Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug) 
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addEmployeeButton">
             <i class="fas fa-plus"></i> Tambah Karyawan
         </button>
+        @endcan
     </div>
 
 
@@ -68,12 +75,18 @@
                                 <button class="btn btn-info btn-sm btn-view" data-id="{{ $Employee->emp_Auto }}" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+
+                                @can('ubah', $currentMenuSlug) 
                                 <button class="btn btn-warning btn-sm btn-edit" data-id="{{ $Employee->emp_Auto }}" title="Edit Employee">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+
+                                @can('hapus', $currentMenuSlug) 
                                 <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $Employee->emp_Auto }}" data-nama="{{ $Employee->emp_Name }}" title="Hapus Employee">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach
@@ -241,7 +254,7 @@
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Divisi Data Karyawan -->
+<!-- Modal Tambah/Edit Data Karyawan -->
 <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl"> {{-- Ukuran modal besar --}}
         <div class="modal-content">

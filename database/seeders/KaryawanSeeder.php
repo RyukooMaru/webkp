@@ -6,6 +6,9 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class KaryawanSeeder extends Seeder
 {
@@ -14,7 +17,7 @@ class KaryawanSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('m_employee')->insert([
+        $employeesData = [
             [
                 'emp_Code' => 'EMP001',
                 'emp_NID' => 'NID001',
@@ -415,6 +418,29 @@ class KaryawanSeeder extends Seeder
                 'emp_ENTRYID' => '1',
                 'emp_FirstEntry' => now(),
             ],
-        ]);
+        ];
+
+        // Loop melalui data untuk menambahkan password yang di-hash
+        $processedData = array_map(function ($employee) {
+            // Ambil tanggal lahir dan format menjadi ddmmyyyy
+            $passwordString = Carbon::parse($employee['emp_DateBorn'])->format('dmY');
+            
+            // Menggunakan nama kolom 'emp_password' yang benar
+            $employee['emp_password'] = Hash::make($passwordString);
+            
+            return $employee;
+        }, $employeesData);
+
+        // PERBAIKAN: Nonaktifkan pengecekan foreign key sebelum truncate
+        Schema::disableForeignKeyConstraints();
+        
+        // Hapus data lama sebelum memasukkan yang baru untuk menghindari duplikasi
+        DB::table('m_employee')->truncate();
+
+        // PERBAIKAN: Aktifkan kembali pengecekan foreign key setelah truncate
+        Schema::enableForeignKeyConstraints();
+
+        // Masukkan data yang sudah diproses ke dalam database
+        DB::table('m_employee')->insert($processedData);
     }
 }

@@ -29,7 +29,6 @@
     <!-- Cropper.js untuk Crop Gambar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
 
-
     
 </head>
 
@@ -221,6 +220,7 @@
             <a class="collapse-item" href="{{ route('posisi.index') }}">Posisi</a>
             <a class="collapse-item" href="{{ route('jadwal.index') }}">Shifting</a>
             <a class="collapse-item" href="{{ route('absensi.index') }}">Absensi</a>
+            <a class="collapse-item" href="{{ route('leave.approvals.index') }}">Approval Izin</a>
         </div>
     </div>
 </li>

@@ -2,34 +2,43 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AbsensiController; // Asumsi namespace controller API
+use App\Http\Controllers\Api\AbsensiController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\LeaveRequestController;
+use App\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// --- RUTE PUBLIK (Tidak Perlu Login/Token) ---
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password/validate', [ForgotPasswordController::class, 'validateStep']);
+Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword']);
+Route::post('/clock-in', [AbsensiController::class, 'clockIn']);
 
-// Grup rute yang memerlukan otentikasi (misal: Sanctum)
+
+// --- RUTE TERPROTEKSI (Wajib Login & Mengirim Token) ---
 Route::middleware('auth:sanctum')->group(function () {
+    
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Endpoint untuk Absensi
+    // Endpoint Absensi
     Route::post('/absensi/clock-in', [AbsensiController::class, 'clockIn']);
     Route::post('/absensi/clock-out', [AbsensiController::class, 'clockOut']);
     Route::get('/absensi/status-hari-ini', [AbsensiController::class, 'getTodayStatus']);
-});
+    Route::get('/absensi/history', [AbsensiController::class, 'getHistory']);
+    Route::post('/leave/submit', [LeaveRequestController::class, 'store']);
 
-// Route untuk login (biasanya tidak diproteksi)
-// Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+    Route::get('/attendance-overview', [AbsensiController::class, 'getAttendanceOverview']);
+    
+});

@@ -14,6 +14,9 @@ use App\Http\Controllers\Presensi\PosisiController;
 use App\Http\Controllers\Presensi\JadwalController;
 use App\Http\Controllers\Presensi\ShiftController;
 use App\Http\Controllers\Presensi\LiburNasionalController;
+use App\Http\Controllers\Presensi\LeaveApprovalController;
+use App\Http\Controllers\Presensi\OfficeLocationController;
+use App\Http\Controllers\Presensi\RekapController;
 use App\Http\Controllers\Presensi\AbsensiController;
 use App\Http\Controllers\Comprof\SubMenuController;
 use App\Http\Controllers\Comprof\DataStafController;
@@ -102,8 +105,19 @@ Route::middleware(['auth'])->group(function () { // Pastikan hanya user terauten
         Route::post('/holiday', [LiburNasionalController::class,'store'])->name('holiday.store');
         Route::put('/holiday/{LiburNasional}', [LiburNasionalController::class,'update'])->name('holiday.update');
         Route::delete('/holiday/{liburNasional}', [LiburNasionalController::class,'destroy'])->name('holiday.destroy');
+        // Lokasi Office
+        Route::post('/officelocation', [OfficeLocationController::class, 'store'])->name('officelocation.store');
+        Route::put('/officelocation/{officeLocation}', [OfficeLocationController::class, 'update'])->name('officelocation.update');
+        Route::delete('/officelocation/{officeLocation}', [OfficeLocationController::class, 'destroy'])->name('officelocation.destroy');
         // Absensi
         Route::resource('absensi', AbsensiController::class);
+        // Leave Request
+        Route::get('/leave-approvals', [LeaveApprovalController::class, 'index'])->name('leave.approvals.index');
+        Route::post('/leave-approvals/{leaveRequest}/approve', [LeaveApprovalController::class, 'approve'])->name('leave.approvals.approve');
+        Route::post('/leave-approvals/{leaveRequest}/reject', [LeaveApprovalController::class, 'reject'])->name('leave.approvals.reject');
+        Route::delete('/leave-approvals/{leaveRequest}', [LeaveApprovalController::class, 'destroy'])->name('leave.approvals.destroy');
+        //Rekap
+        Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
     });
 });
 

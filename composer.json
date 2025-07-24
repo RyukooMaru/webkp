@@ -9,10 +9,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "devmarketer/easynav": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^12.3.0",
         "laravel/legacy-factories": "^1.4",
+        "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.0",
         "symfony/http-client": "^6.1",

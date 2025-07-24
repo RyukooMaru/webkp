@@ -51,6 +51,9 @@ class Jadwal extends Model
         'TMP_FLAG',
         'tmp_user',
         'tmp_date',
+        'latitude',
+        'longitude',
+
     ];
 
     /**

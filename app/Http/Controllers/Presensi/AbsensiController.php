@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Presensi\RealAbsensi;
 use App\Models\Presensi\Employee;
 use App\Models\Presensi\Jadwal;
+use App\Models\Presensi\Divisi; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -13,19 +14,33 @@ use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
+    /**
+     * Menampilkan halaman utama data absensi.
+     */
     public function index()
     {
         $Absensis = RealAbsensi::with('employee')->latest('TS_TANGGAL')->get();
         $employees = Employee::orderBy('emp_Name')->get();
-        return view('presensi.absensi.index', compact('Absensis', 'employees'));
+        
+        // PERBAIKAN: Ambil data divisi untuk dikirim ke view
+        $divisi = Divisi::orderBy('Div_Name')->get(); 
+        
+        // PERBAIKAN: Kirim variabel $divisi ke view
+        return view('presensi.absensi.index', compact('Absensis', 'employees', 'divisi'));
     }
 
+    /**
+     * Mengambil data absensi spesifik untuk ditampilkan di modal.
+     */
     public function show($id)
     {
         $absensi = RealAbsensi::with('employee')->findOrFail($id);
         return response()->json($absensi);
     }
 
+    /**
+     * Menyimpan data absensi baru dari input manual admin.
+     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -33,37 +48,13 @@ class AbsensiController extends Controller
             'TS_TANGGAL' => 'required|date',
             'TS_JAMIN' => 'nullable|date_format:H:i',
             'TS_JAMOUT' => 'nullable|date_format:H:i|after_or_equal:TS_JAMIN',
-            'TS_FOTO' => 'nullable|image|max:2048',
+            'TS_FOTO' => 'nullable|image|max:5048',
             'TS_FILE_PENDUKUNG' => 'nullable|file|mimes:pdf,jpg,png,doc,docx|max:2048',
             'TS_LATITUDE' => 'nullable|numeric',
             'TS_LONGITUDE' => 'nullable|numeric',
             'TS_STATUS' => 'nullable|string',
             'TS_NOTE' => 'nullable|string',
         ]);
-
-        // if (empty($validatedData['TS_STATUS']) || $validatedData['TS_STATUS'] === 'HADIR') {
-        //     $date = Carbon::parse($validatedData['TS_TANGGAL']);
-        //     $schedule = Jadwal::where('TMP_emp', $validatedData['TS_EMP'])
-        //                       ->where('tmp_periode', $date->format('Y-m'))
-        //                       ->where('emp_tgl', $date->format('d'))
-        //                       ->first();
-
-        //     if (!$schedule) {
-        //         // Mengembalikan error validasi jika tidak ada jadwal
-        //         return response()->json([
-        //             'message' => 'The given data was invalid.',
-        //             'errors' => ['TS_TANGGAL' => ['Karyawan tidak memiliki jadwal kerja pada tanggal ini.']]
-        //         ], 422);
-        //     }
-
-        //     if (in_array($schedule->shift_code, ['L', 'OFF'])) {
-        //         // Mengembalikan error validasi jika jadwalnya libur
-        //         return response()->json([
-        //             'message' => 'The given data was invalid.',
-        //             'errors' => ['TS_TANGGAL' => ['Tidak dapat membuat absensi Hadir pada hari libur.']]
-        //         ], 422);
-        //     }
-        // }
 
         $employee = Employee::find($request->TS_EMP);
         if ($employee) {
@@ -82,20 +73,26 @@ class AbsensiController extends Controller
         return response()->json(['success' => 'Data absensi berhasil ditambahkan.']);
     }
 
+    /**
+     * Mengambil data absensi untuk form edit.
+     */
     public function edit($id)
     {
-        // $absensi = RealAbsensi::findOrFail($id);
+        $absensi = RealAbsensi::findOrFail($id);
         return response()->json($absensi);
     }
 
-    public function update(Request $request, RealAbsensi $absensi)
+    /**
+     * Memperbarui data absensi yang ada.
+     */
+    public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
             'TS_EMP' => 'required|exists:m_employee,emp_Auto',
             'TS_TANGGAL' => 'required|date',
             'TS_JAMIN' => 'nullable|date_format:H:i',
             'TS_JAMOUT' => 'nullable|date_format:H:i|after_or_equal:TS_JAMIN',
-            'TS_FOTO' => 'nullable|image|max:2048',
+            'TS_FOTO' => 'nullable|image|max:5048',
             'TS_FILE_PENDUKUNG' => 'nullable|file|mimes:pdf,jpg,png,doc,docx|max:2048',
             'TS_LATITUDE' => 'nullable|numeric',
             'TS_LONGITUDE' => 'nullable|numeric',
@@ -103,31 +100,8 @@ class AbsensiController extends Controller
             'TS_NOTE' => 'nullable|string',
         ]);
 
-        // if (empty($validatedData['TS_STATUS']) || $validatedData['TS_STATUS'] === 'HADIR') {
-        //     $date = Carbon::parse($validatedData['TS_TANGGAL']);
-        //     $schedule = Jadwal::where('TMP_emp', $validatedData['TS_EMP'])
-        //                       ->where('tmp_periode', $date->format('Y-m'))
-        //                       ->where('emp_tgl', $date->format('d'))
-        //                       ->first();
-
-        //     if (!$schedule) {
-        //         // Mengembalikan error validasi jika tidak ada jadwal
-        //         return response()->json([
-        //             'message' => 'The given data was invalid.',
-        //             'errors' => ['TS_TANGGAL' => ['Karyawan tidak memiliki jadwal kerja pada tanggal ini.']]
-        //         ], 422);
-        //     }
-
-        //     if (in_array($schedule->shift_code, ['L', 'OFF'])) {
-        //         // Mengembalikan error validasi jika jadwalnya libur
-        //         return response()->json([
-        //             'message' => 'The given data was invalid.',
-        //             'errors' => ['TS_TANGGAL' => ['Tidak dapat membuat absensi Hadir pada hari libur.']]
-        //         ], 422);
-        //     }
-        // }
-
-        $data = $request->except(['_method', 'TS_FOTO', 'TS_FILE_PENDUKUNG', 'delete_foto', 'delete_file_pendukung']);
+        $absensi = RealAbsensi::findOrFail($id);
+        $data = $request->except(['TS_FOTO', 'TS_FILE_PENDUKUNG', 'delete_foto', 'delete_file_pendukung']);
 
         $employee = Employee::find($request->TS_EMP);
         if ($employee) {
@@ -154,9 +128,13 @@ class AbsensiController extends Controller
         return response()->json(['success' => 'Data absensi berhasil diperbarui.']);
     }
 
-    public function destroy(RealAbsensi $absensi) // PERBAIKAN: Gunakan Route-Model Binding
+    /**
+     * Menghapus data absensi.
+     */
+    public function destroy($id)
     {
-        // Hapus file dari storage jika ada
+        $absensi = RealAbsensi::findOrFail($id);
+        
         if ($absensi->TS_FOTO) {
             Storage::disk('public')->delete('absensi_fotos/' . $absensi->TS_FOTO);
         }
@@ -164,8 +142,7 @@ class AbsensiController extends Controller
             Storage::disk('public')->delete('dokumen_izin/' . $absensi->TS_FILE_PENDUKUNG);
         }
         
-        $absensi->delete(); // Hapus record dari database
-
+        $absensi->delete();
         return response()->json(['success' => 'Data absensi berhasil dihapus.']);
     }
 }

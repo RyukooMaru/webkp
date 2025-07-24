@@ -8,6 +8,7 @@ use App\Models\Presensi\Employee;
 use App\Models\Presensi\Divisi;
 use App\Models\Presensi\Shift;
 use App\Models\Presensi\LiburNasional;
+use App\Models\Presensi\OfficeLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +19,9 @@ class JadwalController extends Controller
     {
         $divisi = Divisi::orderBy('Div_Name')->get();
         $shifts = Shift::orderBy('shift_code')->get();
-        $holidays = LiburNasional::all();
-        return view('presensi.jadwal.index', compact('divisi', 'shifts', 'holidays'));
+        $officeLocations = OfficeLocation::all();
+        $holidays = LiburNasional::orderBy('tanggal', 'desc')->get(); // Diurutkan agar lebih rapi
+        return view('presensi.jadwal.index', compact('divisi', 'shifts', 'holidays', 'officeLocations'));
     }
 
     public function fetchJadwal(Request $request)
@@ -51,6 +53,7 @@ class JadwalController extends Controller
             'employee_ids.*' => 'integer|exists:m_employee,emp_Auto',
             'default_work_shift' => 'required|string|exists:m_shift,shift_code', // Validasi shift kerja
             'default_holiday_shift' => 'required|string|exists:m_shift,shift_code', // Validasi shift libur
+            'location_id' => 'required|integer|exists:m_officeloc,id', 
 
         ]);
 
@@ -59,6 +62,11 @@ class JadwalController extends Controller
         $employees = Employee::whereIn('emp_Auto', $request->employee_ids)->with(['divisi', 'posisi'])->get();
         $masterShifts = Shift::all()->keyBy('shift_code');
         
+        $officeLocation = OfficeLocation::find($request->location_id);
+        if (!$officeLocation) {
+            return response()->json(['message' => 'Lokasi kantor tidak valid.'], 422);
+        }
+
         $nationalHolidays = LiburNasional::whereMonth('tanggal', $periode->month)
                             ->whereYear('tanggal', $periode->year)
                             ->pluck('tanggal')
@@ -89,6 +97,8 @@ class JadwalController extends Controller
                             'shift_code' => $shiftCode, 
                             'jam_in' => $jamIn, 
                             'jam_out' => $jamOut,
+                            'latitude' => $officeLocation->latitude,
+                            'longitude' => $officeLocation->longitude,
                             'tmp_user' => auth()->id(), 
                             'tmp_date' => now(),
                         ]
@@ -109,10 +119,24 @@ class JadwalController extends Controller
             'shift_code' => 'required|string|max:10',
             'jam_in' => 'required|date_format:H:i',
             'jam_out' => 'required|date_format:H:i',
+            'location_id' => 'required|integer|exists:m_officeloc,id', // Validasi input lokasi
         ]);
 
         $jadwal = Jadwal::findOrFail($id);
-        $jadwal->update($request->all());
+        $location = OfficeLocation::find($request->location_id);
+
+        if (!$location) {
+            return response()->json(['message' => 'Lokasi tidak ditemukan.'], 404);
+        }
+
+        // Update data jadwal dengan data baru
+        $jadwal->update([
+            'shift_code' => $request->shift_code,
+            'jam_in' => $request->jam_in,
+            'jam_out' => $request->jam_out,
+            'latitude' => $location->latitude,
+            'longitude' => $location->longitude,
+        ]);
 
         return response()->json([
             'message' => 'Jadwal berhasil diperbarui.',

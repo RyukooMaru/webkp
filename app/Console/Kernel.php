@@ -23,10 +23,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        // === TAMBAHKAN BARIS INI ===
-        // Menjalankan perintah 'absensi:mark-absent' setiap hari pada pukul 23:00 (11 malam).
-        // Anda bisa menyesuaikan waktunya sesuai kebutuhan.
-        $schedule->command('absensi:mark-absent')->everyTenMinutes();
+        // Jalankan perintah auto clock out setiap 5 menit
+        $schedule->command('attendance:auto-clock-out')->everyFiveMinutes();
+
+        $schedule->command('notifications:prune')->daily();
     }
 
     /**
