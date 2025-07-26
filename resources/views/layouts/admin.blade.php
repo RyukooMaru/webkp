@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Laravel SB Admin 2">
-    <meta name="author" content="Alejandro RH">
+    <meta name="author" content="CV.PRIMA BELLA PANEN REJEKI">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,9 +18,23 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables/dataTables.min.css') }}" rel="stylesheet"> {{-- CSS DataTables --}}
 
     <!-- Favicon -->
     <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+
+    <!-- Scripts -->
+    {{-- !!! Tambahkan jQuery jika belum ada dan diperlukan oleh plugin lain --}}
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Contoh SweetAlert --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script> {{-- Contoh InputMask --}}
+
+    <!-- Bootstrap 5 JS Bundle (sudah termasuk Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 <body id="page-top">
 
@@ -95,9 +109,9 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Penjualan Menu:</h6>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-            <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+            <a class="collapse-item" href="{{ route('pelanggan.index') }}">Daftar Pelanggan</a>
+            <a class="collapse-item" href="{{ route('customer-orders.index') }}">Customer Order</a>
+            <a class="collapse-item" href="{{ route('penjualan.index') }}">Penjualan</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
         </div>
@@ -114,9 +128,9 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Akunting Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Kode Akunting</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Jurnal Umum</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">Buku Besar</a>
+                    <a class="collapse-item" href="{{--route('kodeakunting.index')--}}">Kode Akunting</a>
+                    <a class="collapse-item" href="{{--route('jurnalumum.index')--}}">Jurnal Umum</a>
+                    <a class="collapse-item" href="{{--route('bukubesar.index')--}}">Buku Besar</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Kas Masuk</a>
                     <a class="collapse-item" href="{{-- route('#') --}}">Kas Keluar</a>
                 </div>
@@ -152,11 +166,7 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Keamanan Menu:</h6>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
-                    <a class="collapse-item" href="{{-- route('#') --}}">test</a>
+                    <a class="collapse-item" href="{{-- route('#') --}}">User</a>
                 </div>
             </div>
         </li>
@@ -171,7 +181,7 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Data Karyawan Menu:</h6>
-            <a class="collapse-item" href="{{ route('data-karyawan.index') }}">Divisi</a>
+            <a class="collapse-item" href="{{-- route('#') --}}">Divisi</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
             <a class="collapse-item" href="{{-- route('#') --}}">test</a>
@@ -402,7 +412,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>CV.PRIMA BELLA PANEN JAYA {{ now()->year }}</span>
+                    <span>CV.PRIMA BELLA PANEN REJEKI {{ now()->year }}</span>
                 </div>
             </div>
         </footer>
@@ -439,11 +449,6 @@
         </div>
     </div>
 </div>
-
-<!-- Scripts -->
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>
