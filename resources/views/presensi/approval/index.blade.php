@@ -47,21 +47,20 @@
                                 @endif
                             </td>
                             <td>
-                                {{-- Tombol Approval hanya muncul jika status 'pending' --}}
-                                @if($request->status == 'pending')
-                                    <button class="btn btn-primary btn-sm btn-approval"
-                                            data-toggle="modal"
-                                            data-target="#approvalModal"
-                                            data-id="{{ $request->id }}"
-                                            data-name="{{ $request->employee->emp_Name }}"
-                                            data-type="{{ $request->type }}"
-                                            data-start_date="{{ \Carbon\Carbon::parse($request->start_date)->format('d M Y') }}"
-                                            data-end_date="{{ \Carbon\Carbon::parse($request->end_date)->format('d M Y') }}"
-                                            data-reason="{{ $request->reason }}"
-                                            data-attachment="{{ $request->attachment_path ? asset('storage/leave_attachments/' . $request->attachment_path) : '' }}">
-                                        <i class="fas fa-check-circle"></i> Approval
-                                    </button>
-                                @endif
+                                {{-- Tombol Detail/Approval --}}
+                                <button class="btn btn-info btn-sm btn-detail"
+                                        data-toggle="modal"
+                                        data-target="#approvalModal"
+                                        data-id="{{ $request->id }}"
+                                        data-status="{{ $request->status }}"
+                                        data-name="{{ $request->employee->emp_Name }}"
+                                        data-type="{{ $request->type }}"
+                                        data-start_date="{{ \Carbon\Carbon::parse($request->start_date)->format('d M Y') }}"
+                                        data-end_date="{{ \Carbon\Carbon::parse($request->end_date)->format('d M Y') }}"
+                                        data-reason="{{ $request->reason }}"
+                                        data-attachment="{{ $request->attachment_path ? asset('storage/leave_attachments/' . $request->attachment_path) : '' }}">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
 
                                 @can('hapus', $currentMenuSlug)
                                     <button type="button" class="btn btn-danger btn-sm btn-delete-request" 
@@ -122,20 +121,27 @@
                 </table>
             </div>
             <div class="modal-footer justify-content-between">
-                <p class="mb-0 text-muted">Setujui izin ini?</p>
-                <div>
-                    <form id="rejectForm" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-times"></i> Tolak
-                        </button>
-                    </form>
-                    <form id="approveForm" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-check"></i> Ya, Setuju
-                        </button>
-                    </form>
+                {{-- Bagian untuk status PENDING --}}
+                <div id="footer-pending" style="display: none;">
+                    <p class="mb-0 text-muted">Setujui izin ini?</p>
+                    <div>
+                        <form id="rejectForm" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Tolak</button>
+                        </form>
+                        <form id="approveForm" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Ya, Setuju</button>
+                        </form>
+                    </div>
+                </div>
+                {{-- Bagian untuk status APPROVED --}}
+                <div id="footer-approved" class="text-success" style="display: none;">
+                    <i class="fas fa-check-circle"></i> <strong><span class="status-type"></span> telah disetujui.</strong>
+                </div>
+                {{-- Bagian untuk status REJECTED --}}
+                <div id="footer-rejected" class="text-danger" style="display: none;">
+                    <i class="fas fa-times-circle"></i> <strong><span class="status-type"></span> ditolak.</strong>
                 </div>
             </div>
         </div>
@@ -148,7 +154,7 @@
     $(document).ready(function() {
         $('#approvalTable').DataTable();
 
-        $('body').on('click', '.btn-approval', function() {
+        $('body').on('click', '.btn-detail', function() {
             var request = $(this).data();
             $('#modal_name').text(request.name);
             $('#modal_type').text(request.type);
@@ -159,6 +165,24 @@
                 $('#modal_attachment').html(`<a href="${request.attachment}" target="_blank">Lihat Dokumen</a>`);
             } else {
                 $('#modal_attachment').text('-');
+            }
+            
+            $('#footer-pending, #footer-approved, #footer-rejected').hide();
+
+            if (request.status === 'pending') {
+                // Atur action URL untuk form
+                var approveUrl = `{{ url('presensi/leave-approvals') }}/${request.id}/approve`;
+                var rejectUrl = `{{ url('presensi/leave-approvals') }}/${request.id}/reject`;
+                $('#approveForm').attr('action', approveUrl);
+                $('#rejectForm').attr('action', rejectUrl);
+                // Tampilkan footer untuk aksi pending
+                $('#footer-pending').show();
+            } else if (request.status === 'approved') {
+                $('#footer-approved .status-type').text(request.type);
+                $('#footer-approved').show();
+            } else if (request.status === 'rejected') {
+                $('#footer-rejected .status-type').text(request.type);
+                $('#footer-rejected').show();
             }
 
             var approveUrl = `{{ url('presensi/leave-approvals') }}/${request.id}/approve`;
