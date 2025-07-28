@@ -26,9 +26,9 @@
         @endphp
 
         @can('tambah', $currentMenuSlug)
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="addDivisiButton">
-            <i class="fas fa-plus"></i> Tambah Divisi
-        </button>
+            <button id="btn-tambah-absensi" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Presensi Manual
+            </button>
         @endcan
     </div>
 
