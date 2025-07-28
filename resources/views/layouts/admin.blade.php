@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Laravel SB Admin 2">
     <meta name="author" content="CV.PRIMA BELLA PANEN REJEKI">
+    <meta name="author" content="CV.PRIMA BELLA PANEN REJEKI">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -167,9 +168,9 @@
                                 data-parent="#accordionSidebar">
                                 <div class="bg-white py-2 collapse-inner rounded">
                                     <h6 class="collapse-header">Penjualan Menu:</h6>
-                                    <a class="collapse-item" href="route('#')">test</a>
-                                    <a class="collapse-item" href="route('#')">test</a>
-                                    <a class="collapse-item" href="route('#')">test</a>
+                                    <a class="collapse-item" href="route('pelanggan.index')">test</a>
+                                    <a class="collapse-item" href="route('customer-orders.index')">test</a>
+                                    <a class="collapse-item" href="route('penjualan.index')">test</a>
                                     <a class="collapse-item" href="route('#')">test</a>
                                     <a class="collapse-item" href="{{ route('retur.penjualan.index') }}">Retur Penjualan</a>
                                 </div>

@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ControllerSP\PelangganController;
+use App\Http\Controllers\ControllerSP\DaftarPesananController;
+use App\Http\Controllers\ControllerSP\PenjualanController;
 use App\Http\Controllers\Akuntansi\KodeAkuntingController;
 use App\Http\Controllers\Akuntansi\JurnalUmumController;
 use App\Http\Controllers\Inventory\SupplierController;
@@ -344,6 +347,21 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::post('/kategorialbum', [KategoriAlbumController::class, 'store'])->name('kategorialbum.store');
         Route::put('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'update'])->name('kategorialbum.update');
         Route::delete('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'destroy'])->name('kategorialbum.destroy');
+    });
+
+// --- Routes Penjualan ---
+    Route::resource('pelanggan', PelangganController::class);
+    Route::resource('customer-orders', DaftarPesananController::class);
+    Route::resource('penjualan', PenjualanController::class)->only(['index', 'store']);
+
+    Route::prefix('api')->name('api.')->group(function () {
+        Route::prefix('jualan')->name('jualan.')->group(function () {
+            // Route to get outstanding orders for a specific customer
+            Route::get('/outstanding-orders/{pelanggan}', [PenjualanController::class, 'getOutstandingOrders'])->name('outstanding-orders');
+
+            // Route to get the details of a specific customer order
+            Route::get('/order-details/{customerOrder}', [PenjualanController::class, 'getOrderDetails'])->name('order-details');
+        });
     });
 
 });
