@@ -85,6 +85,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
         Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
     });
+    Route::prefix('jadwal')->name('jadwal.')->group(function () {
+            Route::post('/fetch', [JadwalController::class, 'fetchJadwal'])->name('fetch');
+            Route::post('/generate', [JadwalController::class, 'generate'])->name('generate');
+        });
+    //Rekap
+    Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
 });
 
 Route::middleware(['auth', 'can.access.menu'])->group(function () {
@@ -119,8 +125,6 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
             // Jadwal
         Route::prefix('jadwal')->name('jadwal.')->group(function () {
             Route::get('/', [JadwalController::class, 'index'])->name('index');
-            Route::post('/fetch', [JadwalController::class, 'fetchJadwal'])->name('fetch');
-            Route::post('/generate', [JadwalController::class, 'generate'])->name('generate');
             Route::put('/update/{id}', [JadwalController::class, 'update'])->name('update');
             // === TAMBAHKAN ROUTE INI ===
             Route::delete('/destroy', [JadwalController::class, 'destroyJadwal'])->name('destroy');
@@ -145,8 +149,6 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::post('/leave-approvals/{leaveRequest}/approve', [LeaveApprovalController::class, 'approve'])->name('leave.approvals.approve');
         Route::post('/leave-approvals/{leaveRequest}/reject', [LeaveApprovalController::class, 'reject'])->name('leave.approvals.reject');
         Route::delete('/leave-approvals/{leaveRequest}', [LeaveApprovalController::class, 'destroy'])->name('leave.approvals.destroy');
-        //Rekap
-        Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
     });
 });
 
