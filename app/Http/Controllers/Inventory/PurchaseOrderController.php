@@ -100,12 +100,13 @@ class PurchaseOrderController extends Controller
         $po = $purchase_order->load('details.product', 'details.uom');
 
         return view('inventory.purchaseorder.index', [
-            'header' => $po,
-            'suppliers' => Supplier::all(),
-            'products' => Dtproduk::all(),
-            'uoms' => SatuanProduk::all(),
-            'locations' => ['WH-A', 'WH-B', 'WH-C']
-        ]);
+        'header' => $po,
+        // Gunakan unique() untuk menghindari duplikat nama supplier
+        'suppliers' => Supplier::orderBy('nama_supplier')->get()->unique('nama_supplier'),
+        'products' => Dtproduk::all(),
+        'uoms' => SatuanProduk::all(),
+        'locations' => ['WH-A', 'WH-B', 'WH-C']
+    ]);
     }
 
     public function update(Request $request, PurchaseOrder $purchase_order)
