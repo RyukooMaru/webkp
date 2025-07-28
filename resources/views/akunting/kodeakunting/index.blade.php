@@ -195,9 +195,8 @@ $(document).ready(function() {
     $subClassSelect.empty().append('<option value="">-- Pilih Sub Klasifikasi --</option>');
 
     if (classId) {
-        console.log("Melakukan AJAX request ke:", '{{ route("kodeakunting.getSubclasses", "") }}/' + classId); // Debug
         $.ajax({
-            url: '{{ route("kodeakunting.getSubclasses", "") }}/' + classId,
+            url: '{{ url("akunting/kodeakunting/get-subclasses") }}/' + classId,
             type: 'GET',
             dataType: 'json',
             success: function(data) {
