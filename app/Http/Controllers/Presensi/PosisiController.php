@@ -36,7 +36,7 @@ class PosisiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Pos_Code'   => 'required|string|max:60',
+            'Pos_Code'   => 'required|string|max:60|unique:ts_position,Pos_Code',
             'Pos_Name'   => 'required|string|max:150',
         ]);
 
@@ -48,9 +48,6 @@ class PosisiController extends Controller
                 'message' => 'Data Posisi berhasil ditambahkan.',
             ]);
         }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Posisi berhasil ditambahkan.');
     }
 
     /**
@@ -91,9 +88,6 @@ class PosisiController extends Controller
                 'status'  => 'success',
                 'message'=> 'Data Posisi berhasil diperbarui.']);
         }
-
-        return redirect()->route('posisi.index')
-                        ->with('success','Data Posisi berhasil diperbarui.');
     }
 
 
@@ -102,7 +96,8 @@ class PosisiController extends Controller
      */
     public function destroy(string $id)
     {
-        Posisi::findOrFail($id)->delete();
+        $Posisi = Posisi::findOrFail($id);
+        $Posisi->delete();
         return response()->json(['message' => 'Data Posisi berhasil dihapus.']);
     }
 }

@@ -19,9 +19,16 @@
 
     <!-- Tambah Data Karyawan Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug) 
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addEmployeeButton">
             <i class="fas fa-plus"></i> Tambah Karyawan
         </button>
+        @endcan
     </div>
 
 
@@ -68,12 +75,18 @@
                                 <button class="btn btn-info btn-sm btn-view" data-id="{{ $Employee->emp_Auto }}" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+
+                                @can('ubah', $currentMenuSlug) 
                                 <button class="btn btn-warning btn-sm btn-edit" data-id="{{ $Employee->emp_Auto }}" title="Edit Employee">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+
+                                @can('hapus', $currentMenuSlug) 
                                 <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $Employee->emp_Auto }}" data-nama="{{ $Employee->emp_Name }}" title="Hapus Employee">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach
@@ -240,8 +253,8 @@
         </div>
     </div>
 </div>
-    
-<!-- Modal Tambah/Edit Divisi Data Karyawan -->
+
+<!-- Modal Tambah/Edit Data Karyawan -->
 <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl"> {{-- Ukuran modal besar --}}
         <div class="modal-content">
@@ -543,7 +556,7 @@
                             <div class="row my-4 ml-2">
                                 <div class="col-md-3">
                                     <label for="emp_Address" class="form-label">Alamat 1 :</label>
-                                    <textarea type="text" name="emp_Address" id="emp_Address" placeholder="{{ $Employee->emp_Address }}" class="form-control"></textarea>
+                                    <textarea type="text" name="emp_Address" id="emp_Address" placeholder="Alamat lengkap" class="form-control"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="emp_CityCode" class="form-label">Kode Kota 1 :</label>
@@ -581,7 +594,7 @@
                             <div class="row my-4 ml-2">
                                 <div class="col-md-3">
                                     <label for="emp_Address2" class="form-label">Alamat 2 :</label>
-                                    <textarea type="text" name="emp_Address2" id="emp_Address2" placeholder="{{ $Employee->emp_Address2 }}" class="form-control"></textarea>
+                                    <textarea type="text" name="emp_Address2" id="emp_Address2" placeholder="Alamat lengkap" class="form-control"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="emp_CityCode2" class="form-label">Kode Kota 2 :</label>
@@ -626,6 +639,7 @@
         </div>
     </div>
 </div>
+
  
 
 @endsection
@@ -876,6 +890,11 @@
                 success: function(data) {
                     $('#Employee_Id').val(data.emp_Auto);
                     $('#formMethod').val('PUT');
+                    $('#emp_Address').val(data.emp_Address); // Akan mengisi area teks
+                    $('#emp_Address2').val(data.emp_Address2); // Akan mengisi area teks
+                    // Penting: Kosongkan nilai textarea agar placeholder terlihat
+                    $('#emp_Address').val('');
+                    $('#emp_Address2').val('');
 
                     // === PERBAIKAN UTAMA DI SINI ===
                     // Mengisi form sambil melewati field input file

@@ -16,9 +16,16 @@
 
     <!-- Add New Divisi Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug) 
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addPosisiButton">
             <i class="fas fa-plus"></i> Tambah Posisi
         </button>
+        @endcan
     </div>
 
 
@@ -48,6 +55,7 @@
                             <td>{{ $Posisi->Pos_UserID }}</td>
                             <td>{{ $Posisi->Pos_LastUpdate }}</td>
                             <td>
+                                @can('ubah', $currentMenuSlug) 
                                 <button type="button" class="btn btn-sm btn-warning edit-btn"
                                     data-posid="{{ $Posisi->pos_auto }}"
                                     data-poscode="{{ $Posisi->Pos_Code }}"
@@ -56,12 +64,16 @@
                                     data-target="#editPosModal">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+
+                                @can('hapus', $currentMenuSlug) 
                                 <button class="btn btn-sm btn-danger delete-btn"
                                     data-posid="{{ $Posisi->pos_auto }}"
                                     data-posname="{{ $Posisi->Pos_Name }}"
                                     data-toggle="modal" data-target="#deletePosisiModal">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

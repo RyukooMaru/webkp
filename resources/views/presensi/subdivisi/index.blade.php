@@ -16,9 +16,16 @@
 
     <!-- Add New Sub-Divisi Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug) 
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addSubDivisiButton">
             <i class="fas fa-plus"></i> Tambah Sub-Divisi
         </button>
+        @endcan
     </div>
 
 
@@ -56,22 +63,29 @@
                             <td>{{ $SubDivisi->Div_UserID }}</td>
                             <td>{{ $SubDivisi->Div_LastUpdate }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning edit-btn"
-                                    data-subdivid="{{ $SubDivisi->div_auto }}"
-                                    data-divid="{{ $SubDivisi->div_divcode }}"
-                                    data-subdivcode="{{ $SubDivisi->Div_Code }}"
-                                    data-subdivname="{{ $SubDivisi->Div_Name }}"
-                                    data-subdivnik="{{ $SubDivisi->DIV_NIK }}"
-                                    data-toggle="modal"
-                                    data-target="#editSubDivModal">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-subdivid="{{ $SubDivisi->div_auto }}"
-                                    data-subdivname="{{ $SubDivisi->Div_Name }}"
-                                    data-toggle="modal" data-target="#deleteSubDivisiModal">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="d-flex gap-2">
+                                    @can('ubah', $currentMenuSlug) 
+                                    <button type="button" class="btn btn-sm btn-warning edit-btn"
+                                        data-subdivid="{{ $SubDivisi->div_auto }}"
+                                        data-divid="{{ $SubDivisi->div_divcode }}"
+                                        data-subdivcode="{{ $SubDivisi->Div_Code }}"
+                                        data-subdivname="{{ $SubDivisi->Div_Name }}"
+                                        data-subdivnik="{{ $SubDivisi->DIV_NIK }}"
+                                        data-toggle="modal"
+                                        data-target="#editSubDivModal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    @endcan
+                                    
+                                    @can('hapus', $currentMenuSlug) 
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                        data-subdivid="{{ $SubDivisi->div_auto }}"
+                                        data-subdivname="{{ $SubDivisi->Div_Name }}"
+                                        data-toggle="modal" data-target="#deleteSubDivisiModal">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                         @endforeach

@@ -4,12 +4,13 @@ namespace App\Models\Presensi;
 
 use App\Models\keamanan\Member;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $table = 'm_employee';
     protected $primaryKey = 'emp_Auto';

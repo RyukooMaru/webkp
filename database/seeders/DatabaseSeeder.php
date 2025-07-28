@@ -18,7 +18,12 @@ class DatabaseSeeder extends Seeder
                             RoleMenuSeeder::class,
                             KaryawanSeeder::class,
                             MemberSeeder::class,
-                            RightAccessSeeder::class,]);
+                            RightAccessSeeder::class,
+                            DivisiSeeder::class,
+                            SubDivisiSeeder::class,
+                            PosisiSeeder::class,
+                            KaryawanSeeder::class,
+                        ]);
 
 
         // \App\Models\User::factory(10)->create();
@@ -34,6 +39,5 @@ class DatabaseSeeder extends Seeder
         //      'password' => 'password',
         //      'email' => 'test@example.com',
         //  ]);
-
     }
 }

@@ -16,9 +16,16 @@
 
     <!-- Add New Divisi Button -->
     <div class="mb-3">
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="addDivisiButton">
             <i class="fas fa-plus"></i> Tambah Divisi
         </button>
+        @endcan
     </div>
 
     <!-- Divisi Card -->
@@ -61,6 +68,7 @@
                                 <button class="btn btn-info btn-sm btn-view" data-id="{{ $Divisi->div_auto }}" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                @can('ubah', $currentMenuSlug) 
                                 <button type="button" class="btn btn-sm btn-warning edit-btn"
                                     data-divid="{{ $Divisi->div_auto }}"
                                     data-divcode="{{ $Divisi->Div_Code }}"
@@ -72,12 +80,16 @@
                                     data-target="#editDivModal">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+
+                                @can('hapus', $currentMenuSlug)
                                 <button class="btn btn-sm btn-danger delete-btn"
                                     data-divid="{{ $Divisi->div_auto }}"
                                     data-divname="{{ $Divisi->Div_Name }}"
                                     data-toggle="modal" data-target="#deleteDivisiModal">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

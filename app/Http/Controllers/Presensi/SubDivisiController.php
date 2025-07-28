@@ -39,7 +39,7 @@ class SubDivisiController extends Controller
     {
         $validated = $request->validate([
             'div_divcode'   => 'required|string|exists:ts_div,div_auto',
-            'Div_Code'      => 'required|string|max:20',
+            'Div_Code'      => 'required|string|max:20|unique:ts_subdiv,Div_Code',
             'Div_Name'      => 'required|string|max:50',
             'DIV_NIK'       => 'nullable|string|max:20',
         ]);
@@ -52,12 +52,9 @@ class SubDivisiController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Data Posisi berhasil ditambahkan.',
+                'message' => 'Data Subdivisi berhasil ditambahkan.',
             ]);
         }
-
-        return redirect()->route('subdivisi.index')
-                        ->with('success','Data Sub-Divisi berhasil ditambahkan.');
     }
 
     /**
@@ -93,12 +90,9 @@ class SubDivisiController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Data Posisi berhasil ditambahkan.',
+                'message' => 'Data Subdivisi berhasil ditambahkan.',
             ]);
         }
-
-        return redirect()->route('subdivisi.index')
-                        ->with('success','Data Sub-Divisi berhasil diperbarui.');
     }
 
     /**
@@ -109,8 +103,7 @@ class SubDivisiController extends Controller
 
         $SubDivisi = SubDivisi::findOrFail($id);
         $SubDivisi->delete();
-        
-        return redirect()->route('subdivisi.index')->with('success', 'Data Sub-divisi berhasil dihapus.');
+        return response()->json(['message' => 'Data Sub-Divisi berhasil dihapus.']);
 
     }
 

@@ -12,6 +12,13 @@ use App\Http\Controllers\Comprof\SettingMenuController;
 use App\Http\Controllers\Presensi\DivisiController;
 use App\Http\Controllers\Presensi\SubDivisiController;
 use App\Http\Controllers\Presensi\PosisiController;
+use App\Http\Controllers\Presensi\JadwalController;
+use App\Http\Controllers\Presensi\ShiftController;
+use App\Http\Controllers\Presensi\LiburNasionalController;
+use App\Http\Controllers\Presensi\LeaveApprovalController;
+use App\Http\Controllers\Presensi\OfficeLocationController;
+use App\Http\Controllers\Presensi\RekapController;
+use App\Http\Controllers\Presensi\AbsensiController;
 use App\Http\Controllers\Comprof\SubMenuController;
 use App\Http\Controllers\Comprof\DataStafController;
 use App\Http\Controllers\Inventory\KelompokProdukController;
@@ -79,33 +86,66 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'can.access.menu'])->group(function () {
     // --- Data Presensi Routes ---
+    Route::middleware(['auth'])->group(function () { // Pastikan hanya user terautentikasi
     Route::prefix('presensi')->group(function () {
-        // Data Karyawan Routes
-        Route::get('/employee', [KaryawanController::class, 'index'])->name('employee.index');
-        Route::post('/employee', [KaryawanController::class, 'store'])->name('employee.store');
-        Route::get('/employee/{Employee}', [KaryawanController::class, 'show'])->name('employee.show');
-        Route::put('/employee/{Employee}', [KaryawanController::class, 'update'])->name('employee.update');
-        Route::delete('/employee/{Employee}', [KaryawanController::class, 'destroy'])->name('employee.destroy');
-        // Divisi Routes
-        Route::get('/divisi', [DivisiController::class, 'index'])->name('divisi.index');
-        Route::post('/divisi', [DivisiController::class, 'store'])->name('divisi.store');
-        Route::get('/divisi/{Divisi}', [DivisiController::class, 'show'])->name('divisi.show');
-        Route::put('/divisi/{Divisi}', [DivisiController::class, 'update'])->name('divisi.update');
-        Route::delete('/divisi/{Divisi}', [DivisiController::class, 'destroy'])->name('divisi.destroy');
-        // Sub-Divisi Routes
-        Route::get('/subdivisi', [SubDivisiController::class, 'index'])->name('subdivisi.index');
-        Route::post('/subdivisi', [SubDivisiController::class, 'store'])->name('subdivisi.store');
-        Route::get('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'show'])->name('subdivisi.show');
-        Route::put('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'update'])->name('subdivisi.update');
-        Route::delete('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'destroy'])->name('subdivisi.destroy');
-        Route::get('/get-subdivisi/{Divisi}', [SubDivisiController::class, 'getByDivision'])->name('subdivisi.getByDivision');
-        // Posisi Routes
-        Route::get('/posisi', [PosisiController::class, 'index'])->name('posisi.index');
-        Route::post('/posisi', [PosisiController::class, 'store'])->name('posisi.store');
-        Route::get('/posisi/{Posisi}', [PosisiController::class, 'show'])->name('posisi.show');
-        Route::put('/posisi/{Posisi}', [PosisiController::class, 'update'])->name('posisi.update');
-        Route::delete('/posisi/{Posisi}', [PosisiController::class, 'destroy'])->name('posisi.destroy');
+            // Data Karyawan Routes
+            Route::get('/employee', [KaryawanController::class, 'index'])->name('employee.index');
+            Route::post('/employee', [KaryawanController::class, 'store'])->name('employee.store');
+            Route::get('/employee/{Employee}', [KaryawanController::class, 'show'])->name('employee.show');
+            Route::put('/employee/{Employee}', [KaryawanController::class, 'update'])->name('employee.update');
+            Route::delete('/employee/{Employee}', [KaryawanController::class, 'destroy'])->name('employee.destroy');
+            // Divisi Routes
+            Route::get('/divisi', [DivisiController::class, 'index'])->name('divisi.index');
+            Route::post('/divisi', [DivisiController::class, 'store'])->name('divisi.store');
+            Route::get('/divisi/{Divisi}', [DivisiController::class, 'show'])->name('divisi.show');
+            Route::put('/divisi/{Divisi}', [DivisiController::class, 'update'])->name('divisi.update');
+            Route::delete('/divisi/{Divisi}', [DivisiController::class, 'destroy'])->name('divisi.destroy');
+            // Sub-Divisi Routes
+            Route::get('/subdivisi', [SubDivisiController::class, 'index'])->name('subdivisi.index');
+            Route::post('/subdivisi', [SubDivisiController::class, 'store'])->name('subdivisi.store');
+            Route::get('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'show'])->name('subdivisi.show');
+            Route::put('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'update'])->name('subdivisi.update');
+            Route::delete('/subdivisi/{SubDivisi}', [SubDivisiController::class, 'destroy'])->name('subdivisi.destroy');
+            Route::get('/get-subdivisi/{Divisi}', [SubDivisiController::class, 'getByDivision'])->name('subdivisi.getByDivision');
+            // Posisi Routes
+            Route::get('/posisi', [PosisiController::class, 'index'])->name('posisi.index');
+            Route::post('/posisi', [PosisiController::class, 'store'])->name('posisi.store');
+            Route::get('/posisi/{Posisi}', [PosisiController::class, 'show'])->name('posisi.show');
+            Route::put('/posisi/{Posisi}', [PosisiController::class, 'update'])->name('posisi.update');
+            Route::delete('/posisi/{Posisi}', [PosisiController::class, 'destroy'])->name('posisi.destroy');
+            // Jadwal
+        Route::prefix('jadwal')->name('jadwal.')->group(function () {
+            Route::get('/', [JadwalController::class, 'index'])->name('index');
+            Route::post('/fetch', [JadwalController::class, 'fetchJadwal'])->name('fetch');
+            Route::post('/generate', [JadwalController::class, 'generate'])->name('generate');
+            Route::put('/update/{id}', [JadwalController::class, 'update'])->name('update');
+            // === TAMBAHKAN ROUTE INI ===
+            Route::delete('/destroy', [JadwalController::class, 'destroyJadwal'])->name('destroy');
+            Route::post('/check', [JadwalController::class, 'checkJadwal'])->name('check');
+        });
+        // Shift
+        Route::post('/shift', [ShiftController::class,'store'])->name('shift.store');
+        Route::put('/shift/{Shift}', [ShiftController::class,'update'])->name('shift.update');
+        Route::delete('/shift/{shift}', [ShiftController::class,'destroy'])->name('shift.destroy');
+        // Libur Nasional
+        Route::post('/holiday', [LiburNasionalController::class,'store'])->name('holiday.store');
+        Route::put('/holiday/{LiburNasional}', [LiburNasionalController::class,'update'])->name('holiday.update');
+        Route::delete('/holiday/{liburNasional}', [LiburNasionalController::class,'destroy'])->name('holiday.destroy');
+        // Lokasi Office
+        Route::post('/officelocation', [OfficeLocationController::class, 'store'])->name('officelocation.store');
+        Route::put('/officelocation/{officeLocation}', [OfficeLocationController::class, 'update'])->name('officelocation.update');
+        Route::delete('/officelocation/{officeLocation}', [OfficeLocationController::class, 'destroy'])->name('officelocation.destroy');
+        // Absensi
+        Route::resource('absensi', AbsensiController::class);
+        // Leave Request
+        Route::get('/leave-approvals', [LeaveApprovalController::class, 'index'])->name('leave.approvals.index');
+        Route::post('/leave-approvals/{leaveRequest}/approve', [LeaveApprovalController::class, 'approve'])->name('leave.approvals.approve');
+        Route::post('/leave-approvals/{leaveRequest}/reject', [LeaveApprovalController::class, 'reject'])->name('leave.approvals.reject');
+        Route::delete('/leave-approvals/{leaveRequest}', [LeaveApprovalController::class, 'destroy'])->name('leave.approvals.destroy');
+        //Rekap
+        Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
     });
+});
 
     // --- Akuntansi Routes ---
     Route::prefix('akunting')->group(function () {
