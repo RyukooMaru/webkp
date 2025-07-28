@@ -25,17 +25,44 @@ class MenuSeeder extends Seeder
         }
 
 
+        // === Menu Induk: Presensi ===
         $presensi = Menu::firstOrCreate(
             ['slug' => 'presensi'],
-            ['name' => 'Presensi', 'url' => null, 'icon' => 'fas fa-clock', 'order' => 30, 'parent_id' => null] // Icon dummy
+            ['name' => 'Presensi', 'url' => null, 'icon' => 'fas fa-clock', 'order' => 30, 'parent_id' => null]
         );
+
         // Submenu Presensi
         if ($presensi) {
-            Menu::firstOrCreate(['slug' => 'employee'], ['name' => 'Employee', 'url' => '/presensi/employee', 'icon' => 'fas fa-id-badge', 'order' => 1, 'parent_id' => $presensi->id]); // Icon dummy
-            Menu::firstOrCreate(['slug' => 'divisi'], ['name' => 'Divisi', 'url' => '/presensi/divisi', 'icon' => 'fas fa-sitemap', 'order' => 2, 'parent_id' => $presensi->id]); // Icon dummy
-            Menu::firstOrCreate(['slug' => 'subdivisi'], ['name' => 'Sub Divisi', 'url' => '/presensi/subdivisi', 'icon' => 'fas fa-network-wired', 'order' => 3, 'parent_id' => $presensi->id]); // Icon dummy
-            Menu::firstOrCreate(['slug' => 'posisi'], ['name' => 'Posisi', 'url' => '/presensi/posisi', 'icon' => 'fas fa-briefcase', 'order' => 4, 'parent_id' => $presensi->id]); // Icon dummy
+            Menu::firstOrCreate(['slug' => 'employee'], ['name' => 'Employee', 'url' => '/presensi/employee', 'icon' => 'fas fa-id-badge', 'order' => 1, 'parent_id' => $presensi->id]);
+            Menu::firstOrCreate(['slug' => 'divisi'], ['name' => 'Divisi', 'url' => '/presensi/divisi', 'icon' => 'fas fa-sitemap', 'order' => 2, 'parent_id' => $presensi->id]);
+            Menu::firstOrCreate(['slug' => 'subdivisi'], ['name' => 'Sub Divisi', 'url' => '/presensi/subdivisi', 'icon' => 'fas fa-network-wired', 'order' => 3, 'parent_id' => $presensi->id]);
+            Menu::firstOrCreate(['slug' => 'posisi'], ['name' => 'Posisi', 'url' => '/presensi/posisi', 'icon' => 'fas fa-briefcase', 'order' => 4, 'parent_id' => $presensi->id]);
+
+            // === Menu Absensi (akan mencakup fitur rekap) ===
+            Menu::firstOrCreate(
+                ['slug' => 'absensi'],
+                ['name' => 'Absensi', 'url' => '/presensi/absensi', 'icon' => 'fas fa-fingerprint', 'order' => 5, 'parent_id' => $presensi->id]
+            );
+
+            // Jadwal (induk dari Shift, Libur, Lokasi) - Asumsi ini sudah ada dari pembahasan sebelumnya
+            $jadwal = Menu::firstOrCreate(
+                ['slug' => 'jadwal'],
+                ['name' => 'Jadwal', 'url' => '/presensi/jadwal', 'icon' => 'fas fa-calendar-alt', 'order' => 6, 'parent_id' => $presensi->id]
+            );
+
+            if ($jadwal) {
+                Menu::firstOrCreate(['slug' => 'shift'], ['name' => 'Shift', 'url' => '/shift', 'icon' => 'fas fa-exchange-alt', 'order' => 1, 'parent_id' => $jadwal->id]);
+                Menu::firstOrCreate(['slug' => 'holiday'], ['name' => 'Libur Nasional', 'url' => '/holiday', 'icon' => 'fas fa-calendar-day', 'order' => 2, 'parent_id' => $jadwal->id]);
+                Menu::firstOrCreate(['slug' => 'officelocation'], ['name' => 'Lokasi Kantor', 'url' => '/officelocation', 'icon' => 'fas fa-building', 'order' => 3, 'parent_id' => $jadwal->id]);
+            }
+
+            // Persetujuan Cuti (Leave Approvals)
+            Menu::firstOrCreate(
+                ['slug' => 'leave.approvals'],
+                ['name' => 'Persetujuan Cuti', 'url' => '/presensi/leave-approvals', 'icon' => 'fas fa-user-check', 'order' => 7, 'parent_id' => $presensi->id]
+            );
         }
+    
 
 
         $akunting = Menu::firstOrCreate(
@@ -74,13 +101,16 @@ class MenuSeeder extends Seeder
         );
         // Submenu Penjualan
         if ($penjualan) {
-            Menu::firstOrCreate(['slug' => 'retur.penjualan'], ['name' => 'Retur Penjualan', 'url' => '/retur/penjualan', 'icon' => 'fas fa-cash-register', 'order' => 1, 'parent_id' => $penjualan->id]);
+            Menu::firstOrCreate(['slug' => 'pelanggan'], ['name' => 'Pelanggan', 'url' => '/pelanggan', 'icon' => 'fas fa-users', 'order' => 1, 'parent_id' => $penjualan->id]);
+            Menu::firstOrCreate(['slug' => 'customer-orders'], ['name' => 'Customer Orders', 'url' => '/customer-orders', 'icon' => 'fas fa-receipt', 'order' => 2, 'parent_id' => $penjualan->id]);
+            Menu::firstOrCreate(['slug' => 'penjualan.index'], ['name' => 'Daftar Penjualan', 'url' => '/penjualan', 'icon' => 'fas fa-file-invoice-dollar', 'order' => 3, 'parent_id' => $penjualan->id]);
+            Menu::firstOrCreate(['slug' => 'retur.penjualan'], ['name' => 'Retur Penjualan', 'url' => '/retur/penjualan', 'icon' => 'fas fa-cash-register', 'order' => 4, 'parent_id' => $penjualan->id]);
         }
 
 
         $mutasiGudang = Menu::firstOrCreate(
             ['slug' => 'mutasi-gudang'],
-            ['name' => 'Mutasi Gudang', 'url' => null, 'icon' => 'fas fa-truck-moving', 'order' => 60, 'parent_id' => null] // Icon dummy
+            ['name' => 'Mutasi Gudang', 'url' => null, 'icon' => 'fas fa-truck-moving', 'order' => 60, 'parent_id' => null] 
         );
         // Submenu Mutasi Gudang
         if ($mutasiGudang) {
@@ -93,7 +123,7 @@ class MenuSeeder extends Seeder
 
         $companyProfile = Menu::firstOrCreate(
             ['slug' => 'company-profile'],
-            ['name' => 'Company Profile', 'url' => null, 'icon' => 'fas fa-building', 'order' => 80, 'parent_id' => null] // Icon dummy
+            ['name' => 'Company Profile', 'url' => null, 'icon' => 'fas fa-building', 'order' => 80, 'parent_id' => null] 
         );
         // Submenu Company Profile
         if ($companyProfile) {
