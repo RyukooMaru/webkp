@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\Log;
 
 class DataStafController extends Controller
 {
+
+    public function teamPage()
+    {
+        $staffs = Datastaf::where('status', true)
+            ->orderBy('name')
+            ->get();
+            
+        return view('frontend.team', compact('staffs'));
+    }
+
     public function index()
     {
         $staffs = Datastaf::orderBy('name')->get();
@@ -18,40 +28,63 @@ class DataStafController extends Controller
     }
 
     public function store(Request $request): JsonResponse
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'jabatan' => 'required|string|max:255',
-        'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        'description' => 'required|string',
-        'education' => 'required|string',
-    ]);
-
-    try {
-        $path = $request->file('profile_image')->store('staff-profiles', 'public');
-        
-        $staff = Datastaf::create([
-            'name' => $validated['name'],
-            'jabatan' => $validated['jabatan'],
-            'profile_image' => $path,
-            'description' => $validated['description'],
-            'education' => $validated['education'],
-            'status' => true // Default status aktif
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'description' => 'required|string',
+            'education' => 'required|string',
         ]);
-
-        return response()->json([
-            'message' => 'Data staf berhasil ditambahkan',
-            'data' => $staff
-        ], 201);
-    } catch (\Exception $e) {
-        Log::error('Error creating staff: ' . $e->getMessage());
-        return response()->json([
-            'message' => 'Terjadi kesalahan saat menyimpan data',
-            'error' => $e->getMessage()
-        ], 500);
+    
+        try {
+            // Bersihkan deskripsi sebelum disimpan
+            $cleanDescription = $this->cleanSummernoteContent($validated['description']);
+            $path = $request->file('profile_image')->store('staff-profiles', 'public');
+            
+            $staff = Datastaf::create([
+                'name' => $validated['name'],
+                'jabatan' => $validated['jabatan'],
+                'profile_image' => $path,
+                'description' => $cleanDescription,
+                'education' => $validated['education'],
+                'status' => true
+            ]);
+    
+            return response()->json([
+                'message' => 'Data staf berhasil ditambahkan',
+                'data' => $staff
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Error creating staff: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menyimpan data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-
+    
+    private function cleanSummernoteContent($content)
+    {
+        $content = trim($content);
+        
+        // Remove empty paragraphs and non-breaking spaces
+        $content = preg_replace('/<p[^>]*>(&nbsp;|\s)*<\/p>/', '', $content);
+        $content = str_replace('&nbsp;', ' ', $content);
+        
+        // Remove all HTML tags except allowed ones
+        $content = strip_tags($content, '<br><strong><em><u><a>');
+        
+        // Clean up multiple line breaks
+        $content = preg_replace('/(<br\s*\/?>\s*){2,}/', '<br>', $content);
+        
+        // If content is empty after cleaning, return empty string
+        if (empty(trim(strip_tags($content)))) {
+            return '';
+        }
+        
+        return $content;
+    }
     public function update(Request $request, Datastaf $datastaf): JsonResponse
     {
         // PERBAIKAN: Hapus validasi status

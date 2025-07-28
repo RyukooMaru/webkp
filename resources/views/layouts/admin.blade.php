@@ -191,6 +191,7 @@
             <a class="collapse-item" href="{{ route('comprof.datastaf.index') }}">Data Staf</a>
             <a class="collapse-item" href="{{ route('comprof.kategoriberita.index') }}">Kategori Berita</a>
             <a class="collapse-item" href="{{ route('comprof.kategorialbum.index') }}">Kategori Album</a>
+            <a class="collapse-item" href="{{ route('comprof.websitecontent.index') }}">Kelola Website</a>
         </div>
     </div>
 </li>

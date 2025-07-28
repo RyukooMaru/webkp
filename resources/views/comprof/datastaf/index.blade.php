@@ -301,78 +301,87 @@ $(function() {
         modalInstance.show();
     });
 
-    // Submit Form dengan AJAX
-    form.on('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const isEdit = $('#formMethod').val() === 'PUT';
-        
-        // Validasi gambar hanya untuk tambah data
-        if (!isEdit && !formData.get('profile_image')) {
+// Submit Form dengan AJAX
+form.on('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const isEdit = $('#formMethod').val() === 'PUT';
+    
+    // Ambil dan bersihkan konten summernote
+    let descriptionContent = $('#description').summernote('code');
+    descriptionContent = descriptionContent.trim();
+    
+    // Validasi gambar hanya untuk tambah data
+    if (!isEdit && !formData.get('profile_image')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gambar Profil Diperlukan',
+            text: 'Silakan pilih gambar profil untuk staf baru',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    // Bersihkan konten sebelum dikirim
+    descriptionContent = descriptionContent.replace(/<p[^>]*>(&nbsp;|\s)*<\/p>/g, '');
+    descriptionContent = descriptionContent.replace(/&nbsp;/g, ' ');
+    descriptionContent = descriptionContent.trim();
+    
+    // Jika konten kosong setelah dibersihkan
+    if (descriptionContent === '' || descriptionContent === '<br>') {
+        descriptionContent = '';
+    }
+    
+    formData.set('description', descriptionContent);
+    
+    // Jika edit dan tidak ada file baru, hapus entry profile_image
+    if (isEdit && !$('#profile_image')[0].files[0]) {
+        formData.delete('profile_image');
+    }
+    
+    $.ajax({
+        url: form.attr('action'),
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            modalInstance.hide();
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: response.message,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            });
+        },
+        error: function(xhr) {
+            let message = 'Terjadi kesalahan pada server';
+            let errors = xhr.responseJSON;
+
+            if (xhr.status === 422 && errors && errors.errors) {
+                message = '';
+                Object.values(errors.errors).forEach(arr => {
+                    arr.forEach(msg => message += msg + '<br>');
+                });
+            } else if (errors && errors.message) {
+                message = errors.message;
+            } else if (errors && errors.error) {
+                message = errors.error;
+            }
+
             Swal.fire({
                 icon: 'error',
-                title: 'Gambar Profil Diperlukan',
-                text: 'Silakan pilih gambar profil untuk staf baru',
+                title: 'Error ' + xhr.status,
+                html: message,
                 confirmButtonText: 'OK'
             });
-            return;
         }
-        
-        // Ambil konten summernote
-        const descriptionContent = $('#description').summernote('code');
-        formData.set('description', descriptionContent);
-        
-        // Tambahkan status ke FormData
-        formData.set('status', $('#status').val());
-        
-        // Jika edit dan tidak ada file baru, hapus entry profile_image
-        if (isEdit && !$('#profile_image')[0].files[0]) {
-            formData.delete('profile_image');
-        }
-        
-        $.ajax({
-            url: form.attr('action'),
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                modalInstance.hide();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                let message = 'Terjadi kesalahan pada server';
-                let errors = xhr.responseJSON;
-
-                if (xhr.status === 422 && errors && errors.errors) {
-                    message = '';
-                    Object.values(errors.errors).forEach(arr => {
-                        arr.forEach(msg => message += msg + '<br>');
-                    });
-                } else if (errors && errors.message) {
-                    message = errors.message;
-                } else if (errors && errors.error) {
-                    message = errors.error;
-                }
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error ' + xhr.status,
-                    html: message,
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
     });
+});
 
     // Hapus Data Staf
     $('#dataTable').on('click', '.delete-btn', function() {

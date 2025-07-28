@@ -83,16 +83,15 @@
                 <div class="form-group mb-3">
                     <label class="small mb-1">Logo Perusahaan</label>
                     <input type="file" name="logo" class="form-control" accept="image/*">
-                    <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB</small>
-                    
+                    <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB | Rekomendasi: 200x100px</small>
                     @if(isset($setting) && $setting->logo)
-                        <div class="mt-2">
-                            <img src="{{ $setting->logo_url }}" alt="Logo" class="img-thumbnail" style="max-height: 100px;">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" name="remove_logo" id="removeLogo">
-                                <label class="form-check-label small" for="removeLogo">
-                                    Hapus logo saat disimpan
-                                </label>
+                                        <div class="mt-2">
+                                            <img src="{{ $setting->logo_url }}" alt="Logo" class="company-logo img-thumbnail">
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" name="remove_logo" id="removeLogo">
+                                                <label class="form-check-label small" for="removeLogo">
+                                                    Hapus logo saat disimpan
+                                                </label>
                             </div>
                         </div>
                     @endif
@@ -172,6 +171,23 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <style>
+        .company-logo {
+        max-width: 200px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+        display: block;
+        margin-bottom: 10px;
+        object-fit: contain;
+    }
+
+    .img-thumbnail {
+        padding: 4px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+
     .note-editor.note-frame {
         border: 1px solid #dee2e6 !important;
         border-radius: 0.25rem !important;

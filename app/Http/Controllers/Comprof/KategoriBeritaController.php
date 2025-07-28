@@ -12,7 +12,7 @@ class KategoriBeritaController extends Controller
 {
     public function index()
     {
-        $kategoris = KategoriBerita::orderBy('kategori_berita')->get();
+        $kategoris = KategoriBerita::withCount('beritas')->orderBy('kategori_berita')->get();
         return view('comprof.kategoriberita.index', compact('kategoris'));
     }
 

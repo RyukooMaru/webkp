@@ -19,20 +19,26 @@ class Slider extends Model
         'status' => 'boolean',
     ];
 
+    protected $appends = [
+        'image_url',
+        'status_html',
+        'clean_title'
+    ];
+
     public function getImageUrlAttribute()
     {
-        if ($this->image) {
-            return Storage::disk('public')->exists($this->image) 
-                ? asset('storage/' . $this->image)
-                : asset('images/default-slider.png');
-        }
-        return asset('images/default-slider.png');
+        return $this->image ? asset('storage/' . $this->image) : asset('images/default-slider.png');
     }
 
     public function getStatusHtmlAttribute()
     {
         return $this->status 
-            ? '<span class="badge badge-active">Aktif</span>'
-            : '<span class="badge badge-inactive">Tidak Aktif</span>';
+            ? '<span class="badge-active">Aktif</span>'
+            : '<span class="badge-inactive">Tidak Aktif</span>';
+    }
+
+    public function getCleanTitleAttribute()
+    {
+        return strip_tags($this->title);
     }
 }
