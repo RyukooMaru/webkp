@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ControllerSP\PelangganController;
 use App\Http\Controllers\ControllerSP\DaftarPesananController;
 use App\Http\Controllers\ControllerSP\PenjualanController;
