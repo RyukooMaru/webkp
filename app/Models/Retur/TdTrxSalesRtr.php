@@ -5,7 +5,7 @@ namespace App\Models\Retur;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Inventory\Dtproduk;
-use App\Models\Penjualan\Customer;
+use App\Models\SPModels\Pelanggan;
 
 class TdTrxSalesRtr extends Model
 {
@@ -51,6 +51,6 @@ class TdTrxSalesRtr extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'Pro_SupCode', 'kode_customer');
+        return $this->belongsTo(Pelanggan::class, 'Pro_SupCode', 'kode');
     }
 }

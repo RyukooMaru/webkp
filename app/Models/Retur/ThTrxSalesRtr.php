@@ -5,7 +5,7 @@ namespace App\Models\Retur;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
-use App\Models\Penjualan\Customer;
+use App\Models\SPModels\Pelanggan;
 use App\Models\MutasiGudang\Warehouse;
 
 class ThTrxSalesRtr extends Model
@@ -60,7 +60,7 @@ class ThTrxSalesRtr extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'Trx_SupCode', 'kode_customer');
+        return $this->belongsTo(Pelanggan::class, 'Trx_SupCode', 'kode');
     }
 
     public function warehouse()

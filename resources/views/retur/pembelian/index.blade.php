@@ -192,18 +192,18 @@
 
                             // Button Edit dengan permission check
                             @can('ubah', $currentMenuSlug)
-                                buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1" title="Edit" ${editBtnDisabled}>
+                                buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1 mr-1" title="Edit" ${editBtnDisabled}>
                                 <i class="fas fa-edit"></i>
                             </a>`;
                             @endcan
 
                             // Button Approve
-                            buttons += `<button data-id="${data}" class="btn btn-sm ${approveBtnClass} btn-approve mb-1" title="Approve" ${approveBtnDisabled}>
+                            buttons += `<button data-id="${data}" class="btn btn-sm ${approveBtnClass} btn-approve mb-1 mr-1" title="Approve" ${approveBtnDisabled}>
                                 <i class="fas fa-check"></i>
                             </button>`;
 
                             // Button Print
-                            buttons += `<a href="${printUrl}" class="btn btn-sm btn-info mb-1" title="Print" target="_blank">
+                            buttons += `<a href="${printUrl}" class="btn btn-sm btn-info mb-1 mr-1" title="Print" target="_blank">
                                 <i class="fas fa-print"></i>
                             </a>`;
 

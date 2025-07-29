@@ -2,7 +2,7 @@
 
 @php
     $currentRouteName = Route::currentRouteName();
-    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
 @endphp
 
 @section('main-content')
@@ -53,9 +53,9 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 @can('tambah', $currentMenuSlug)
-                <a href="{{ route('retur.penjualan.create') }}" class="btn btn-primary btn-sm mr-2 mb-2 mb-md-0">
-                    <i class="fas fa-plus"></i> Tambah Data
-                </a>
+                    <a href="{{ route('retur.penjualan.create') }}" class="btn btn-primary btn-sm mr-2 mb-2 mb-md-0">
+                        <i class="fas fa-plus"></i> Tambah Data
+                    </a>
                 @endcan
                 <button id="btn-approve-all" class="btn btn-success btn-sm mr-2 mb-2 mb-md-0" disabled>
                     <i class="fas fa-check"></i> Setujui Semua
@@ -189,21 +189,21 @@
                             const approveBtnDisabled = row.trx_posting === 'T' ? 'disabled' : '';
 
                             let buttons = '';
-                            
+
                             // Button Edit dengan permission check
                             @can('ubah', $currentMenuSlug)
-                            buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1" title="Edit" ${editBtnDisabled}>
+                                buttons += `<a href="${editUrl}" class="btn btn-sm ${editBtnClass} mb-1 mr-1" title="Edit" ${editBtnDisabled}>
                                 <i class="fas fa-edit"></i>
                             </a>`;
                             @endcan
-                            
+
                             // Button Approve
-                            buttons += `<button data-id="${data}" class="btn btn-sm ${approveBtnClass} btn-approve mb-1" title="Approve" ${approveBtnDisabled}>
+                            buttons += `<button data-id="${data}" class="btn btn-sm ${approveBtnClass} btn-approve mb-1 mr-1" title="Approve" ${approveBtnDisabled}>
                                 <i class="fas fa-check"></i>
                             </button>`;
-                            
+
                             // Button Print
-                            buttons += `<a href="${printUrl}" class="btn btn-sm btn-info mb-1" title="Print" target="_blank">
+                            buttons += `<a href="${printUrl}" class="btn btn-sm btn-info mb-1 mr-1" title="Print" target="_blank">
                                 <i class="fas fa-print"></i>
                             </a>`;
 

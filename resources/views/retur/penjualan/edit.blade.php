@@ -34,7 +34,7 @@
                                     <option value="{{ $header->Trx_SupCode }}" selected>
                                         {{ $header->Trx_SupCode }}
                                         @if ($header->customer)
-                                            - {{ $header->customer->nama_customer }}
+                                            - {{ $header->customer->anggota }}
                                         @endif
                                     </option>
                                 @endif
@@ -209,7 +209,8 @@
                         data: 'trx_prodname'
                     },
                     {
-                        data: 'Trx_QtyTrx'
+                        data: 'Trx_QtyTrx',
+                        render: d => parseFloat(d).toFixed(2).replace('.', ',')
                     },
                     {
                         data: 'trx_uom'
@@ -240,13 +241,13 @@
                             let buttons = '';
 
                             @can('ubah', $currentMenuSlug)
-                                buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1" data-idx="${meta.row}">
+                                buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1 mr-1" data-idx="${meta.row}">
                                 <i class="fas fa-edit"></i>
                             </button>`;
                             @endcan
 
                             @can('hapus', $currentMenuSlug)
-                                buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1" data-idx="${meta.row}">
+                                buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1 mr-1" data-idx="${meta.row}">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                             @endcan

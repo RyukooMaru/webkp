@@ -237,7 +237,7 @@
                                     <strong>:</strong>
                                 </td>
                                 <td style="border: none; padding: 2px 0; margin: 0;">
-                                    {{ $row->customer->nama_customer }}</td>
+                                    {{ $row->customer->anggota }}</td>
                             </tr>
                         </table>
                     </td>

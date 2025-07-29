@@ -33,7 +33,7 @@ class EnsureUserCanAccessMenu
 
         // --- DEBUGGING: TAMPILKAN HASILNYA ---
         // Hapus baris dd() ini setelah debugging selesai.
-       // dd([
+        // dd([
         //     'full_route_name' => $routeName,
         //     'calculated_menu_slug' => $menuSlug,
         //     'user_role_name' => Auth::user()->role->name ?? 'No Role',
@@ -45,6 +45,14 @@ class EnsureUserCanAccessMenu
 
         // Jika user tidak memiliki akses ke menu tersebut
         if (!Gate::allows('access_menu', $menuSlug)) {
+            // Jika request adalah AJAX, kembalikan JSON error
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'error' => 'Anda tidak memiliki izin untuk mengakses data ini.',
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
             return redirect('/home')->with('error', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 
@@ -71,15 +79,44 @@ class EnsureUserCanAccessMenu
         $action = end($parts);
 
         $standardActions = [
-            'index', 'store', 'create', 'show', 'edit', 'update', 'destroy',
-            'json', 'pdf', 'data', 'approve', 'approveAll', 'print', 'printAll',
-            'publish', 'publishEdit', 'getByDivision', 'getSubclasses',
-            'getNamaPerkiraan', 'getNextNo'
+            'index',
+            'store',
+            'create',
+            'show',
+            'edit',
+            'update',
+            'destroy',
+            'json',
+            'pdf',
+            'data',
+            'approve',
+            'approveAll',
+            'print',
+            'printAll',
+            'publish',
+            'publishEdit',
+            'getByDivision',
+            'getSubclasses',
+            'getNamaPerkiraan',
+            'getNextNo',
+            'details',
+            'customers',
+            'suppliers',
+            'warehouses',
+            'product-data',
+            'uom-options'
         ];
 
         if (count($parts) > 1 && in_array($action, $standardActions)) {
             // Jika route memiliki aksi standar, kembalikan bagian dasar
-            return implode('.', array_slice($parts, 0, -1));
+            $baseRoute = implode('.', array_slice($parts, 0, -1));
+
+            // Handling khusus untuk details: retur.penjualan.details.data -> retur.penjualan
+            if (strpos($baseRoute, '.details') !== false) {
+                $baseRoute = str_replace('.details', '', $baseRoute);
+            }
+
+            return $baseRoute;
         }
 
         // Default: gunakan seluruh route name sebagai slug

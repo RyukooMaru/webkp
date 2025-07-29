@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Retur\ThTrxSalesRtr;
 use App\Models\Retur\TdTrxSalesRtr;
-use App\Models\Penjualan\Customer;
+use App\Models\SPModels\Pelanggan;
 use App\Models\MutasiGudang\Warehouse;
 use App\Models\Inventory\Dtproduk;
 use App\Models\Inventory\SatuanProduk;
@@ -63,10 +63,10 @@ class ReturPenjualanController extends Controller
                 'Trx_SupCode'    => $r->Trx_SupCode,
                 'trx_number'     => $r->trx_number,
                 'Trx_Date'       => $r->Trx_Date?->format('Y-m-d'),
-                'Trx_GrossPrice' => number_format($r->Trx_GrossPrice, 2),
-                'Trx_TotDiscount' => number_format($r->Trx_TotDiscount, 2),
-                'Trx_Taxes'      => number_format($r->Trx_Taxes, 2),
-                'Trx_NettPrice'  => number_format($r->Trx_NettPrice, 2),
+                'Trx_GrossPrice' => number_format($r->Trx_GrossPrice, 2, ',', '.'),
+                'Trx_TotDiscount' => number_format($r->Trx_TotDiscount, 2, ',', '.'),
+                'Trx_Taxes'      => number_format($r->Trx_Taxes, 2, ',', '.'),
+                'Trx_NettPrice'  => number_format($r->Trx_NettPrice, 2, ',', '.'),
                 'Trx_UserID'     => $userName,
                 'Trx_LastUpdate' => $r->Trx_LastUpdate?->format('Y-m-d H:i:s'),
                 'trx_posting'    => $r->trx_posting,
@@ -82,24 +82,24 @@ class ReturPenjualanController extends Controller
         $page = $request->get('page', 1);
         $perPage = 10;
 
-        $query = Customer::query();
+        $query = Pelanggan::query();
 
         // Jika ada search term, filter berdasarkan search
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('kode_customer', 'like', "%{$search}%")
-                    ->orWhere('nama_customer', 'like', "%{$search}%");
+                $q->where('kode', 'like', "%{$search}%")
+                    ->orWhere('anggota', 'like', "%{$search}%");
             });
         }
 
-        $customers = $query->select('kode_customer', 'nama_customer')
-            ->orderBy('kode_customer')
+        $customers = $query->select('kode', 'anggota')
+            ->orderBy('kode')
             ->paginate($perPage, ['*'], 'page', $page);
 
         $items = $customers->map(function ($customer) {
             return [
-                'id' => $customer->kode_customer,
-                'text' => $customer->kode_customer . ' - ' . $customer->nama_customer
+                'id' => $customer->kode,
+                'text' => $customer->kode . ' - ' . $customer->anggota
             ];
         });
 
@@ -637,7 +637,7 @@ class ReturPenjualanController extends Controller
     // Print Single
     public function print($id)
     {
-        $row = ThTrxSalesRtr::with(['details', 'user:id,name', 'customer:kode_customer,nama_customer'])->findOrFail($id);
+        $row = ThTrxSalesRtr::with(['details', 'user:id,name', 'customer:kode,anggota'])->findOrFail($id);
         $details = $row->details;
 
         $currentUser = auth()->user();

@@ -2,7 +2,7 @@
 
 @php
     $currentRouteName = Route::currentRouteName();
-    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
 @endphp
 
 @section('main-content')
@@ -34,7 +34,7 @@
                                     <option value="{{ $header->Trx_SupCode }}" selected>
                                         {{ $header->Trx_SupCode }}
                                         @if ($header->customer)
-                                            - {{ $header->customer->nama_customer }}
+                                            - {{ $header->customer->anggota }}
                                         @endif
                                     </option>
                                 @endif
@@ -66,10 +66,10 @@
 
         <div class="mb-3 d-flex">
             @can('tambah', $currentMenuSlug)
-            <button type="button" id="addCodeButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
-                data-bs-target="#dtlModal">
-                <i class="fas fa-plus"></i>
-            </button>
+                <button type="button" id="addCodeButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
+                    data-bs-target="#dtlModal">
+                    <i class="fas fa-plus"></i>
+                </button>
             @endcan
             <button id="btnPublish" class="btn btn-info mr-2">
                 <i class="fas fa-floppy-disk"></i>
@@ -421,7 +421,10 @@
                         data: 'trx_prodname'
                     },
                     {
-                        data: 'Trx_QtyTrx'
+                        data: 'Trx_QtyTrx',
+                        render: function(data) {
+                            return parseFloat(data).toFixed(2).replace('.', ',');
+                        }
                     },
                     {
                         data: 'trx_uom'
@@ -458,19 +461,19 @@
                         orderable: false,
                         render: function(data, type, row) {
                             let buttons = '';
-                            
+
                             @can('ubah', $currentMenuSlug)
-                            buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1" data-id="${row.Trx_Auto || row.trx_number_dtl}">
+                                buttons += `<button class="btn btn-sm btn-warning edit-btn mb-1 mr-1" data-id="${row.Trx_Auto || row.trx_number_dtl}">
                                 <i class="fas fa-edit"></i>
                             </button>`;
                             @endcan
-                            
+
                             @can('hapus', $currentMenuSlug)
-                            buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1" data-id="${row.Trx_Auto || row.trx_number_dtl}">
+                                buttons += `<button class="btn btn-sm btn-danger delete-btn mb-1 mr-1" data-id="${row.Trx_Auto || row.trx_number_dtl}">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                             @endcan
-                            
+
                             return buttons;
                         }
                     }
