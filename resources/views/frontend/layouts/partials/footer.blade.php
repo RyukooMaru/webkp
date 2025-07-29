@@ -49,36 +49,39 @@
 
             <!-- Social Media Column -->
             <div class="col-lg-4 mb-4">
-                <h5 class="mb-3">Connect With Us</h5>
-                <div class="social-links">
-                    @if($company->facebook ?? false)
+            <h5 class="mb-3">Connect With Us</h5>
+            <div class="social-links">
+                @if($company)
+                    @if($company->facebook)
                         <a href="{{ $company->facebook }}" class="social-icon me-2" target="_blank">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                     @endif
-                    @if($company->twitter ?? false)
+                    @if($company->twitter)
                         <a href="{{ $company->twitter }}" class="social-icon me-2" target="_blank">
                             <i class="fab fa-twitter"></i>
                         </a>
                     @endif
-                    @if($company->instagram ?? false)
+                    @if($company->instagram)
                         <a href="{{ $company->instagram }}" class="social-icon me-2" target="_blank">
                             <i class="fab fa-instagram"></i>
                         </a>
                     @endif
-                    @if($company->linkedin ?? false)
+                    @if($company->linkedin)
                         <a href="{{ $company->linkedin }}" class="social-icon me-2" target="_blank">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     @endif
-                    
-                    <!-- Fallback if no social media links -->
+
                     @unless($company->facebook || $company->twitter || $company->instagram || $company->linkedin)
                         <p class="text-muted">Follow us on social media</p>
                     @endunless
-                </div>
+                @else
+                    <p class="text-muted">Follow us on social media</p>
+                @endif
             </div>
         </div>
+
         
         <hr class="my-4 bg-secondary">
         
