@@ -107,24 +107,25 @@ class PenerimaanController extends Controller
 
     public function edit(Penerimaan $penerimaan)
     {
-        if ($penerimaan->status !== 'draft') {
-            return redirect()->route('penerimaan.show', $penerimaan->penerimaan_id)
-                ->with('warning', 'Hanya penerimaan dengan status draft yang dapat diedit');
-        }
+    if ($penerimaan->status !== 'draft') {
+        return redirect()->route('penerimaan.show', $penerimaan->penerimaan_id)
+            ->with('warning', 'Hanya penerimaan dengan status draft yang dapat diedit');
+    }
 
-        $penerimaan->load(['details.product', 'details.uom']);
+    $penerimaan->load(['details.product', 'details.uom']);
 
-        return view('inventory.penerimaan.index', [
-            'header' => $penerimaan,
-            'suppliers' => Supplier::orderBy('nama_supplier')->get(),
-            'purchaseOrders' => PurchaseOrder::where('status', 'published')
-                ->orderBy('po_number')
-                ->get(),
-            'products' => Dtproduk::orderBy('nama_produk')->get(),
-            'uoms' => SatuanProduk::orderBy('UOM_Code')->get(),
-            'locations' => ['WH-A', 'WH-B', 'WH-C'],
-            'title' => 'Edit Penerimaan: ' . $penerimaan->no_penerimaan
-        ]);
+    return view('inventory.penerimaan.index', [
+        'header' => $penerimaan,
+        // Gunakan unique() untuk menghindari duplikat nama supplier
+        'suppliers' => Supplier::orderBy('nama_supplier')->get()->unique('nama_supplier'),
+        'purchaseOrders' => PurchaseOrder::where('status', 'published')
+            ->orderBy('po_number')
+            ->get(),
+        'products' => Dtproduk::orderBy('nama_produk')->get(),
+        'uoms' => SatuanProduk::orderBy('UOM_Code')->get(),
+        'locations' => ['WH-A', 'WH-B', 'WH-C'],
+        'title' => 'Edit Penerimaan: ' . $penerimaan->no_penerimaan
+    ]);
     }
 
     public function update(Request $request, Penerimaan $penerimaan)
@@ -294,7 +295,14 @@ class PenerimaanController extends Controller
         DB::transaction(function () use ($penerimaan) {
             $penerimaan->update(['status' => 'published']);
             
-            // Here you can add inventory adjustment logic if needed
+            // Update stock for each product
+            foreach ($penerimaan->details as $detail) {
+                $product = Dtproduk::find($detail->product_id);
+                if ($product) {
+                    $product->qty += $detail->qty;
+                    $product->save();
+                }
+            }
         });
 
         return response()->json([

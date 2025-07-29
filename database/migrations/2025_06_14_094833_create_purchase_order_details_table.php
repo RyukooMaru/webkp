@@ -10,8 +10,13 @@ return new class extends Migration
     {
         Schema::create('purchase_order_details', function (Blueprint $table) {
             $table->id('detail_id');
-            $table->foreignId('po_id')->constrained('purchase_orders', 'po_id');
-            $table->foreignId('product_id')->constrained('dataproduk_tabel');
+            $table->foreignId('po_id')->constrained('purchase_orders', 'po_id')->onDelete('cascade');
+            
+            // Tambahkan onDelete('cascade') untuk product_id
+            $table->foreignId('product_id')
+                ->constrained('dataproduk_tabel')
+                ->onDelete('cascade');
+            
             $table->foreignId('uom_id')->constrained('m_uom', 'UOM_Auto');
             $table->integer('qty');
             $table->decimal('unit_price', 15, 2);
