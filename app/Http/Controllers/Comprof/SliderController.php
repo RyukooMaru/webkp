@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Comprof;
 use App\Http\Controllers\Controller;
 use App\Models\Comprof\Slider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class SliderController extends Controller
 {
@@ -27,25 +26,18 @@ class SliderController extends Controller
         ]);
 
         try {
-            $path = $request->file('image')->store('sliders', 'public');
+            $imagePath = $request->file('image')->store('sliders', 'public');
             
-            $slider = Slider::create([
-                'title' => $validated['title'],
+            Slider::create([
+                'title' => strip_tags($validated['title']),
                 'link' => $validated['link'],
-                'image' => $path,
+                'image' => $imagePath,
                 'status' => $validated['status']
             ]);
 
-            return response()->json([
-                'message' => 'Slider berhasil ditambahkan',
-                'data' => $slider
-            ], 201);
+            return response()->json(['message' => 'Slider berhasil ditambahkan'], 201);
         } catch (\Exception $e) {
-            Log::error('Error creating slider: ' . $e->getMessage());
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
 
@@ -58,39 +50,40 @@ class SliderController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        // Handle file upload if new image is provided
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($slider->image) {
-                Storage::disk('public')->delete($slider->image);
+        try {
+            $data = [
+                'title' => strip_tags($validated['title']),
+                'link' => $validated['link'],
+                'status' => $validated['status']
+            ];
+
+            if ($request->hasFile('image')) {
+                // Hapus gambar lama
+                if ($slider->image) {
+                    Storage::disk('public')->delete($slider->image);
+                }
+                $data['image'] = $request->file('image')->store('sliders', 'public');
             }
-            
-            $path = $request->file('image')->store('sliders', 'public');
-            $validated['image'] = $path;
-        } else {
-            // Keep the existing image if no new image is uploaded
-            $validated['image'] = $slider->image;
+
+            $slider->update($data);
+
+            return response()->json(['message' => 'Slider berhasil diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
-
-        $slider->update($validated);
-
-        return response()->json([
-            'message' => 'Slider berhasil diperbarui',
-            'data' => $slider
-        ]);
     }
 
     public function destroy(Slider $slider): JsonResponse
     {
-        // Delete associated image
-        if ($slider->image) {
-            Storage::disk('public')->delete($slider->image);
+        try {
+            if ($slider->image) {
+                Storage::disk('public')->delete($slider->image);
+            }
+            $slider->delete();
+
+            return response()->json(['message' => 'Slider berhasil dihapus']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
-
-        $slider->delete();
-
-        return response()->json([
-            'message' => 'Slider berhasil dihapus'
-        ]);
     }
 }

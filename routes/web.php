@@ -38,6 +38,12 @@ use App\Http\Controllers\Comprof\SliderController;
 use App\Http\Controllers\Comprof\SetPerusahaanController;
 use App\Http\Controllers\Comprof\KategoriBeritaController;
 use App\Http\Controllers\Comprof\KategoriAlbumController;
+use App\Http\Controllers\Comprof\WebsiteContentController;
+use App\Http\Controllers\Comprof\BeritaController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\GalleryController;
+use App\Http\Controllers\Frontend\NewsController;
+use App\Http\Controllers\Frontend\PageController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -56,11 +62,27 @@ use App\Http\Controllers\MutasiGudang\TerimaGudangController;
 |
 */
 
-/* Login, Home, Profile */
+// Frontend Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/team', [HomeController::class, 'team'])->name('team');
+Route::get('/careers', [PageController::class, 'show'])->name('careers');
+// Gallery Routes
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{id}', [GalleryController::class, 'show'])->name('gallery.show');
+// News Routes
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+Route::get('/news/category/{id}', [NewsController::class, 'category'])->name('news.category');
+Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
+// Dynamic Pages from Website Content
+Route::get('/page/{id}', [PageController::class, 'show'])->name('page.show');
+Route::get('/submenu/{submenuId}', [PageController::class, 'showBySubmenu'])->name('page.by.submenu');
 
-Route::get('/', function () {
+/* Auth Routes */
+
+Route::get('/login', function () {
     return view('auth.login');
-});
+})->name('login');
 
 Auth::routes();
 
@@ -335,6 +357,8 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::post('/slider', [SliderController::class, 'store'])->name('slider.store');
         Route::put('/slider/{slider}', [SliderController::class, 'update'])->name('slider.update');
         Route::delete('/slider/{slider}', [SliderController::class, 'destroy'])->name('slider.destroy');
+        Route::post('/slider/upload-image', [SliderController::class, 'uploadImage'])->name('slider.upload-image');
+
         // Set Perusahaan Routes
         Route::get('/setperusahaan', [SetPerusahaanController::class, 'index'])->name('setperusahaan.index');
         Route::post('/setperusahaan', [SetPerusahaanController::class, 'store'])->name('setperusahaan.store');
@@ -349,6 +373,20 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::post('/kategorialbum', [KategoriAlbumController::class, 'store'])->name('kategorialbum.store');
         Route::put('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'update'])->name('kategorialbum.update');
         Route::delete('/kategorialbum/{kategorialbum}', [KategoriAlbumController::class, 'destroy'])->name('kategorialbum.destroy');
+        // Website Content Routes
+        Route::get('/websitecontent', [WebsiteContentController::class, 'index'])->name('websitecontent.index');
+        Route::post('/websitecontent', [WebsiteContentController::class, 'store'])->name('websitecontent.store');
+        Route::put('/websitecontent/{id}', [WebsiteContentController::class, 'update'])->name('websitecontent.update');
+        Route::delete('/websitecontent/{id}', [WebsiteContentController::class, 'destroy'])->name('websitecontent.destroy');
+        Route::post('/websitecontent/upload-image', [WebsiteContentController::class, 'uploadImage'])->name('websitecontent.upload-image');
+
+        // Berita Routes
+        Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+        Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
+        Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+        Route::get('/berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
+        Route::put('/berita/{berita}', [BeritaController::class, 'update'])->name('berita.update');
+        Route::delete('/berita/{berita}', [BeritaController::class, 'destroy'])->name('berita.destroy');
     });
 
 // --- Routes Penjualan ---

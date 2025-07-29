@@ -31,17 +31,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($sliders as $index => $slider)
-                            <tr>
-                                <td class="align-middle text-center">{{ $index + 1 }}</td>
-                                <td class="align-middle text-center">
-                                    <img src="{{ $slider->image_url }}" alt="Slider Image" class="img-thumbnail" style="width: 250px; height: 125px; object-fit: cover;">
-                                </td>
-                                <td class="align-middle">
-                                    <div class="slider-title-preview">
-                                        {!! $slider->title !!}
-                                    </div>
-                                </td>
+                    @forelse($sliders as $index => $slider)
+                        <tr data-link="{{ $slider->link }}">
+                            <td class="align-middle text-center">{{ $index + 1 }}</td>
+                            <td class="align-middle text-center">
+                                <img src="{{ $slider->image_url }}" alt="Slider Image" class="img-thumbnail" style="width: 250px; height: 125px; object-fit: cover;">
+                            </td>
+                                    <td class="align-middle">
+                        <div class="slider-title-preview">
+                            {!! $slider->clean_title !!}
+                        </div>
+                                        </td>
                                 <td class="align-middle text-center">
                                     {!! $slider->status_html !!}
                                 </td>
@@ -197,8 +197,8 @@
         background-color: #dc3545;
     }
     .slider-title-preview {
-        max-height: 125px;
-        overflow: hidden;
+        display: none;
+        visibility: hidden;
     }
     .modal-md {
         max-width: 600px;
@@ -270,6 +270,32 @@ $(function() {
         disableDragAndDrop: true,
         shortcuts: false,
         followingToolbar: false
+    });
+// Add this click handler for the slider rows
+$('#dataTable').on('click', 'tr[data-link]', function(e) {
+        // Don't trigger if clicking on action buttons
+        if (!$(e.target).closest('.edit-btn, .delete-btn').length && $(this).data('link')) {
+            window.open($(this).data('link'), '_blank');
+        }
+    });
+
+    // Update Summernote initialization to prevent link display
+    $('.summernote-title').summernote({
+        // [Keep all your existing Summernote config]
+        callbacks: {
+            onPaste: function(e) {
+                // Clean paste to remove links
+                var bufferText = ((e.originalEvent || e).clipboardData.getData('Text'));
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            },
+            onKeydown: function(e) {
+                // Prevent direct link insertion
+                if (e.key === 'Enter' && window.getSelection().toString().match(/https?:\/\//)) {
+                    e.preventDefault();
+                }
+            }
+        }
     });
 
     // Inisialisasi DataTables
@@ -467,3 +493,4 @@ $(function() {
 });
 </script>
 @endpush
+

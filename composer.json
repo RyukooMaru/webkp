@@ -12,6 +12,7 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "devmarketer/easynav": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^3.11",
         "laravel/framework": "^12.3.0",
         "laravel/legacy-factories": "^1.4",
         "laravel/sanctum": "^4.2",

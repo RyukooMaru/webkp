@@ -42,7 +42,6 @@ class SubMenuController extends Controller
         ]);
     }
 
-    // Perhatikan parameter harus sesuai (Submenu $submenu)
     public function update(Request $request, Submenu $submenu): JsonResponse
     {
         $validated = $request->validate([
@@ -66,7 +65,6 @@ class SubMenuController extends Controller
         ]);
     }
 
-    // Perhatikan parameter harus sesuai (Submenu $submenu)
     public function destroy(Submenu $submenu): JsonResponse
     {
         $submenu->delete();
