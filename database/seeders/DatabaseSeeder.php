@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
                             RoleSeeder::class,
                             ShiftSeeder::class,
                             WarehouseSeeder::class,
+                            LeaveRequestSeeder::class,
                         ]);
 
 

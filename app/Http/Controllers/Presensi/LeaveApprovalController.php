@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class LeaveApprovalController extends Controller
 {
@@ -30,7 +31,6 @@ class LeaveApprovalController extends Controller
             $period = CarbonPeriod::create($leaveRequest->start_date, $leaveRequest->end_date);
             $employee = $leaveRequest->employee;
 
-            // Ambil daftar hari libur nasional pada bulan terkait untuk efisiensi
             $nationalHolidays = LiburNasional::whereMonth('tanggal', Carbon::parse($leaveRequest->start_date)->month)
                                              ->whereYear('tanggal', Carbon::parse($leaveRequest->start_date)->year)
                                              ->pluck('tanggal')
@@ -38,16 +38,12 @@ class LeaveApprovalController extends Controller
                                              ->toArray();
 
             foreach ($period as $date) {
-                
                 if ($date->isWeekend() || in_array($date->toDateString(), $nationalHolidays)) {
-                    continue; // Lanjut ke tanggal berikutnya
+                    continue;
                 }
 
                 RealAbsensi::updateOrCreate(
-                    [
-                        'TS_EMP' => $employee->emp_Auto,
-                        'TS_TANGGAL' => $date->toDateString(),
-                    ],
+                    ['TS_EMP' => $employee->emp_Auto, 'TS_TANGGAL' => $date->toDateString()],
                     [
                         'TS_NAME' => $employee->emp_Name,
                         'TS_CODE' => $employee->emp_Code,
@@ -68,35 +64,42 @@ class LeaveApprovalController extends Controller
                              Carbon::parse($leaveRequest->start_date)->format('d M Y') . " telah disetujui.",
             ]);
 
+            // PERBAIKAN: Ubah status menjadi 'approved'
             $leaveRequest->update(['status' => 'approved']);
+            
             DB::commit();
-
             return back()->with('success', 'Pengajuan izin telah disetujui.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menyetujui izin: ' . $e->getMessage());
+            Log::error('Gagal menyetujui izin: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyetujui izin. Silakan cek log untuk detail.');
         }
     }
 
     public function reject(LeaveRequest $leaveRequest)
     {
-        // Buat notifikasi untuk pengguna
-        Notification::create([
-            'employee_id' => $leaveRequest->employee_id,
-            'title' => 'Pengajuan Izin Ditolak',
-            'message' => "Mohon maaf, pengajuan {$leaveRequest->type} Anda untuk tanggal " . 
-                         Carbon::parse($leaveRequest->start_date)->format('d M Y') . " ditolak.",
-        ]);
-        
-        $leaveRequest->update(['status' => 'rejected']);
-        return back()->with('success', 'Pengajuan izin telah ditolak.');
+        try {
+            Notification::create([
+                'employee_id' => $leaveRequest->employee_id,
+                'title' => 'Pengajuan Izin Ditolak',
+                'message' => "Mohon maaf, pengajuan {$leaveRequest->type} Anda untuk tanggal " . 
+                             Carbon::parse($leaveRequest->start_date)->format('d M Y') . " ditolak.",
+            ]);
+            
+            // PERBAIKAN: Ubah status menjadi 'rejected'
+            $leaveRequest->update(['status' => 'rejected']);
+
+            return back()->with('success', 'Pengajuan izin telah ditolak.');
+        } catch (\Exception $e) {
+            Log::error('Gagal menolak izin: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menolak izin. Silakan cek log untuk detail.');
+        }
     }
 
     public function destroy(LeaveRequest $leaveRequest)
     {
         try {
-            // Hapus file lampiran dari storage jika ada
             if ($leaveRequest->attachment_path) {
                 \Storage::disk('public')->delete('leave_attachments/' . $leaveRequest->attachment_path);
             }
