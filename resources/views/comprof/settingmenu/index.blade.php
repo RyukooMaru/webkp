@@ -197,7 +197,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.settingmenu.destroy', '') }}/${id}`,
+                    url: '/comprof/settingmenu/${id}',
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",

@@ -200,7 +200,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.kategorialbum.destroy', '') }}/${id}`,
+                    url: '/comprof/kategorialbum/${id}',
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",

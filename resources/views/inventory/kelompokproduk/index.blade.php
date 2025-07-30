@@ -209,43 +209,44 @@ $(function() {
             buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: `{{ route('kelompokproduk.destroy', '') }}/${id}`,
-                    method: 'DELETE',
-                    dataType: 'json',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        row.fadeOut(400, function() {
-                            row.remove();
-                        });
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Terhapus!',
-                            html: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function(xhr) {
-                        let message = 'Terjadi kesalahan pada server';
+$.ajax({
+    url: `/inventory/kelompokproduk/${id}`,
+    method: 'DELETE',
+    dataType: 'json',
+    data: {
+        _token: "{{ csrf_token() }}"
+    },
+    success: function(response) {
+        row.fadeOut(400, function() {
+            row.remove();
+        });
+        Swal.fire({
+            icon: 'success',
+            title: 'Terhapus!',
+            html: response.message,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    },
+    error: function(xhr) {
+        let message = 'Terjadi kesalahan pada server';
 
-                        if (xhr.status === 404) {
-                            message = 'Data kelompok produk tidak ditemukan';
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                            message = xhr.responseJSON.message;
-                        }
+        if (xhr.status === 404) {
+            message = 'Data kelompok produk tidak ditemukan';
+        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
+        }
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            html: message,
-                            timer: 3000,
-                            showConfirmButton: true
-                        });
-                    }
-                });
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            html: message,
+            timer: 3000,
+            showConfirmButton: true
+        });
+    }
+});
+
             }
         });
     });

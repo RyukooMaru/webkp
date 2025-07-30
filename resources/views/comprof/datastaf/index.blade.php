@@ -405,7 +405,7 @@ form.on('submit', function(e) {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.datastaf.destroy', '') }}/${id}`,
+                    url: '/comprof/datastaf/${id}',
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",

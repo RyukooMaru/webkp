@@ -23,6 +23,14 @@ class DatabaseSeeder extends Seeder
                             SubDivisiSeeder::class,
                             PosisiSeeder::class,
                             KaryawanSeeder::class,
+                            AccClassSeeder::class,
+                            AccSubclassSeeder::class,
+                            MenuSeeder::class,
+                            CaraBayarSeeder::class,
+                            LiburNasionalSeeder::class,
+                            RoleSeeder::class,
+                            ShiftSeeder::class,
+                            WarehouseSeeder::class,
                         ]);
 
 
