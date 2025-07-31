@@ -2,9 +2,11 @@
 
 namespace App\Models\Akuntansi;
 
-use App\Models\User; // Pastikan ini ada jika Anda menggunakan relasi user
+use App\Models\keamanan\Member; // Pastikan ini ada jika Anda menggunakan relasi user
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MutasiGudang\Warehouse; // Pastikan ini ada jika Anda menggunakan relasi gudang
+
 
 class AccHdjurnal extends Model
 {
@@ -21,8 +23,7 @@ class AccHdjurnal extends Model
         'catatan',
         'user_id',
         'nominal',
-        'tipe_jurnal', // <-- TAMBAHKAN INI
-        // 'created_at' dan 'updated_at' biasanya tidak perlu di fillable jika timestamps diaktifkan
+        'tipe_jurnal',
     ];
 
     // ... (relasi dan method lainnya)
@@ -35,11 +36,17 @@ class AccHdjurnal extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Member::class, 'user_id', 'Mem_Auto');
+
     }
 
     public function details()
     {
         return $this->hasMany(AccDtjurnal::class, 'acc_hd_jurnal_id');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'Trx_WareCode', 'WARE_Auto');
     }
 }

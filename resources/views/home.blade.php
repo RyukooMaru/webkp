@@ -88,37 +88,128 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
+    // --- FUNGSI HELPER UNTUK FORMAT RUPIAH ---
     function formatRupiah(number) {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(number);
     }
 
-    // Grafik Penjualan
-    new Chart(document.getElementById('penjualanBulananChart'), {
-        type: 'bar',
-        data: { labels: @json($salesLabels), datasets: [{ label: 'Total Penjualan', data: @json($salesData), backgroundColor: 'rgba(78, 115, 223, 0.8)' }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: (value) => formatRupiah(value) }}}, plugins: { tooltip: { callbacks: { label: (context) => 'Total: ' + formatRupiah(context.parsed.y) }}}}
-    });
 
-    // Grafik Gender
-    new Chart(document.getElementById('genderPieChart'), {
-        type: 'pie',
-        data: { labels: @json($genderLabels), datasets: [{ data: @json($genderValues), backgroundColor: ['#4e73df', '#e74a3b'] }] },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
+    // --- GRAFIK PENJUALAN PER BULAN ---
+    // 1. Ambil data penjualan dari controller (Blade)
+    // Variabelnya harus sama dengan yang Anda kirim dari controller, yaitu 'penjualanBulananData'
+    const penjualanData = @json($penjualanBulananData ?? []); // '?? []' untuk keamanan jika variabel tidak ada
 
-    // Grafik Departemen
-    new Chart(document.getElementById('departmentPieChart'), {
-        type: 'pie',
-        data: { labels: @json($departmentLabels), datasets: [{ data: @json($departmentValues), backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#858796'] }] },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
+    // 2. Dapatkan elemen canvas
+    const ctxPenjualan = document.getElementById('penjualanBulananChart');
 
-    // Grafik Presensi
-    new Chart(document.getElementById('attendanceChart'), {
-        type: 'bar',
-        data: { labels: @json($attendanceLabels), datasets: [{ label: 'Jumlah Karyawan', data: @json($attendanceValues), backgroundColor: ['#1cc88a', '#f6c23e', '#36b9cc', '#e74a3b'] }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { precision: 0 }}}}
-    });
+    // 3. Buat chart baru jika elemennya ada
+    if (ctxPenjualan) {
+        new Chart(ctxPenjualan, {
+            type: 'bar',
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+                datasets: [{
+                    label: 'Total Penjualan',
+                    data: penjualanData, // <-- Gunakan variabel yang sudah kita ambil
+                    backgroundColor: 'rgba(78, 115, 223, 0.9)', // Warna standar template
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgba(46, 90, 217, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Gunakan fungsi helper untuk format label sumbu Y
+                            callback: function(value) {
+                                return formatRupiah(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Gunakan fungsi helper untuk format tooltip
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += formatRupiah(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    // --- Kode untuk grafik lainnya (Gender, Departemen, dll.) bisa diletakkan di sini ---
+    // Contoh untuk grafik gender (pastikan variabel $genderLabels dan $genderValues ada dari controller)
+    const ctxGender = document.getElementById('genderPieChart');
+    if (ctxGender) {
+        new Chart(ctxGender, {
+            type: 'pie',
+            data: {
+                labels: @json($genderLabels ?? []),
+                datasets: [{
+                    data: @json($genderValues ?? []),
+                    backgroundColor: ['#4e73df', '#e74a3b']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+    // ====================================================================
+    // === TAMBAHKAN BLOK KODE DI BAWAH INI UNTUK GRAFIK DEPARTEMEN ===
+    // ====================================================================
+    const ctxDepartment = document.getElementById('departmentPieChart');
+    if (ctxDepartment) {
+        new Chart(ctxDepartment, {
+            type: 'pie', // Atau 'doughnut' jika Anda lebih suka
+            data: {
+                // Variabel ini harus sama dengan yang Anda kirim dari controller
+                labels: @json($departmentLabels ?? []),
+                datasets: [{
+                    data: @json($departmentValues ?? []),
+                    // Sediakan lebih banyak warna jika departemen Anda lebih dari 5
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#858796', '#e74a3b', '#5a5c69'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#60616f', '#c0392b', '#3d3e48']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true, // Tampilkan legenda agar tahu warna departemen
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+
+    // ... dan seterusnya untuk grafik lainnya
+
 });
 </script>
 @endpush

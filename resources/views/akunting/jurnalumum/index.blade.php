@@ -38,37 +38,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($jurnals as $jurnal)
-                        <tr id="row-jurnal-{{ $jurnal->id }}">
-                            <td>{{ $jurnal->tanggal_buat->format('d-m-Y') }}</td>
-                            <td>{{ $jurnal->no_jurnal }}</td>
-                            <td>{{ $jurnal->referensi }}</td>
-                            <td>{{ $jurnal->lokasi_nama ?? '-' }}</td> {{-- Tampilkan lokasi --}}
-                            <td>{{ Str::limit($jurnal->catatan, 50) }}</td> {{-- Batasi catatan --}}
-                            <td class="text-end">{{ number_format($jurnal->nominal, 2, ',', '.') }}</td>
-                            <td>{{ $jurnal->user->name ?? 'N/A' }}</td> {{-- Tampilkan nama user --}}
-                            <td>{{ $jurnal->tanggal_edit->format('d-m-Y H:i') }}</td>
-                            <td>
-                                <button class="btn btn-info btn-sm btn-view" data-id="{{ $jurnal->id }}" title="Lihat Detail">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @can('ubah', $currentMenuSlug)
-                                <button class="btn btn-warning btn-sm btn-edit" data-id="{{ $jurnal->id }}" title="Edit Jurnal">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                @endcan
-                                @can('hapus', $currentMenuSlug)
-                                <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $jurnal->id }}" data-no="{{ $jurnal->no_jurnal }}" title="Hapus Jurnal">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                @endcan
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="9" class="text-center">Belum ada data jurnal.</td>
-                        </tr>
-                        @endforelse
+                        @if(isset($jurnals) && count($jurnals) > 0)
+                            @foreach ($jurnals as $jurnal)
+                            <tr id="row-jurnal-{{ $jurnal->id }}">
+                                <td>{{ $jurnal->tanggal_buat->format('d-m-Y') }}</td>
+                                <td>{{ $jurnal->no_jurnal }}</td>
+                                <td>{{ $jurnal->referensi }}</td>
+                                <td>{{ $jurnal->lokasi_nama ?? '-' }}</td>
+                                <td>{{ Str::limit($jurnal->catatan, 50) }}</td>
+                                <td class="text-end">{{ number_format($jurnal->nominal, 2, ',', '.') }}</td>
+                                <td>{{ $jurnal->user->Mem_UserName ?? 'N/A' }}</td>
+                                <td>{{ $jurnal->tanggal_edit->format('d-m-Y H:i') }}</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm btn-view" data-id="{{ $jurnal->id }}" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    @can('ubah', $currentMenuSlug)
+                                    <button class="btn btn-warning btn-sm btn-edit" data-id="{{ $jurnal->id }}" title="Edit Jurnal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    @endcan
+                                    @can('hapus', $currentMenuSlug)
+                                    <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $jurnal->id }}" data-no="{{ $jurnal->no_jurnal }}" title="Hapus Jurnal">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </td>
+                            </tr>
+                            @endforeach
+                        @endif
+                        {{-- Jika $jurnals kosong, biarkan <tbody> ini kosong.
+                            DataTables akan menangani sisanya. --}}
                     </tbody>
                 </table>
             </div>
@@ -167,8 +167,15 @@
                         </div>
                          <div class="col-md-3">
                             <label for="lokasi_nama" class="form-label">Lokasi</label>
-                            <input type="text" class="form-control" id="lokasi_nama" name="lokasi_nama" placeholder="Kantor Pusat">
-                             <small class="text-muted">Sementara input manual</small>
+                            <select class="form-control" id="lokasi_nama" name="lokasi_nama">
+                                <option value="" selected>-- Pilih Lokasi --</option>
+                                @if(isset($warehouses))
+                                    @foreach($warehouses as $warehouse)
+                                        {{-- Value dari option adalah NAMA LOKASI, bukan ID --}}
+                                        <option value="{{ $warehouse->WARE_Name }}">{{ $warehouse->WARE_Name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                          <div class="col-md-3">
                             <label for="referensi" class="form-label">Referensi</label>

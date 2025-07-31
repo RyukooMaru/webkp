@@ -37,6 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(isset($jurnals) && count($jurnals) > 0)
                         @forelse ($jurnals as $jurnal)
                         {{-- Anda mungkin perlu memfilter $jurnals di controller atau di sini jika 'tipe_jurnal' ada --}}
                         {{-- Atau, jika ini adalah daftar umum, pastikan 'show' menampilkan data dengan benar --}}
@@ -83,6 +84,7 @@
                             <td colspan="9" class="text-center">Belum ada data kas masuk.</td>
                         </tr>
                         @endforelse
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -172,10 +174,17 @@
                             <label for="tanggal_buat" class="form-label">Tanggal Transaksi <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_buat" name="tanggal_buat" required>
                         </div>
-                        <div class="col-md-3"> {{-- LOKASI BARU DI SINI --}}
-                        <label for="lokasi_nama" class="form-label">Lokasi</label>
-                        <input type="text" class="form-control" id="lokasi_nama" name="lokasi_nama" placeholder="Kantor Cabang, dll.">
-                        {{-- Jika Anda punya daftar lokasi, bisa diganti select --}}
+                        <div class="col-md-3">
+                            <label for="lokasi_nama" class="form-label">Lokasi</label>
+                            <select class="form-control" id="lokasi_nama" name="lokasi_nama">
+                                <option value="" selected>-- Pilih Lokasi --</option>
+                                @if(isset($warehouses))
+                                    @foreach($warehouses as $warehouse)
+                                        {{-- Value dari option adalah NAMA LOKASI, bukan ID --}}
+                                        <option value="{{ $warehouse->WARE_Name }}">{{ $warehouse->WARE_Name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <label for="rekening_tujuan_id" class="form-label">Rekening Tujuan (Simpan Ke) <span class="text-danger">*</span></label>

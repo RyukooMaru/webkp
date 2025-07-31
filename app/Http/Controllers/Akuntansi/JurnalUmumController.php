@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Akuntansi\AccDtjurnal;
 use App\Models\Akuntansi\AccHdjurnal;
 use App\Models\Akuntansi\AccKira;
+use App\Models\MutasiGudang\Warehouse; // Pastikan ini ada jika Anda menggunakan relasi gudang
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +19,8 @@ class JurnalUmumController extends Controller
     // Fungsi helper untuk generate nomor jurnal
     private function generateNoJurnal(): string
     {
-        $currentYearMonth = date('ym'); // Format TahunBulan (e.g., 2307)
-        $prefix = date('y') . date('m') . '-'; // e.g., "2307-"
+        $currentYearMonth = date('dm'); // Format TahunBulan (e.g., 2307)
+        $prefix = date('d') . date('m') . '-'; // e.g., "2307-"
         $suffix = '-JU';
 
         // Cari nomor urut terakhir di bulan ini
@@ -49,12 +50,17 @@ class JurnalUmumController extends Controller
     public function index()
     {
         // Ambil daftar jurnal header dengan relasi user
-        $jurnals = AccHdjurnal::with('user')->orderBy('tanggal_buat', 'desc')->orderBy('no_jurnal', 'desc')->paginate(15); // Sesuaikan paginasi
+        $jurnals = AccHdjurnal::with('user')
+                ->orderBy('tanggal_buat', 'desc')
+                ->orderBy('no_jurnal', 'desc')
+                ->paginate(15); // Sesuaikan paginasi
+
+        $warehouses = Warehouse::orderBy('WARE_Name')->get(['WARE_Name']); // Cukup ambil WARE_Name
 
         // Ambil daftar perkiraan untuk dropdown di modal
         $perkiraan = AccKira::orderBy('cls_kiraid')->get(['id', 'cls_kiraid', 'cls_ina']);
 
-        return view('akunting.jurnalumum.index', compact('jurnals', 'perkiraan'));
+        return view('akunting.jurnalumum.index', compact('jurnals', 'perkiraan', 'warehouses'));
 
     }
 
@@ -157,9 +163,9 @@ class JurnalUmumController extends Controller
             return response()->json(['success' => 'Jurnal berhasil disimpan dengan nomor: ' . $noJurnal], 201); // Created
 
         } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan semua perubahan jika ada error
-            Log::error('Error saving journal: ' . $e->getMessage()); // Log error
-            return response()->json(['errors' => ['server' => ['Terjadi kesalahan saat menyimpan jurnal. Silakan coba lagi.']]], 500); // Internal Server Error
+            DB::rollBack();
+            // Tampilkan pesan error asli dari database ke frontend
+            return response()->json(['errors' => ['server' => [$e->getMessage()]]], 500);
         }
     }
 
@@ -339,5 +345,38 @@ class JurnalUmumController extends Controller
         } else {
             return response()->json(['nama_perkiraan' => ''], 404); // Not found
         }
+    }
+
+    public function getWarehouses(Request $request)
+    {
+        $search = $request->get('q', '');
+        $page = $request->get('page', 1);
+        $perPage = 10;
+
+        $query = Warehouse::query();
+
+        // Jika ada search term, filter berdasarkan search
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('WARE_Auto', 'like', "%{$search}%")
+                    ->orWhere('WARE_Name', 'like', "%{$search}%");
+            });
+        }
+
+        $warehouses = $query->select('WARE_Auto', 'WARE_Name')
+            ->orderBy('WARE_Auto')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $items = $warehouses->map(function ($warehouse) {
+            return [
+                'id' => $warehouse->WARE_Auto,
+                'text' => $warehouse->WARE_Auto . ' - ' . $warehouse->WARE_Name
+            ];
+        });
+
+        return response()->json([
+            'items' => $items,
+            'total_count' => $warehouses->total()
+        ]);
     }
 }

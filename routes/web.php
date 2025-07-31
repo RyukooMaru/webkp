@@ -102,10 +102,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
     Route::prefix('keamanan')->name('keamanan.')->group(function () {
-       
+
     });
-   
-    
+
+
     Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
 });
 
@@ -185,7 +185,7 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::get('jurnal-umum/get-next-no', [JurnalUmumController::class, 'create'])->name('jurnalumum.getNextNo');
         // Buku Besar routes
         Route::get('buku-besar', [BukuBesarController::class, 'index'])->name('bukubesar.index');
-        Route::get('buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('akunting.bukubesar.pdf');
+        Route::get('buku-besar/pdf', [BukuBesarController::class, 'generatePDF'])->name('bukubesar.pdf');
         // Kas Masuk routes
         Route::resource('kas-masuk', KasMasukController::class);
         // Kas Keluar routes

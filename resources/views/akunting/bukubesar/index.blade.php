@@ -62,7 +62,7 @@
                         <a href="{{ route('bukubesar.index') }}" class="btn btn-secondary">
                             <i class="fa fa-times"></i> Reset
                         </a>
-                        <a href="{{ route('akunting.bukubesar.pdf', request()->query()) }}" class="btn btn-danger" target="_blank">
+                        <a href="{{ route('bukubesar.pdf', request()->query()) }}" class="btn btn-danger" target="_blank">
                             <i class="fa fa-file-pdf"></i> Cetak PDF
                         </a>
                     </div>

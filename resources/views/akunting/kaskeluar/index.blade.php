@@ -38,6 +38,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(isset($jurnals) && count($jurnals) > 0)
                         @forelse ($jurnals as $jurnal)
                         @php
                             $rekeningAsalText = '-';
@@ -81,6 +82,7 @@
                             <td colspan="9" class="text-center">Belum ada data kas keluar.</td>
                         </tr>
                         @endforelse
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -173,7 +175,15 @@
                         </div>
                         <div class="col-md-3">
                             <label for="lokasi_nama" class="form-label">Lokasi</label>
-                            <input type="text" class="form-control" id="lokasi_nama" name="lokasi_nama" placeholder="Kantor Cabang, dll.">
+                            <select class="form-control" id="lokasi_nama" name="lokasi_nama">
+                                <option value="" selected>-- Pilih Lokasi --</option>
+                                @if(isset($warehouses))
+                                    @foreach($warehouses as $warehouse)
+                                        {{-- Value dari option adalah NAMA LOKASI, bukan ID --}}
+                                        <option value="{{ $warehouse->WARE_Name }}">{{ $warehouse->WARE_Name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <label for="rekening_asal_id" class="form-label">Rekening Sumber (Diambil Dari) <span class="text-danger">*</span></label>

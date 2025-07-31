@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Akuntansi\AccDtjurnal;
 use App\Models\Akuntansi\AccHdjurnal;
 use App\Models\Akuntansi\AccKira;
+use App\Models\MutasiGudang\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +18,8 @@ class KasMasukController extends Controller
 {
     private function generateNoBuktiKasMasuk(): string
     {
-        $currentYearMonth = date('ym');
-        $prefix = date('y') . date('m') . '-'; // e.g., "2307-"
+        $currentYearMonth = date('dm');
+        $prefix = date('d') . date('m') . '-'; // e.g., "2307-"
         $suffix = '-KM'; // KM untuk Kas Masuk
 
         $lastBukti = AccHdjurnal::where('no_jurnal', 'like', $prefix . '%') // Masih pakai kolom no_jurnal
@@ -57,10 +58,11 @@ class KasMasukController extends Controller
                         ->orderBy('no_jurnal', 'desc')
                         ->paginate(15);
 
+        $warehouses = Warehouse::orderBy('WARE_Name')->get(['WARE_Name']); // Cukup ambil WARE_Name
         // Perkiraan untuk Rekening Tujuan (Kas/Bank) dan Diterima Dari
         $perkiraan = AccKira::orderBy('cls_kiraid')->get(['id', 'cls_kiraid', 'cls_ina']);
 
-        return view('akunting.kasmasuk.index', compact('jurnals', 'perkiraan'));
+        return view('akunting.kasmasuk.index', compact('jurnals', 'perkiraan', 'warehouses'));
     }
 
     public function store(Request $request)

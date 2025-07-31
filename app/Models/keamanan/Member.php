@@ -20,7 +20,7 @@ class Member extends Authenticatable // Model ini HARUS meng-extend Authenticata
 
     // Nonaktifkan timestamps otomatis (created_at dan updated_at)
     // karena tabel 'm_members' Anda menggunakan Mem_LastUpdate
-    public $timestamps = false; 
+    public $timestamps = false;
 
     // Daftar kolom yang bisa diisi secara massal (mass assignable)
     protected $fillable = [
@@ -43,7 +43,7 @@ class Member extends Authenticatable // Model ini HARUS meng-extend Authenticata
      */
     public function getAuthIdentifierName()
     {
-        return 'Mem_UserName'; // Menggunakan kolom 'Mem_UserName' sebagai identifier
+        return 'Mem_Auto'; // Menggunakan kolom 'Mem_UserName' sebagai identifier
     }
 
     /**
@@ -95,7 +95,7 @@ class Member extends Authenticatable // Model ini HARUS meng-extend Authenticata
     // --- Relasi Model (Opsional, tapi penting untuk fungsionalitas lain) ---
     // Pastikan Anda telah mengimpor model Role, RightAccess, RoleMenu di bagian atas file
     // dan namespace-nya sudah benar sesuai lokasi file Anda.
-    
+
     /**
      * Dapatkan role utama member ini.
      */
