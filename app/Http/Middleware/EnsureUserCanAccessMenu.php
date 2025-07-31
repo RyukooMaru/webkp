@@ -68,6 +68,7 @@ class EnsureUserCanAccessMenu
         $specialMappings = [
             'home' => 'dashboard',
             'profile' => 'profile',
+            'rekap.generate' => 'absensi'
             // Tambahkan mapping khusus lainnya di sini
         ];
 
@@ -91,6 +92,7 @@ class EnsureUserCanAccessMenu
             'data',
             'approve',
             'approveAll',
+            'reject',
             'print',
             'printAll',
             'publish',
@@ -104,7 +106,15 @@ class EnsureUserCanAccessMenu
             'suppliers',
             'warehouses',
             'product-data',
-            'uom-options'
+            'uom-options',
+            'fetch',    
+            'generate', 
+            'store-detail', 
+            'update-detail', 
+            'delete-detail', 
+            'updateMenuAccess', 
+            'searchEmployees', 
+            'getRoleMenusByRoleId', 
         ];
 
         if (count($parts) > 1 && in_array($action, $standardActions)) {

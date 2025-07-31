@@ -102,15 +102,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
     Route::prefix('keamanan')->name('keamanan.')->group(function () {
-        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
-        Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
-        Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
+       
     });
-    Route::prefix('jadwal')->name('jadwal.')->group(function () {
-            Route::post('/fetch', [JadwalController::class, 'fetchJadwal'])->name('fetch');
-            Route::post('/generate', [JadwalController::class, 'generate'])->name('generate');
-        });
-    //Rekap
+   
+    
     Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
 });
 
@@ -147,6 +142,8 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::prefix('jadwal')->name('jadwal.')->group(function () {
             Route::get('/', [JadwalController::class, 'index'])->name('index');
             Route::put('/update/{id}', [JadwalController::class, 'update'])->name('update');
+            Route::post('/fetch', [JadwalController::class, 'fetchJadwal'])->name('fetch');
+            Route::post('/generate', [JadwalController::class, 'generate'])->name('generate');
             // === TAMBAHKAN ROUTE INI ===
             Route::delete('/destroy', [JadwalController::class, 'destroyJadwal'])->name('destroy');
             Route::post('/check', [JadwalController::class, 'checkJadwal'])->name('check');
@@ -254,12 +251,15 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::resource('roles', RoleController::class);
         // Route for Permission (URL: /keamanan/permission)
         Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
+        Route::post('permission/update-menu-access', [PermissionController::class, 'updateMenuAccess'])->name('permission.updateMenuAccess');
         // Route for Member (User) (URL: /keamanan/member)
         Route::get('member', [MemberController::class, 'index'])->name('member.index');
         Route::post('member', [MemberController::class, 'store'])->name('member.store');
         Route::get('member/{id}/edit', [MemberController::class, 'edit'])->name('member.edit');
         Route::put('member/{id}', [MemberController::class, 'update'])->name('member.update');
         Route::delete('member/{id}', [MemberController::class, 'destroy'])->name('member.destroy');
+        Route::get('member/search-employees', [MemberController::class, 'searchEmployees'])->name('member.searchEmployees');
+        Route::get('member/get-role-menus-by-role/{roleId?}', [MemberController::class, 'getRoleMenusByRoleId'])->name('member.getRoleMenusByRoleId');
     });
 
     // --- Gudang Routes ---
