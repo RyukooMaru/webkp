@@ -80,41 +80,31 @@ class EnsureUserCanAccessMenu
         $action = end($parts);
 
         $standardActions = [
-            'index',
-            'store',
-            'create',
-            'show',
-            'edit',
-            'update',
-            'destroy',
-            'json',
-            'pdf',
-            'data',
-            'approve',
-            'approveAll',
-            'reject',
-            'print',
-            'printAll',
+           // CRUD Standar (dan variasinya)
+            'index', 'store', 'create', 'show', 'edit', 'update',
+            'destroy', 'destroyHeader', 'destroyDetail',
+            'cancel', 
+            
+            // Aksi Data JSON / Helper
+            'json', 'pdf', 'data', 'details',
+            'fetch', 'generate', 'check', 
+            'customers', 'suppliers', 'warehouses', 'product-data', 'uom-options',
+            'getByDivision', 'getSubclasses', 'getNamaPerkiraan', 'getNextNo',
+            'searchEmployees', 'getRoleMenusByRoleId',
+            
+            // Aksi Dokumen Kustom
+            'updateHeader',
+            'storeDetail',
+            'updateDetail',
             'publish',
             'publishEdit',
-            'getByDivision',
-            'getSubclasses',
-            'getNamaPerkiraan',
-            'getNextNo',
-            'details',
-            'customers',
-            'suppliers',
-            'warehouses',
-            'product-data',
-            'uom-options',
-            'fetch',    
-            'generate', 
-            'store-detail', 
-            'update-detail', 
-            'delete-detail', 
-            'updateMenuAccess', 
-            'searchEmployees', 
-            'getRoleMenusByRoleId', 
+            'updateMenuAccess',
+            
+            // Aksi Approval
+            'approve', 'approveAll', 'reject',
+            
+            // Aksi Printing
+            'print', 'printAll',
         ];
 
         if (count($parts) > 1 && in_array($action, $standardActions)) {

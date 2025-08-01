@@ -104,9 +104,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('keamanan')->name('keamanan.')->group(function () {
 
     });
-
-
-    Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
 });
 
 Route::middleware(['auth', 'can.access.menu'])->group(function () {
@@ -167,6 +164,8 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::post('/leave-approvals/{leaveRequest}/approve', [LeaveApprovalController::class, 'approve'])->name('leave.approvals.approve');
         Route::post('/leave-approvals/{leaveRequest}/reject', [LeaveApprovalController::class, 'reject'])->name('leave.approvals.reject');
         Route::delete('/leave-approvals/{leaveRequest}', [LeaveApprovalController::class, 'destroy'])->name('leave.approvals.destroy');
+        //Rekap
+        Route::match(['get', 'post'], '/rekap', [RekapController::class, 'generateReport'])->name('rekap.generate');
     });
 });
 
