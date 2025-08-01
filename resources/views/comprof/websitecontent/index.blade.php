@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    @endphp
+
     <div class="mb-3">
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddContent">
             <i class="fas fa-plus"></i> Tambah Konten
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -44,25 +51,32 @@
                                 <td>{!! $content->status ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-secondary">Tidak Aktif</span>' !!}</td>
                                 <td>{!! $content->halaman_depan ? '<span class="badge badge-info">Ya</span>' : '<span class="badge badge-secondary">Tidak</span>' !!}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $content->id }}"
-                                        data-submenu_id="{{ $content->submenu_id }}"
-                                        data-judul="{{ $content->judul }}"
-                                        data-isi="{{ $content->isi }}"
-                                        data-gambar="{{ $content->gambar }}"
-                                        data-kategori_berita_id="{{ $content->kategori_berita_id }}"
-                                        data-kategori_album_id="{{ $content->kategori_album_id }}"
-                                        data-status="{{ $content->status }}"
-                                        data-halaman_depan="{{ $content->halaman_depan }}"
-                                        title="Edit Konten">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $content->id }}"
-                                        data-judul="{{ $content->judul }}"
-                                        title="Hapus Konten">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        @can('ubah', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $content->id }}"
+                                            data-submenu_id="{{ $content->submenu_id }}"
+                                            data-judul="{{ $content->judul }}"
+                                            data-isi="{{ $content->isi }}"
+                                            data-gambar="{{ $content->gambar }}"
+                                            data-kategori_berita_id="{{ $content->kategori_berita_id }}"
+                                            data-kategori_album_id="{{ $content->kategori_album_id }}"
+                                            data-status="{{ $content->status }}"
+                                            data-halaman_depan="{{ $content->halaman_depan }}"
+                                            title="Edit Konten">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @endcan
+
+                                        @can('hapus', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $content->id }}"
+                                            data-judul="{{ $content->judul }}"
+                                            title="Hapus Konten">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -147,12 +161,14 @@
                     <label class="small mb-0">Gambar</label>
                     <input type="file" id="gambar" name="gambar" class="form-control-file form-control-sm">
                     <div id="gambarPreview" class="mt-2"></div>
+                    @can('ubah', $currentMenuSlug)
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" name="remove_image" id="removeImage">
                         <label class="form-check-label small" for="removeImage">
                             Hapus gambar saat disimpan
                         </label>
                     </div>
+                    @endcan
                 </div>
 
                 <div class="row">
@@ -179,7 +195,9 @@
 
             <div class="modal-footer py-1">
                 <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Batal</button>
+                @can('ubah', $currentMenuSlug)
                 <button type="submit" class="btn btn-primary btn-sm px-3" id="modalSubmit">Simpan</button>
+                @endcan
             </div>
         </form>
     </div>
@@ -209,6 +227,29 @@
     .img-thumbnail {
         max-width: 200px;
         max-height: 150px;
+    }
+    .d-flex.gap-2 {
+        gap: 0.5rem;
+    }
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .alert {
+        border-left: 4px solid;
+    }
+    .modal-header {
+        padding: 0.75rem 1.5rem;
+    }
+    .modal-footer {
+        padding: 0.75rem 1.5rem;
+    }
+    .note-editor.note-frame {
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.25rem !important;
     }
 </style>
 @endpush

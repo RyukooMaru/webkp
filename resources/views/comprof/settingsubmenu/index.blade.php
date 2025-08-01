@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    @endphp
+
     <div class="mb-3">
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddSubMenu">
             <i class="fas fa-plus"></i> Tambah Sub Menu
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -42,22 +49,29 @@
                                 <td>{{ $submenu->tautan }}</td>
                                 <td>{!! $submenu->status_html !!}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $submenu->id }}"
-                                        data-menu_id="{{ $submenu->menu_id }}"
-                                        data-nama_submenu="{{ $submenu->nama_submenu }}"
-                                        data-urut="{{ $submenu->urut }}"
-                                        data-tautan="{{ $submenu->tautan }}"
-                                        data-status="{{ $submenu->status }}"
-                                        title="Edit Sub Menu">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $submenu->id }}"
-                                        data-nama_submenu="{{ $submenu->nama_submenu }}"
-                                        title="Hapus Sub Menu">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        @can('ubah', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $submenu->id }}"
+                                            data-menu_id="{{ $submenu->menu_id }}"
+                                            data-nama_submenu="{{ $submenu->nama_submenu }}"
+                                            data-urut="{{ $submenu->urut }}"
+                                            data-tautan="{{ $submenu->tautan }}"
+                                            data-status="{{ $submenu->status }}"
+                                            title="Edit Sub Menu">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @endcan
+
+                                        @can('hapus', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $submenu->id }}"
+                                            data-nama_submenu="{{ $submenu->nama_submenu }}"
+                                            title="Hapus Sub Menu">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -203,6 +217,7 @@ $(function() {
         const btn = $(this);
         const id = btn.data('id');
         const nama = btn.data('nama_submenu');
+        const deleteUrl = `{{ route('comprof.settingsubmenu.destroy', ':id') }}`.replace(':id', id);
         const row = btn.parents('tr');
 
         Swal.fire({
@@ -220,7 +235,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.settingsubmenu.destroy', '') }}/${id}`,
+                    url: deleteUrl,
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",

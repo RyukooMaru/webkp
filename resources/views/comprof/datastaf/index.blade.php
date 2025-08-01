@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    @endphp
+
     <div class="mb-3">
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddStaf">
             <i class="fas fa-plus"></i> Tambah Data Staf
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -34,7 +41,7 @@
                             <tr>
                                 <td class="align-middle text-center">{{ $index + 1 }}</td>
                                 <td class="align-middle text-center">
-                                    <img src="{{ $staff->profile_image_url }}" alt="Profil Staf" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $staff->profile_image) }}" alt="Profil Staf" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
                                 </td>
                                 <td class="align-middle">
                                     <div class="mb-2">
@@ -49,29 +56,34 @@
                                     <div>
                                         <strong>Deskripsi:</strong> 
                                         <div class="mt-1">
-                                            {!! \Illuminate\Support\Str::limit($staff->description, 200) !!}
+                                            {!! $staff->description !!}
                                         </div>
                                     </div>
                                 </td>
                                 <td class="align-middle text-center">
                                     <div class="d-flex justify-content-center gap-2">
+                                        @can('ubah', $currentMenuSlug)
                                         <button class="btn btn-sm btn-warning edit-btn"
                                             data-id="{{ $staff->id }}"
                                             data-name="{{ $staff->name }}"
                                             data-jabatan="{{ $staff->jabatan }}"
                                             data-education="{{ $staff->education }}"
                                             data-description="{{ $staff->description }}"
-                                            data-profile_image_url="{{ $staff->profile_image_url }}"
+                                            data-profile_image="{{ $staff->profile_image }}"
                                             data-status="{{ $staff->status }}"
                                             title="Edit Staf">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                        @endcan
+
+                                        @can('hapus', $currentMenuSlug)
                                         <button class="btn btn-sm btn-danger delete-btn"
                                             data-id="{{ $staff->id }}"
                                             data-name="{{ $staff->name }}"
                                             title="Hapus Staf">
                                             <i class="fas fa-trash"></i>
                                         </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
@@ -93,7 +105,6 @@
                 @csrf
                 <input type="hidden" id="id" name="id">
                 <input type="hidden" id="formMethod" name="_method" value="POST">
-                <input type="hidden" id="status" name="status" value="1">
 
                 <div class="modal-header py-2">
                     <h5 class="modal-title" id="modalTitle">Tambah Data Staf</h5>
@@ -217,7 +228,7 @@ $(function() {
     const modalEl = document.getElementById('universalModal');
     const modalInstance = new bootstrap.Modal(modalEl);
     const form = $('#mainForm');
-    const baseComprofUrl = "{{ url('comprof') }}";
+    const baseUrl = "{{ route('comprof.datastaf.store') }}";
 
     // Inisialisasi Summernote
     $('.summernote').summernote({
@@ -246,7 +257,6 @@ $(function() {
             }
             reader.readAsDataURL(file);
         } else {
-            // Tampilkan gambar yang sudah ada jika ada
             const existingImg = preview.data('existing');
             if (existingImg) {
                 preview.attr('src', existingImg).show();
@@ -261,11 +271,11 @@ $(function() {
         form.trigger('reset');
         $('#modalTitle').text('Tambah Data Staf');
         $('#modalSubmit').text('Simpan');
-        form.attr('action', `${baseComprofUrl}/datastaf`);
+        form.attr('action', baseUrl);
         $('#formMethod').val('POST');
         $('.summernote').summernote('reset');
         $('#imagePreview img').hide().removeData('existing');
-        $('#imageRequired').show(); // Tampilkan tanda bintang untuk required
+        $('#imageRequired').show();
         modalInstance.show();
     });
 
@@ -273,23 +283,24 @@ $(function() {
     $('#dataTable').on('click', '.edit-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
-        form.attr('action', `${baseComprofUrl}/datastaf/${id}`);
+        const editUrl = "{{ route('comprof.datastaf.update', ':id') }}".replace(':id', id);
         
+        form.attr('action', editUrl);
         $('#id').val(id);
         $('#name').val(btn.data('name'));
         $('#jabatan').val(btn.data('jabatan'));
         $('#education').val(btn.data('education'));
         $('#description').summernote('code', btn.data('description'));
-        $('#status').val(btn.data('status'));
         
         // Tampilkan gambar yang sudah ada
         const preview = $('#imagePreview img');
-        const profileImageUrl = btn.data('profile_image_url');
+        const profileImage = btn.data('profile_image');
         
-        if (profileImageUrl) {
-            preview.attr('src', profileImageUrl)
+        if (profileImage) {
+            const imageUrl = "{{ asset('storage') }}/" + profileImage;
+            preview.attr('src', imageUrl)
                    .show()
-                   .data('existing', profileImageUrl);
+                   .data('existing', imageUrl);
         } else {
             preview.hide().removeData('existing');
         }
@@ -297,98 +308,75 @@ $(function() {
         $('#modalTitle').text('Edit Data Staf');
         $('#modalSubmit').text('Simpan Perubahan');
         $('#formMethod').val('PUT');
-        $('#imageRequired').hide(); // Sembunyikan tanda bintang saat edit
+        $('#imageRequired').hide();
         modalInstance.show();
     });
 
-// Submit Form dengan AJAX
-form.on('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const isEdit = $('#formMethod').val() === 'PUT';
-    
-    // Ambil dan bersihkan konten summernote
-    let descriptionContent = $('#description').summernote('code');
-    descriptionContent = descriptionContent.trim();
-    
-    // Validasi gambar hanya untuk tambah data
-    if (!isEdit && !formData.get('profile_image')) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gambar Profil Diperlukan',
-            text: 'Silakan pilih gambar profil untuk staf baru',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-    
-    // Bersihkan konten sebelum dikirim
-    descriptionContent = descriptionContent.replace(/<p[^>]*>(&nbsp;|\s)*<\/p>/g, '');
-    descriptionContent = descriptionContent.replace(/&nbsp;/g, ' ');
-    descriptionContent = descriptionContent.trim();
-    
-    // Jika konten kosong setelah dibersihkan
-    if (descriptionContent === '' || descriptionContent === '<br>') {
-        descriptionContent = '';
-    }
-    
-    formData.set('description', descriptionContent);
-    
-    // Jika edit dan tidak ada file baru, hapus entry profile_image
-    if (isEdit && !$('#profile_image')[0].files[0]) {
-        formData.delete('profile_image');
-    }
-    
-    $.ajax({
-        url: form.attr('action'),
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            modalInstance.hide();
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: response.message,
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                location.reload();
-            });
-        },
-        error: function(xhr) {
-            let message = 'Terjadi kesalahan pada server';
-            let errors = xhr.responseJSON;
-
-            if (xhr.status === 422 && errors && errors.errors) {
-                message = '';
-                Object.values(errors.errors).forEach(arr => {
-                    arr.forEach(msg => message += msg + '<br>');
-                });
-            } else if (errors && errors.message) {
-                message = errors.message;
-            } else if (errors && errors.error) {
-                message = errors.error;
-            }
-
+    // Submit Form dengan AJAX
+    form.on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const isEdit = $('#formMethod').val() === 'PUT';
+        
+        // Validasi gambar hanya untuk tambah data
+        if (!isEdit && !formData.get('profile_image')) {
             Swal.fire({
                 icon: 'error',
-                title: 'Error ' + xhr.status,
-                html: message,
+                title: 'Gambar Profil Diperlukan',
+                text: 'Silakan pilih gambar profil untuk staf baru',
                 confirmButtonText: 'OK'
             });
+            return;
         }
+        
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                modalInstance.hide();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let message = 'Terjadi kesalahan pada server';
+                let errors = xhr.responseJSON;
+
+                if (xhr.status === 422 && errors && errors.errors) {
+                    message = '';
+                    Object.values(errors.errors).forEach(arr => {
+                        arr.forEach(msg => message += msg + '<br>');
+                    });
+                } else if (errors && errors.message) {
+                    message = errors.message;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error ' + xhr.status,
+                    html: message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     });
-});
 
     // Hapus Data Staf
     $('#dataTable').on('click', '.delete-btn', function() {
         const btn = $(this);
         const id = btn.data('id');
         const name = btn.data('name');
-        const row = btn.closest('tr');
+        const deleteUrl = "{{ route('comprof.datastaf.destroy', ':id') }}".replace(':id', id);
 
         Swal.fire({
             title: 'Hapus Data Staf?',
@@ -405,26 +393,20 @@ form.on('submit', function(e) {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.datastaf.destroy', '') }}/${id}`,
+                    url: deleteUrl,
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(response) {
-                        row.fadeOut(400, function() {
-                            row.remove();
-                            // Re-number table
-                            $('#dataTable tbody tr').each(function(index) {
-                                $(this).find('td:first').text(index + 1);
-                            });
-                        });
-                        
                         Swal.fire({
                             icon: 'success',
                             title: 'Terhapus!',
                             text: response.message,
                             showConfirmButton: false,
                             timer: 1500 
+                        }).then(() => {
+                            location.reload();
                         });
                     },
                     error: function(xhr) {

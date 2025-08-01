@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    @endphp
+
     <div class="mb-3">
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddSlider">
             <i class="fas fa-plus"></i> Tambah Slider
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -37,34 +44,39 @@
                             <td class="align-middle text-center">
                                 <img src="{{ $slider->image_url }}" alt="Slider Image" class="img-thumbnail" style="width: 250px; height: 125px; object-fit: cover;">
                             </td>
-                                    <td class="align-middle">
-                        <div class="slider-title-preview">
-                            {!! $slider->clean_title !!}
-                        </div>
-                                        </td>
-                                <td class="align-middle text-center">
-                                    {!! $slider->status_html !!}
-                                </td>
-                                <td class="align-middle text-center">
-                                    <div class="d-flex justify-content-center gap-2">
-                                        <button class="btn btn-sm btn-warning edit-btn"
-                                            data-id="{{ $slider->id }}"
-                                            data-title="{{ $slider->title }}"
-                                            data-link="{{ $slider->link }}"
-                                            data-image_url="{{ $slider->image_url }}"
-                                            data-status="{{ $slider->status }}"
-                                            title="Edit Slider">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger delete-btn"
-                                            data-id="{{ $slider->id }}"
-                                            data-title="{{ $slider->title }}"
-                                            title="Hapus Slider">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <td class="align-middle">
+                                <div class="slider-title-preview">
+                                    {!! $slider->clean_title !!}
+                                </div>
+                            </td>
+                            <td class="align-middle text-center">
+                                {!! $slider->status_html !!}
+                            </td>
+                            <td class="align-middle text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    @can('ubah', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-warning edit-btn"
+                                        data-id="{{ $slider->id }}"
+                                        data-title="{{ $slider->title }}"
+                                        data-link="{{ $slider->link }}"
+                                        data-image_url="{{ $slider->image_url }}"
+                                        data-status="{{ $slider->status }}"
+                                        title="Edit Slider">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    @endcan
+
+                                    @can('hapus', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                        data-id="{{ $slider->id }}"
+                                        data-title="{{ $slider->title }}"
+                                        title="Hapus Slider">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="text-center text-muted">Tidak ada data slider</td>
@@ -269,19 +281,7 @@ $(function() {
         styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
         disableDragAndDrop: true,
         shortcuts: false,
-        followingToolbar: false
-    });
-// Add this click handler for the slider rows
-$('#dataTable').on('click', 'tr[data-link]', function(e) {
-        // Don't trigger if clicking on action buttons
-        if (!$(e.target).closest('.edit-btn, .delete-btn').length && $(this).data('link')) {
-            window.open($(this).data('link'), '_blank');
-        }
-    });
-
-    // Update Summernote initialization to prevent link display
-    $('.summernote-title').summernote({
-        // [Keep all your existing Summernote config]
+        followingToolbar: false,
         callbacks: {
             onPaste: function(e) {
                 // Clean paste to remove links
@@ -295,6 +295,14 @@ $('#dataTable').on('click', 'tr[data-link]', function(e) {
                     e.preventDefault();
                 }
             }
+        }
+    });
+
+    // Add this click handler for the slider rows
+    $('#dataTable').on('click', 'tr[data-link]', function(e) {
+        // Don't trigger if clicking on action buttons
+        if (!$(e.target).closest('.edit-btn, .delete-btn').length && $(this).data('link')) {
+            window.open($(this).data('link'), '_blank');
         }
     });
 
@@ -432,6 +440,7 @@ $('#dataTable').on('click', 'tr[data-link]', function(e) {
         const btn = $(this);
         const id = btn.data('id');
         const title = btn.data('title');
+        const deleteUrl = `{{ route('comprof.slider.destroy', ':id') }}`.replace(':id', id);
         const row = btn.closest('tr');
 
         Swal.fire({
@@ -449,7 +458,7 @@ $('#dataTable').on('click', 'tr[data-link]', function(e) {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('comprof.slider.destroy', '') }}/${id}`,
+                    url: deleteUrl,
                     type: 'DELETE',
                     data: { 
                         _token: "{{ csrf_token() }}",
@@ -493,4 +502,3 @@ $('#dataTable').on('click', 'tr[data-link]', function(e) {
 });
 </script>
 @endpush
-
