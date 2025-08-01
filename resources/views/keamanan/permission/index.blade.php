@@ -167,11 +167,11 @@
             Swal.fire({
                 icon: icon,
                 title: title,
-                html: text, // Menggunakan html untuk pesan yang berisi <br>
-                timer: 2000, // Durasi notifikasi
-                showConfirmButton: false, // Tidak menampilkan tombol konfirmasi
-                didClose: () => { // Callback setelah alert ditutup
-                    if (reload) location.reload(); // Reload halaman jika diminta
+                html: text, 
+                timer: 2000, 
+                showConfirmButton: false, 
+                didClose: () => { 
+                    if (reload) location.reload(); 
                 }
             });
         }
@@ -205,7 +205,6 @@
         //      info: false, // Matikan info "Showing X of Y entries"
         //      searching: false // Matikan fitur search bawaan DataTable
         // });
-        // NOTE: Saya sudah mengomentari ini di kode sebelumnya untuk halaman ini.
 
         // Init DataTables for the main users table (if that's where #dataTable is)
         $('#dataTable').DataTable(); // Pastikan ID ini merujuk ke tabel daftar pengguna di halaman ini

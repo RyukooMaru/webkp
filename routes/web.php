@@ -97,13 +97,8 @@ Route::middleware(['web'])->group(function () {
 //route yang tidak perlu acess menu
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
-
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
-
-    Route::prefix('keamanan')->name('keamanan.')->group(function () {
-
-    });
 });
 
 Route::middleware(['auth', 'can.access.menu'])->group(function () {
