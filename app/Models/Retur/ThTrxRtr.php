@@ -4,7 +4,7 @@ namespace App\Models\Retur;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\User;
+use App\Models\keamanan\Member;
 use App\Models\Inventory\Supplier;
 use App\Models\MutasiGudang\Warehouse;
 
@@ -59,12 +59,12 @@ class ThTrxRtr extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'Trx_UserID');
+        return $this->belongsTo(Member::class, 'Trx_UserID', 'Mem_Auto');
     }
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'Trx_SupCode', 'kode_supplier');
+        return $this->belongsTo(Supplier::class, 'Trx_SupCode', 'id');
     }
 
     public function warehouse()

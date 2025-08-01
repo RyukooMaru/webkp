@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Inventory\Dtproduk;
 use App\Models\Inventory\Supplier;
+use App\Models\Inventory\SatuanProduk;
 
 class TdTrxRtr extends Model
 {
@@ -59,5 +60,10 @@ class TdTrxRtr extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'Trx_SupCode', 'kode_supplier');
+    }
+
+    public function uom()
+    {
+        return $this->belongsTo(SatuanProduk::class, 'trx_uom', 'UOM_Auto');
     }
 }

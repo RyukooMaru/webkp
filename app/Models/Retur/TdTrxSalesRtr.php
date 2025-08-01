@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Inventory\Dtproduk;
 use App\Models\SPModels\Pelanggan;
+use App\Models\Inventory\SatuanProduk;
 
 class TdTrxSalesRtr extends Model
 {
@@ -52,5 +53,10 @@ class TdTrxSalesRtr extends Model
     public function customer()
     {
         return $this->belongsTo(Pelanggan::class, 'Pro_SupCode', 'kode');
+    }
+
+    public function uom()
+    {
+        return $this->belongsTo(SatuanProduk::class, 'trx_uom', 'UOM_Auto');
     }
 }

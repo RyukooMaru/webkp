@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Retur;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\keamanan\Member;
 use App\Models\Retur\ThTrxSalesRtr;
 use App\Models\Retur\TdTrxSalesRtr;
 use App\Models\SPModels\Pelanggan;
@@ -26,8 +26,12 @@ class ReturPenjualanController extends Controller
     // JSON untuk DataTables index
     public function dataJson(Request $request)
     {
-        // Hanya ambil data dengan posting F atau T
-        $query = ThTrxSalesRtr::whereIn('trx_posting', ['F', 'T']);
+        // Hanya ambil data dengan posting F atau T dan eager load user
+        $query = ThTrxSalesRtr::with([
+            'user:Mem_Auto,Mem_ID,Mem_UserName',
+            'customer:id,kode,anggota'
+        ])
+            ->whereIn('trx_posting', ['F', 'T']);
 
         // Filter
         if ($request->filled('filter_date_from')) {
@@ -39,28 +43,29 @@ class ReturPenjualanController extends Controller
         }
 
         if ($request->filled('filter_sup_code')) {
-            $query->where('Trx_SupCode', $request->filter_sup_code);
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('kode', 'like', '%' . $request->filter_sup_code . '%');
+            });
         }
 
         $rows = $query->get();
 
         $data = $rows->map(function ($r) {
-            $userName = $r->Trx_UserID;
+            // Gunakan relasi user yang sudah di-eager load
+            // Prioritas: Mem_UserName > Mem_ID > Trx_UserID
+            $userName = $r->Trx_UserID; // fallback
 
-            if (!empty($r->Trx_UserID)) {
-                try {
-                    $user = User::find($r->Trx_UserID);
-                    if ($user) {
-                        $userName = $user->name;
-                    }
-                } catch (\Exception $e) {
-                    // Hanya gunakan ID jika ada yang gagal
+            if ($r->user) {
+                if (!empty($r->user->Mem_UserName)) {
+                    $userName = $r->user->Mem_UserName;
+                } elseif (!empty($r->user->Mem_ID)) {
+                    $userName = $r->user->Mem_ID; // Tampilkan custom ID untuk user
                 }
             }
 
             return [
                 'Trx_Auto'       => $r->Trx_Auto,
-                'Trx_SupCode'    => $r->Trx_SupCode,
+                'Trx_SupCode'    => $r->customer ? $r->customer->kode : $r->Trx_SupCode,
                 'trx_number'     => $r->trx_number,
                 'Trx_Date'       => $r->Trx_Date?->format('Y-m-d'),
                 'Trx_GrossPrice' => number_format($r->Trx_GrossPrice, 2, ',', '.'),
@@ -92,13 +97,13 @@ class ReturPenjualanController extends Controller
             });
         }
 
-        $customers = $query->select('kode', 'anggota')
+        $customers = $query->select('id', 'kode', 'anggota')
             ->orderBy('kode')
             ->paginate($perPage, ['*'], 'page', $page);
 
         $items = $customers->map(function ($customer) {
             return [
-                'id' => $customer->kode,
+                'id' => $customer->id, // Gunakan primary key untuk relasi
                 'text' => $customer->kode . ' - ' . $customer->anggota
             ];
         });
@@ -155,7 +160,7 @@ class ReturPenjualanController extends Controller
                 'Trx_SupCode'    => '',
                 'Trx_WareCode'   => '',
                 'Trx_Note'       => '',
-                'Trx_UserID'     => Auth::id(),
+                'Trx_UserID'     => Auth::user()->Mem_Auto,
                 'Trx_LastUpdate' => now(),
             ]
         );
@@ -210,7 +215,7 @@ class ReturPenjualanController extends Controller
         $userId = null;
         try {
             if (Auth::check()) {
-                $userId = Auth::id();
+                $userId = Auth::user()->Mem_Auto;
             }
         } catch (\Exception $e) {
             // Tangani pengecualian jika auth() tidak berfungsi
@@ -234,7 +239,7 @@ class ReturPenjualanController extends Controller
     // JSON Detail untuk satu header
     public function detailsJson($id)
     {
-        $header = ThTrxSalesRtr::with('details')->findOrFail($id);
+        $header = ThTrxSalesRtr::with('details.uom:UOM_Auto,UOM_Code')->findOrFail($id);
         return response()->json(['data' => $header->details]);
     }
 
@@ -393,7 +398,7 @@ class ReturPenjualanController extends Controller
         // Update header
         $hdr->update([
             'trx_posting' => 'F',
-            'Trx_UserID'     => Auth::id(),
+            'Trx_UserID'     => Auth::user()->Mem_Auto,
             'Trx_LastUpdate' => now()
         ]);
 
@@ -436,7 +441,7 @@ class ReturPenjualanController extends Controller
             'Trx_WareCode' => $r->Trx_WareCode,
             'Trx_Note'     => $r->Trx_Note,
             'trx_posting'  => 'F',
-            'Trx_UserID'   => Auth::id(),
+            'Trx_UserID'   => Auth::user()->Mem_Auto,
             'Trx_LastUpdate' => now(),
         ]);
 
@@ -480,7 +485,7 @@ class ReturPenjualanController extends Controller
             // Update header menjadi status T
             $hdr->update([
                 'trx_posting' => 'T',
-                'Trx_UserID' => Auth::id(),
+                'Trx_UserID' => Auth::user()->Mem_Auto,
                 'Trx_LastUpdate' => now()
             ]);
 
@@ -531,7 +536,7 @@ class ReturPenjualanController extends Controller
         // Update header menjadi status T
         $hdr->update([
             'trx_posting' => 'T',
-            'Trx_UserID' => Auth::id(),
+            'Trx_UserID' => Auth::user()->Mem_Auto,
             'Trx_LastUpdate' => now()
         ]);
 
@@ -577,7 +582,10 @@ class ReturPenjualanController extends Controller
         ];
 
         $query = ThTrxSalesRtr::select(array_merge(['Trx_Auto', 'trx_posting'], $cols))
-            ->with('user:id,name')
+            ->with([
+                'user:Mem_Auto,Mem_ID,Mem_UserName',
+                'customer:id,kode,anggota'
+            ])
             ->whereIn('trx_posting', ['F', 'T']);
 
         if ($search = $request->query('search')) {
@@ -637,7 +645,11 @@ class ReturPenjualanController extends Controller
     // Print Single
     public function print($id)
     {
-        $row = ThTrxSalesRtr::with(['details', 'user:id,name', 'customer:kode,anggota'])->findOrFail($id);
+        $row = ThTrxSalesRtr::with([
+            'details.uom:UOM_Auto,UOM_Code',
+            'user:Mem_Auto,Mem_ID,Mem_UserName',
+            'customer:id,kode,anggota'
+        ])->findOrFail($id);
         $details = $row->details;
 
         $currentUser = auth()->user();
@@ -681,15 +693,18 @@ class ReturPenjualanController extends Controller
     }
 
     // Method untuk mengambil data UOM
-    public function getUoms()
+    public function getUoms(Request $request)
     {
+        $selectedValue = $request->get('selected'); // Untuk mendapatkan nilai yang sudah dipilih
+
         $uoms = SatuanProduk::select('UOM_Code', 'UOM_Auto')
             ->orderBy('UOM_Code')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $uoms
+            'data' => $uoms,
+            'selected' => $selectedValue // Kirim kembali nilai yang dipilih
         ]);
     }
 }

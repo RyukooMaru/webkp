@@ -80,18 +80,38 @@ class EnsureUserCanAccessMenu
         $action = end($parts);
 
         $standardActions = [
-           // CRUD Standar (dan variasinya)
-            'index', 'store', 'create', 'show', 'edit', 'update',
-            'destroy', 'destroyHeader', 'destroyDetail',
-            'cancel', 
-            
+            // CRUD Standar (dan variasinya)
+            'index',
+            'store',
+            'create',
+            'show',
+            'edit',
+            'update',
+            'destroy',
+            'destroyHeader',
+            'destroyDetail',
+            'cancel',
+
             // Aksi Data JSON / Helper
-            'json', 'pdf', 'data', 'details',
-            'fetch', 'generate', 'check', 
-            'customers', 'suppliers', 'warehouses', 'product-data', 'uom-options',
-            'getByDivision', 'getSubclasses', 'getNamaPerkiraan', 'getNextNo',
-            'searchEmployees', 'getRoleMenusByRoleId',
-            
+            'json',
+            'pdf',
+            'data',
+            'details',
+            'fetch',
+            'generate',
+            'check',
+            'customers',
+            'suppliers',
+            'warehouses',
+            'product-data',
+            'uom-options',
+            'getByDivision',
+            'getSubclasses',
+            'getNamaPerkiraan',
+            'getNextNo',
+            'searchEmployees',
+            'getRoleMenusByRoleId',
+
             // Aksi Dokumen Kustom
             'updateHeader',
             'storeDetail',
@@ -99,19 +119,22 @@ class EnsureUserCanAccessMenu
             'publish',
             'publishEdit',
             'updateMenuAccess',
-            
+
             // Aksi Approval
-            'approve', 'approveAll', 'reject',
-            
+            'approve',
+            'approveAll',
+            'reject',
+
             // Aksi Printing
-            'print', 'printAll',
+            'print',
+            'printAll',
         ];
 
         if (count($parts) > 1 && in_array($action, $standardActions)) {
             // Jika route memiliki aksi standar, kembalikan bagian dasar
             $baseRoute = implode('.', array_slice($parts, 0, -1));
 
-            // Handling khusus untuk details: retur.penjualan.details.data -> retur.penjualan
+            // Handling khusus untuk details
             if (strpos($baseRoute, '.details') !== false) {
                 $baseRoute = str_replace('.details', '', $baseRoute);
             }

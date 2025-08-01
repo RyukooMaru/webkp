@@ -227,7 +227,7 @@
                                     <strong>:</strong>
                                 </td>
                                 <td style="border: none; padding: 2px 0; margin: 0; ">
-                                    {{ $row->Trx_SupCode }}</td>
+                                    {{ $row->customer ? $row->customer->kode : $row->Trx_SupCode }}</td>
                             </tr>
                             <tr style="border: none;">
                                 <td style="border: none; width: 100px; padding: 2px 0; margin: 0; ">
@@ -276,7 +276,7 @@
                                 <td>{{ $d->Trx_ProdCode }}</td>
                                 <td>{{ $d->trx_prodname }}</td>
                                 <td class="text-right">{{ number_format($d->Trx_QtyTrx, 2, ',', '.') }}</td>
-                                <td>{{ $d->trx_uom }}</td>
+                                <td>{{ $d->uom ? $d->uom->UOM_Code : $d->trx_uom }}</td>
                                 <td class="text-right">{{ number_format($d->Trx_GrossPrice, 2, ',', '.') }}</td>
                                 <td class="text-right">{{ number_format($d->Trx_Discount, 2, ',', '.') }}</td>
                                 <td class="text-right">{{ number_format($d->Trx_Taxes, 2, ',', '.') }}</td>
@@ -350,14 +350,14 @@
                             @if ($r->trx_posting !== 'D')
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $r->Trx_SupCode }}</td>
+                                    <td>{{ $r->customer ? $r->customer->kode : $r->Trx_SupCode }}</td>
                                     <td>{{ $r->trx_number }}</td>
                                     <td>{{ $r->Trx_Date ? $r->Trx_Date->format('d M Y') : 'N/A' }}</td>
                                     <td class="text-right">{{ number_format($r->Trx_GrossPrice, 2, ',', '.') }}</td>
                                     <td class="text-right">{{ number_format($r->Trx_TotDiscount, 2, ',', '.') }}</td>
                                     <td class="text-right">{{ number_format($r->Trx_Taxes, 2, ',', '.') }}</td>
                                     <td class="text-right">{{ number_format($r->Trx_NettPrice, 2, ',', '.') }}</td>
-                                    <td>{{ $r->user->name ?? $r->Trx_UserID }}</td>
+                                    <td>{{ $r->user->Mem_UserName ?? $r->Trx_UserID }}</td>
                                     <td class="text-center">{{ $r->trx_posting === 'T' ? '✓' : '✗' }}</td>
                                 </tr>
                             @endif
@@ -378,7 +378,7 @@
         @endif
 
         <div class="footer-info">
-            Dicetak oleh {{ $currentUser->name }} pada {{ $tanggalCetak }}
+            Dicetak oleh {{ $currentUser->Mem_UserName ?? $currentUser->Mem_Auto }} pada {{ $tanggalCetak }}
         </div>
     </div>
 </body>

@@ -76,16 +76,16 @@
                         <thead class="thead-light">
                             <tr>
                                 <th width='5%'>Pelanggan</th>
-                                <th width='5%'>NO</th>
-                                <th width='15%'>Tgl Kembali</th>
+                                <th width='7%'>NO</th>
+                                <th width='13%'>Tgl Kembali</th>
                                 <th width='10%'>Bruto</th>
                                 <th width='10%'>Disc</th>
                                 <th width='10%'>Pajak</th>
                                 <th width='10%'>Netto</th>
                                 <th width='5%'>Pengguna</th>
-                                <th width='10%'>Tgl</th>
+                                <th width='12%'>Tgl</th>
                                 <th width='5%'>Disetujui</th>
-                                <th width='15%'>Aksi</th>
+                                <th width='13%'>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

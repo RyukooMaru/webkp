@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Retur;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\keamanan\Member;
 use App\Models\Retur\ThTrxRtr;
 use App\Models\Retur\TdTrxRtr;
 use App\Models\Inventory\Supplier;
@@ -26,8 +26,12 @@ class ReturPembelianController extends Controller
     // JSON untuk DataTables index
     public function dataJson(Request $request)
     {
-        // Hanya ambil data dengan posting F atau T
-        $query = ThTrxRtr::whereIn('trx_posting', ['F', 'T']);
+        // Hanya ambil data dengan posting F atau T dan eager load user
+        $query = ThTrxRtr::with([
+            'user:Mem_Auto,Mem_ID,Mem_UserName',
+            'supplier:id,kode_supplier,nama_supplier'
+        ])
+            ->whereIn('trx_posting', ['F', 'T']);
 
         // Filter
         if ($request->filled('filter_date_from')) {
@@ -39,28 +43,29 @@ class ReturPembelianController extends Controller
         }
 
         if ($request->filled('filter_sup_code')) {
-            $query->where('Trx_SupCode', $request->filter_sup_code);
+            $query->whereHas('supplier', function ($q) use ($request) {
+                $q->where('kode_supplier', 'like', '%' . $request->filter_sup_code . '%');
+            });
         }
 
         $rows = $query->get();
 
         $data = $rows->map(function ($r) {
-            $userName = $r->Trx_UserID;
+            // Gunakan relasi user yang sudah di-eager load
+            // Prioritas: Mem_UserName > Mem_ID > Trx_UserID
+            $userName = $r->Trx_UserID; // fallback
 
-            if (!empty($r->Trx_UserID)) {
-                try {
-                    $user = User::find($r->Trx_UserID);
-                    if ($user) {
-                        $userName = $user->name;
-                    }
-                } catch (\Exception $e) {
-                    // Hanya gunakan ID jika ada yang gagal
+            if ($r->user) {
+                if (!empty($r->user->Mem_UserName)) {
+                    $userName = $r->user->Mem_UserName;
+                } elseif (!empty($r->user->Mem_ID)) {
+                    $userName = $r->user->Mem_ID; // Tampilkan custom ID untuk user
                 }
             }
 
             return [
                 'Trx_Auto'       => $r->Trx_Auto,
-                'Trx_SupCode'    => $r->Trx_SupCode,
+                'Trx_SupCode'    => $r->supplier ? $r->supplier->kode_supplier : $r->Trx_SupCode,
                 'trx_number'     => $r->trx_number,
                 'Trx_Date'       => $r->Trx_Date?->format('Y-m-d'),
                 'Trx_GrossPrice' => number_format($r->Trx_GrossPrice, 2, ',', '.'),
@@ -92,13 +97,13 @@ class ReturPembelianController extends Controller
             });
         }
 
-        $suppliers = $query->select('kode_supplier', 'nama_supplier')
+        $suppliers = $query->select('id', 'kode_supplier', 'nama_supplier')
             ->orderBy('kode_supplier')
             ->paginate($perPage, ['*'], 'page', $page);
 
         $items = $suppliers->map(function ($supplier) {
             return [
-                'id' => $supplier->kode_supplier,
+                'id' => $supplier->id, // Gunakan primary key untuk relasi
                 'text' => $supplier->kode_supplier . ' - ' . $supplier->nama_supplier
             ];
         });
@@ -147,6 +152,9 @@ class ReturPembelianController extends Controller
     public function create()
     {
         // kalau sudah ada draft, ambil. kalau belum, buat baru
+        $currentUser = Auth::user();
+        $userId = $currentUser ? $currentUser->Mem_Auto : null;
+
         $draft = ThTrxRtr::firstOrCreate(
             ['trx_posting' => 'D'],
             [
@@ -155,12 +163,10 @@ class ReturPembelianController extends Controller
                 'Trx_SupCode'    => '',
                 'Trx_WareCode'   => '',
                 'Trx_Note'       => '',
-                'Trx_UserID'     => Auth::id(),
+                'Trx_UserID'     => $userId,
                 'Trx_LastUpdate' => now(),
             ]
-        );
-
-        // eager load details kosong atau yang ada
+        );        // eager load details kosong atau yang ada
         $draft->load(['details', 'warehouse', 'supplier']);
 
         return view('retur.pembelian.create', [
@@ -210,7 +216,8 @@ class ReturPembelianController extends Controller
         $userId = null;
         try {
             if (Auth::check()) {
-                $userId = Auth::id();
+                $currentUser = Auth::user();
+                $userId = $currentUser ? $currentUser->Mem_Auto : null;
             }
         } catch (\Exception $e) {
             // Tangani pengecualian jika auth() tidak berfungsi
@@ -234,7 +241,7 @@ class ReturPembelianController extends Controller
     // JSON Detail untuk satu header
     public function detailsJson($id)
     {
-        $header = ThTrxRtr::with('details')->findOrFail($id);
+        $header = ThTrxRtr::with('details.uom:UOM_Auto,UOM_Code')->findOrFail($id);
         return response()->json(['data' => $header->details]);
     }
 
@@ -391,9 +398,12 @@ class ReturPembelianController extends Controller
         }
 
         // Update header
+        $currentUser = Auth::user();
+        $userId = $currentUser ? $currentUser->Mem_Auto : null;
+
         $hdr->update([
             'trx_posting' => 'F',
-            'Trx_UserID'     => Auth::id(),
+            'Trx_UserID'     => $userId,
             'Trx_LastUpdate' => now()
         ]);
 
@@ -429,14 +439,18 @@ class ReturPembelianController extends Controller
 
         // Ambil header
         $hdr = ThTrxRtr::findOrFail($id);
+
         // Update header fields + set posting=F
+        $currentUser = Auth::user();
+        $userId = $currentUser ? $currentUser->Mem_Auto : null;
+
         $hdr->update([
             'Trx_Date'     => $r->Trx_Date,
             'Trx_SupCode'  => $r->Trx_SupCode,
             'Trx_WareCode' => $r->Trx_WareCode,
             'Trx_Note'     => $r->Trx_Note,
             'trx_posting'  => 'F',
-            'Trx_UserID'   => Auth::id(),
+            'Trx_UserID'   => $userId,
             'Trx_LastUpdate' => now(),
         ]);
 
@@ -476,11 +490,14 @@ class ReturPembelianController extends Controller
         // Ambil semua header yang akan diapprove
         $headers = ThTrxRtr::where('trx_posting', 'F')->get();
 
+        $currentUser = Auth::user();
+        $userId = $currentUser ? $currentUser->Mem_Auto : null;
+
         foreach ($headers as $hdr) {
             // Update header menjadi status T
             $hdr->update([
                 'trx_posting' => 'T',
-                'Trx_UserID' => Auth::id(),
+                'Trx_UserID' => $userId,
                 'Trx_LastUpdate' => now()
             ]);
 
@@ -529,9 +546,12 @@ class ReturPembelianController extends Controller
         }
 
         // Update header menjadi status T
+        $currentUser = Auth::user();
+        $userId = $currentUser ? $currentUser->Mem_Auto : null;
+
         $hdr->update([
             'trx_posting' => 'T',
-            'Trx_UserID' => Auth::id(),
+            'Trx_UserID' => $userId,
             'Trx_LastUpdate' => now()
         ]);
 
@@ -577,7 +597,10 @@ class ReturPembelianController extends Controller
         ];
 
         $query = ThTrxRtr::select(array_merge(['Trx_Auto', 'trx_posting'], $cols))
-            ->with('user:id,name')
+            ->with([
+                'user:Mem_Auto,Mem_ID,Mem_UserName',
+                'supplier:id,kode_supplier,nama_supplier'
+            ])
             ->whereIn('trx_posting', ['F', 'T']);
 
         if ($search = $request->query('search')) {
@@ -598,7 +621,9 @@ class ReturPembelianController extends Controller
         }
 
         if ($request->filled('filter_sup_code')) {
-            $query->where('Trx_SupCode', 'like', '%' . $request->filter_sup_code . '%');
+            $query->whereHas('supplier', function ($q) use ($request) {
+                $q->where('kode_supplier', 'like', '%' . $request->filter_sup_code . '%');
+            });
         }
 
         $rows = $query->get();
@@ -637,7 +662,7 @@ class ReturPembelianController extends Controller
     // Print Single
     public function print($id)
     {
-        $row = ThTrxRtr::with(['details', 'user:id,name', 'supplier:kode_supplier,nama_supplier'])->findOrFail($id);
+        $row = ThTrxRtr::with(['details.uom:UOM_Auto,UOM_Code', 'user:Mem_Auto,Mem_ID,Mem_UserName', 'supplier:id,kode_supplier,nama_supplier'])->findOrFail($id);
         $details = $row->details;
 
         $currentUser = auth()->user();
@@ -681,15 +706,18 @@ class ReturPembelianController extends Controller
     }
 
     // Method untuk mengambil data UOM
-    public function getUoms()
+    public function getUoms(Request $request)
     {
+        $selectedValue = $request->get('selected'); // Untuk mendapatkan nilai yang sudah dipilih
+
         $uoms = SatuanProduk::select('UOM_Code', 'UOM_Auto')
             ->orderBy('UOM_Code')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $uoms
+            'data' => $uoms,
+            'selected' => $selectedValue // Kirim kembali nilai yang dipilih
         ]);
     }
 }

@@ -223,27 +223,71 @@
                 $('#Trx_NettPrice').val(total.toFixed(2));
             }
 
-            // Inisialisasi dropdown satuan saat modal dibuka
+            // Inisialisasi dropdown satuan saat modal dibuka (hanya jika belum ada data)
             $('#dtlModal').on('shown.bs.modal', function() {
-                loadUomOptions();
+                // Hanya load jika dropdown masih kosong dan bukan mode edit
+                if ($('#trx_uom option').length <= 1 && !editMode) {
+                    loadUomOptions();
+                }
+            });
+
+            // Reset editMode saat modal ditutup
+            $('#dtlModal').on('hidden.bs.modal', function() {
+                editMode = false;
             });
 
             // Load UOM options untuk dropdown
-            function loadUomOptions() {
+            function loadUomOptions(selectedValue = null, callback = null) {
+                $.ajax({
+                    url: '{{ route('retur.pembelian.uom-options') }}',
+                    method: 'GET',
+                    data: {
+                        selected: selectedValue
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#trx_uom').empty().append('<option value="">Pilih Satuan</option>');
+                            response.data.forEach(function(uom) {
+                                // Gunakan UOM_Auto sebagai value dan UOM_Code sebagai display
+                                const isSelected = selectedValue && selectedValue == uom.UOM_Auto ? 'selected' : '';
+                                $('#trx_uom').append('<option value="' + uom.UOM_Auto + '" ' + isSelected + '>' +
+                                    uom.UOM_Code + '</option>');
+                            });
+                            
+                            // Jika ada selectedValue, set sebagai nilai terpilih
+                            if (selectedValue) {
+                                $('#trx_uom').val(selectedValue);
+                                // Trigger change event untuk memastikan nilai ter-set
+                                $('#trx_uom').trigger('change');
+                            }
+                            
+                            // Callback jika ada
+                            if (callback && typeof callback === 'function') {
+                                callback();
+                            }
+                        }
+                    },
+                    error: function() {
+                        console.error('Gagal memuat data satuan');
+                    }
+                });
+            }
+
+            // Helper function untuk mencari UOM_Auto berdasarkan UOM_Code
+            function findUomAutoByCode(uomCode, callback) {
                 $.ajax({
                     url: '{{ route('retur.pembelian.uom-options') }}',
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {
-                            $('#trx_uom').empty().append('<option value="">Pilih Satuan</option>');
-                            response.data.forEach(function(uom) {
-                                $('#trx_uom').append('<option value="' + uom.UOM_Code + '">' +
-                                    uom.UOM_Code + '</option>');
-                            });
+                            const uom = response.data.find(item => item.UOM_Code === uomCode);
+                            callback(uom ? uom.UOM_Auto : null);
+                        } else {
+                            callback(null);
                         }
                     },
                     error: function() {
-                        console.error('Gagal memuat data satuan');
+                        callback(null);
                     }
                 });
             }
@@ -277,11 +321,25 @@
 
                             // Set default UOM jika ada
                             if (data.uom_code) {
-                                $('#trx_uom').val(data.uom_code);
+                                // Cari UOM_Auto berdasarkan UOM_Code dari data produk
+                                findUomAutoByCode(data.uom_code, function(uomAuto) {
+                                    if (uomAuto) {
+                                        // Load UOM options dengan UOM_Auto sebagai nilai default
+                                        loadUomOptions(uomAuto, function() {
+                                            // Focus ke qty input setelah UOM ter-load
+                                            $('#Trx_QtyTrx').focus();
+                                        });
+                                    } else {
+                                        // Jika tidak ditemukan, load dropdown kosong
+                                        loadUomOptions(null, function() {
+                                            $('#Trx_QtyTrx').focus();
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Focus ke qty input jika tidak ada UOM default
+                                $('#Trx_QtyTrx').focus();
                             }
-
-                            // Focus ke qty input
-                            $('#Trx_QtyTrx').focus();
                         }
                     },
                     error: function(xhr) {
@@ -427,7 +485,10 @@
                         }
                     },
                     {
-                        data: 'trx_uom'
+                        data: 'uom',
+                        render: function(data, type, row) {
+                            return data && data.UOM_Code ? data.UOM_Code : (row.trx_uom || '-');
+                        }
                     },
                     {
                         data: 'Trx_GrossPrice',
@@ -520,7 +581,10 @@
                 $('#Trx_Taxes').val(0);
                 $('#Trx_NettPrice').val(0);
 
-                $('#dtlModal').modal('show');
+                // Load UOM options untuk form baru dan buka modal setelah selesai
+                loadUomOptions(null, function() {
+                    $('#dtlModal').modal('show');
+                });
             });
 
             // Simpan atau Update DETAIL
@@ -614,15 +678,17 @@
                 // Isi kolom formulir
                 $('#Trx_ProdCode').val(row.Trx_ProdCode);
                 $('#trx_prodname').val(row.trx_prodname);
-                $('#trx_uom').val(row.trx_uom);
                 $('#Trx_QtyTrx').val(row.Trx_QtyTrx);
                 $('#Trx_GrossPrice').val(row.Trx_GrossPrice);
                 $('#Trx_Discount').val(row.Trx_Discount);
                 $('#Trx_Taxes').val(row.Trx_Taxes);
                 $('#Trx_NettPrice').val(row.Trx_NettPrice);
                 $('#Trx_NoteDetail').val(row.Trx_Note);
-
-                $('#dtlModal').modal('show');
+                
+                // Load UOM options dengan nilai yang sudah ada dan buka modal setelah selesai
+                loadUomOptions(row.trx_uom, function() {
+                    $('#dtlModal').modal('show');
+                });
             });
 
             // HAPUS DETAIL
