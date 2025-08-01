@@ -11,9 +11,17 @@ use Illuminate\Support\Facades\Auth;
 class DtprodukController extends Controller
 {
     public function index(Request $request)
+    
     {    
-        $dtproduks = Dtproduk::with('supplier')->get();
-        $suppliers = Supplier::all();
+        $dtproduks = Dtproduk::with('supplier')
+            ->orderBy('kode_produk', 'asc')
+            ->get();
+            
+        // Menggunakan groupBy untuk menghindari duplikat nama supplier
+        $suppliers = Supplier::select('id', 'nama_supplier')
+            ->orderBy('nama_supplier', 'asc')
+            ->get()
+            ->unique('nama_supplier');
         
         return view('inventory.dataproduk.index', compact('dtproduks', 'suppliers'));
     }

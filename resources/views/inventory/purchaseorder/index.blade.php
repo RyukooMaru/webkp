@@ -1,5 +1,10 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+@endphp
+
 @section('main-content')
     <div class="container-fluid">
         @if(isset($purchaseOrders))
@@ -7,9 +12,11 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Daftar Purchase Order</h6>
+                    @can('tambah', $currentMenuSlug)
                     <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Buat PO Baru
                     </a>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -39,18 +46,24 @@
                                             </span>
                                         </td>
                                         <td>
+                                            @can('ubah', $currentMenuSlug)
                                             <a href="{{ route('purchase-orders.edit', $po->po_id) }}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            @endcan
+                                            
                                             <a href="{{ route('purchase-orders.show', $po->po_id) }}" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            
                                             @if ($po->status === 'draft')
+                                                @can('hapus', $currentMenuSlug)
                                                 <button class="btn btn-sm btn-danger delete-po-btn" 
                                                     data-id="{{ $po->po_id }}"
                                                     data-name="{{ $po->po_number }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
+                                                @endcan
                                             @endif
                                         </td>
                                     </tr>
@@ -149,16 +162,24 @@
                 {{-- TOMBOL ACTION --}}
                 @if($header->status === 'draft')
                 <div class="mb-3 d-flex">
+                    @can('tambah', $currentMenuSlug)
                     <button type="button" id="addDetailButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
                         data-bs-target="#dtlModal">
                         <i class="fas fa-plus"></i> Tambah Pesanan
                     </button>
+                    @endcan
+                    
+                    @can('ubah', $currentMenuSlug)
                     <button id="btnPublish" class="btn btn-success mr-2">
                         <i class="fas fa-floppy-disk"></i> Simpan PO
                     </button>
+                    @endcan
+                    
+                    @can('hapus', $currentMenuSlug)
                     <button id="btnCancelDraft" class="btn btn-danger">
                         <i class="fas fa-times"></i> Batalkan
                     </button>
+                    @endcan
                 </div>
                 @endif
 
@@ -202,21 +223,26 @@
                                             <td>{{ $detail->note }}</td>
                                             <td>
                                                 @if($header->status === 'draft')
-                                                <button class="btn btn-sm btn-warning edit-btn" 
-                                                    data-id="{{ $detail->detail_id }}"
-                                                    data-product_id="{{ $detail->product_id }}"
-                                                    data-uom_id="{{ $detail->uom_id }}"
-                                                    data-qty="{{ $detail->qty }}"
-                                                    data-unit_price="{{ $detail->unit_price }}"
-                                                    data-tax_percent="{{ $detail->tax_percent }}"
-                                                    data-discount_percent="{{ $detail->discount_percent }}"
-                                                    data-note="{{ $detail->note }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger delete-btn" 
-                                                    data-id="{{ $detail->detail_id }}">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                    @can('ubah', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-warning edit-btn" 
+                                                        data-id="{{ $detail->detail_id }}"
+                                                        data-product_id="{{ $detail->product_id }}"
+                                                        data-uom_id="{{ $detail->uom_id }}"
+                                                        data-qty="{{ $detail->qty }}"
+                                                        data-unit_price="{{ $detail->unit_price }}"
+                                                        data-tax_percent="{{ $detail->tax_percent }}"
+                                                        data-discount_percent="{{ $detail->discount_percent }}"
+                                                        data-note="{{ $detail->note }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    @endcan
+                                                    
+                                                    @can('hapus', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-danger delete-btn" 
+                                                        data-id="{{ $detail->detail_id }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    @endcan
                                                 @else
                                                 <span class="text-muted">Locked</span>
                                                 @endif
@@ -460,9 +486,11 @@
                             </a>
                             @if ($header->status === 'draft')
                                 <div>
+                                    @can('ubah', $currentMenuSlug)
                                     <a href="{{ route('purchase-orders.edit', $header->po_id) }}" class="btn btn-warning">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
+                                    @endcan
                                 </div>
                             @endif
                         </div>

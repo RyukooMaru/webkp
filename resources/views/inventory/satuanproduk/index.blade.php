@@ -1,22 +1,33 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+@endphp
+
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Satuan Produk</h1>
 
     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
+    <!-- Tombol Tambah dengan Permission Check -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" id="btnAddSatuan">
-            <i class="fas fa-plus"></i> Tambah Satuan
-        </button>
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+        
+        @can('tambah', $currentMenuSlug)
+            <button type="button" class="btn btn-primary" id="btnAddSatuan">
+                <i class="fas fa-plus"></i> Tambah Satuan
+            </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -25,35 +36,45 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-                        <th width="2%" class="text-center align-middle">No</th>
-                        <th class="text-center align-middle">Satuan Produk (UOM)</th>
-                        <th width="10%" class="text-center align-middle">Aksi</th>
+                            <th width="2%" class="text-center align-middle">No</th>
+                            <th class="text-center align-middle">Satuan Produk (UOM)</th>
+                            <th width="10%" class="text-center align-middle">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($satuanProduks as $index => $satuan)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $satuan->UOM_Code }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning edit-btn"
-                                    data-id="{{ $satuan->UOM_Auto }}"
-                                    data-uom_code="{{ $satuan->UOM_Code }}"
-                                    title="Edit Satuan Produk">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-id="{{ $satuan->UOM_Auto }}"
-                                    data-uom_code="{{ $satuan->UOM_Code }}"
-                                    title="Hapus Satuan Produk">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td>{{ $satuan->UOM_Code }}</td>
+                                <td class="text-center">
+                                    @php
+                                        $currentRouteName = Route::currentRouteName();
+                                        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+                                    @endphp
+                                    
+                                    @can('ubah', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $satuan->UOM_Auto }}"
+                                            data-uom_code="{{ $satuan->UOM_Code }}"
+                                            title="Edit Satuan Produk">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    @endcan
+                                    
+                                    @can('hapus', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $satuan->UOM_Auto }}"
+                                            data-uom_code="{{ $satuan->UOM_Code }}"
+                                            title="Hapus Satuan Produk">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="3" class="text-center text-muted">Tidak ada data satuan produk</td>
-                        </tr>
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Tidak ada data satuan produk</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>

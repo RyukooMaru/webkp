@@ -1,5 +1,10 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+@endphp
+
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Data Produk</h1>
@@ -11,11 +16,13 @@
         </button>
     </div>
     @endif
+    @can('tambah', $currentMenuSlug)
     <div class="mb-3">
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddDataProduk">
             <i class="fas fa-plus"></i> Tambah Produk
         </button>
     </div>
+    @endcan
     <!-- Tabel data -->
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -44,6 +51,7 @@
                             <td>Rp{{ number_format($p->harga_beli, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($p->harga_jual, 0, ',', '.') }}</td>
                             <td>
+                                @can('ubah', $currentMenuSlug)
                                 <button class="btn btn-sm btn-warning edit-btn"
                                     data-id="{{ $p->id }}"
                                     data-kode="{{ $p->kode_produk }}"
@@ -55,12 +63,16 @@
                                     title="Edit Produk">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
+                                
+                                @can('hapus', $currentMenuSlug)
                                 <button class="btn btn-sm btn-danger delete-btn"
                                     data-id="{{ $p->id }}"
                                     data-nama="{{ $p->nama_produk }}"
                                     title="Hapus Produk">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </td>
                         </tr>
                         @empty
@@ -76,6 +88,7 @@
 </div>
 
 <!-- Modal: Universal Modal for Add/Edit -->
+@canany(['tambah', 'ubah'], $currentMenuSlug)
 <div class="modal fade" id="universalModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form id="mainForm" method="POST" class="modal-content"> 
@@ -142,6 +155,7 @@
         </form>
     </div>
 </div>
+@endcanany
 @endsection
 
 @push('styles')
@@ -308,4 +322,3 @@ $(function() {
 });
 </script>
 @endpush
-

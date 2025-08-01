@@ -1,5 +1,10 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+@endphp
+
 @section('main-content')
     <div class="container-fluid">
         @if(isset($penerimaans))
@@ -7,9 +12,11 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Daftar Penerimaan Barang</h6>
+                    @can('tambah', $currentMenuSlug)
                     <a href="{{ route('penerimaan.create') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah Penerimaan
                     </a>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -43,18 +50,24 @@
                                             </span>
                                         </td>
                                         <td>
+                                            @can('ubah', $currentMenuSlug)
                                             <a href="{{ route('penerimaan.edit', $penerimaan->penerimaan_id) }}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            @endcan
+                                            
                                             <a href="{{ route('penerimaan.show', $penerimaan->penerimaan_id) }}" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            
                                             @if ($penerimaan->status === 'draft')
+                                                @can('hapus', $currentMenuSlug)
                                                 <button class="btn btn-sm btn-danger delete-penerimaan-btn" 
                                                     data-id="{{ $penerimaan->penerimaan_id }}"
                                                     data-name="{{ $penerimaan->no_penerimaan }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
+                                                @endcan
                                             @endif
                                         </td>
                                     </tr>
@@ -175,16 +188,24 @@
                 {{-- TOMBOL ACTION --}}
                 @if($header->status === 'draft')
                 <div class="mb-3 d-flex">
+                    @can('tambah', $currentMenuSlug)
                     <button type="button" id="addDetailButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
                         data-bs-target="#dtlModal">
                         <i class="fas fa-plus"></i> Tambah Barang
                     </button>
+                    @endcan
+                    
+                    @can('ubah', $currentMenuSlug)
                     <button id="btnPublish" class="btn btn-success mr-2">
                         <i class="fas fa-floppy-disk"></i> Simpan Penerimaan
                     </button>
+                    @endcan
+                    
+                    @can('hapus', $currentMenuSlug)
                     <button id="btnCancelDraft" class="btn btn-danger">
                         <i class="fas fa-times"></i> Batalkan
                     </button>
+                    @endcan
                 </div>
                 @endif
 
@@ -222,21 +243,26 @@
                                             <td>{{ $detail->catatan }}</td>
                                             <td>
                                                 @if($header->status === 'draft')
-                                                <button class="btn btn-sm btn-warning edit-btn" 
-                                                    data-id="{{ $detail->detail_id }}"
-                                                    data-product_id="{{ $detail->product_id }}"
-                                                    data-uom_id="{{ $detail->uom_id }}"
-                                                    data-qty="{{ $detail->qty }}"
-                                                    data-harga_beli="{{ $detail->harga_beli }}"
-                                                    data-pajak_persen="{{ $detail->pajak_persen }}"
-                                                    data-diskon_persen="{{ $detail->diskon_persen }}"
-                                                    data-catatan="{{ $detail->catatan }}">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger delete-btn" 
-                                                    data-id="{{ $detail->detail_id }}">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                    @can('ubah', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-warning edit-btn" 
+                                                        data-id="{{ $detail->detail_id }}"
+                                                        data-product_id="{{ $detail->product_id }}"
+                                                        data-uom_id="{{ $detail->uom_id }}"
+                                                        data-qty="{{ $detail->qty }}"
+                                                        data-harga_beli="{{ $detail->harga_beli }}"
+                                                        data-pajak_persen="{{ $detail->pajak_persen }}"
+                                                        data-diskon_persen="{{ $detail->diskon_persen }}"
+                                                        data-catatan="{{ $detail->catatan }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    @endcan
+                                                    
+                                                    @can('hapus', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-danger delete-btn" 
+                                                        data-id="{{ $detail->detail_id }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    @endcan
                                                 @else
                                                 <span class="text-muted">Locked</span>
                                                 @endif
@@ -462,9 +488,11 @@
                             </a>
                             @if ($header->status === 'draft')
                                 <div>
+                                    @can('ubah', $currentMenuSlug)
                                     <a href="{{ route('penerimaan.edit', $header->penerimaan_id) }}" class="btn btn-warning">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
+                                    @endcan
                                 </div>
                             @endif
                         </div>
