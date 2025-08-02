@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+    @endphp
+
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddMenu">
+        @can('tambah', $currentMenuSlug)
+        <button type="button" class="btn btn-primary" id="btnAddMenu" data-toggle="modal">
             <i class="fas fa-plus"></i> Tambah Menu
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -23,7 +30,6 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-
                             <th>No</th>
                             <th>Nama Menu</th>
                             <th>Urutan</th>
@@ -32,27 +38,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @forelse($setmenus as $index => $menu)
+                        @forelse($setmenus as $index => $menu)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $menu->nama_menu }}</td>
                                 <td>{{ $menu->urutan }}</td>
                                 <td>{!! $menu->status_html !!}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $menu->id }}"
-                                        data-nama="{{ $menu->nama_menu }}"
-                                        data-urutan="{{ $menu->urutan }}"
-                                        data-status="{{ $menu->status }}"
-                                        title="Edit Menu">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $menu->id }}"
-                                        data-nama="{{ $menu->nama_menu }}"
-                                        title="Hapus Menu">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        @can('ubah', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $menu->id }}"
+                                            data-nama="{{ $menu->nama_menu }}"
+                                            data-urutan="{{ $menu->urutan }}"
+                                            data-status="{{ $menu->status }}"
+                                            title="Edit Menu">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @endcan
+
+                                        @can('hapus', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $menu->id }}"
+                                            data-nama="{{ $menu->nama_menu }}"
+                                            title="Hapus Menu">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -66,13 +79,13 @@
         </div>
     </div>
 
-    <!-- Modal Add/Edit -->
+    <!-- Modal Tambah/Edit Menu -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <form id="mainForm" method="POST" class="modal-content">
                 @csrf
-                <input type="hidden" id="id" name="id">
                 @method('POST')
+                <input type="hidden" id="id" name="id">
 
                 <div class="modal-header py-2">
                     <h5 class="modal-title" id="modalTitle">Tambah Menu</h5>
@@ -113,74 +126,72 @@
 
 @push('scripts')
 <script>
-$(function() {
+$(function () {
     const modalEl = document.getElementById('universalModal');
     const modalInstance = new bootstrap.Modal(modalEl);
     const form = $('#mainForm');
-    const baseComprofUrl = "{{ url('comprof') }}";
+    const baseUrl = "{{ url('comprof') }}";
 
-    // Inisialisasi DataTables
     $('#dataTable').DataTable();
 
-    // Tambah Menu
-    $('#btnAddMenu').click(() => {
+    // Tambah
+    $('#btnAddMenu').on('click', function () {
         form.trigger('reset');
         $('#modalTitle').text('Tambah Menu');
         $('#modalSubmit').text('Simpan');
-        form.attr('action', `${baseComprofUrl}/settingmenu`); // Corrected for store
+        form.attr('action', `${baseUrl}/settingmenu`);
         form.find('input[name="_method"]').val('POST');
         modalInstance.show();
     });
 
-    // Edit Menu
-    $('#dataTable').on('click', '.edit-btn', function() {
+    // Edit
+    $('#dataTable').on('click', '.edit-btn', function () {
         const btn = $(this);
         const id = btn.data('id');
-        form.attr('action', `${baseComprofUrl}/settingmenu/${id}`);
-        
+
         $('#id').val(id);
         $('#nama_menu').val(btn.data('nama'));
         $('#urutan').val(btn.data('urutan'));
         $('#status').val(btn.data('status'));
+
+        form.attr('action', `${baseUrl}/settingmenu/${id}`);
+        form.find('input[name="_method"]').val('PUT');
         $('#modalTitle').text('Edit Menu');
         $('#modalSubmit').text('Simpan Perubahan');
-        form.find('input[name="_method"]').val('PUT');
-        
         modalInstance.show();
     });
 
     // Submit Form
-    form.on('submit', function(e) {
+    form.on('submit', function (e) {
         e.preventDefault();
-        
         $.ajax({
             url: form.attr('action'),
             method: form.find('input[name="_method"]').val(),
             data: form.serialize(),
-            success: function(response) {
+            success: function (response) {
                 modalInstance.hide();
                 Swal.fire('Berhasil', response.message, 'success');
                 setTimeout(() => location.reload(), 1000);
             },
-            error: function(xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    let errors = xhr.responseJSON.errors;
-                    let messages = '';
-                    Object.values(errors).forEach(arr => arr.forEach(msg => messages += msg + '<br>'));
-                    Swal.fire('Error', messages, 'error');
-                } else {
-                    Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+            error: function (xhr) {
+                let message = 'Terjadi kesalahan pada server';
+                if (xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
                 }
+                Swal.fire('Error', message, 'error');
             }
         });
     });
 
-    // Hapus Menu
-    $('#dataTable').on('click', '.delete-btn', function() {
+    // Hapus
+    $('#dataTable').on('click', '.delete-btn', function () {
         const btn = $(this);
         const id = btn.data('id');
         const nama = btn.data('nama');
-        const row = btn.parents('tr');
+        const deleteUrl = `{{ route('comprof.settingmenu.destroy', ':id') }}`.replace(':id', id);
+        const row = btn.closest('tr');
 
         Swal.fire({
             title: 'Hapus Menu?',
@@ -197,15 +208,13 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/comprof/settingmenu/${id}',
+                    url: deleteUrl,
                     type: 'DELETE',
-                    data: { 
-                        _token: "{{ csrf_token() }}",
+                    data: {
+                        _token: "{{ csrf_token() }}"
                     },
-                    success: function(response) {
-                        row.fadeOut(400, function() {
-                            row.remove();
-                        });
+                    success: function (response) {
+                        row.fadeOut(400, () => row.remove());
                         Swal.fire({
                             icon: 'success',
                             title: 'Terhapus!',
@@ -214,12 +223,11 @@ $(function() {
                             showConfirmButton: false
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         let message = 'Terjadi kesalahan pada server';
-
                         if (xhr.status === 404) {
                             message = 'Data menu tidak ditemukan';
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        } else if (xhr.responseJSON?.message) {
                             message = xhr.responseJSON.message;
                         }
 

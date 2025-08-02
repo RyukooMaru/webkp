@@ -11,6 +11,11 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+    @endphp
+
     <div class="card shadow mb-4">
         <div class="card-body">
             <form id="setPerusahaanForm" method="POST" enctype="multipart/form-data">
@@ -18,150 +23,156 @@
                 <input type="hidden" name="id" value="{{ $setting->id ?? '' }}">
 
                 <div class="row">
-    <!-- Left Column -->
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label class="small mb-1">Nama Perusahaan <span class="text-danger">*</span></label>
-            <input type="text" name="company_name" class="form-control" 
-                   value="{{ $setting->company_name ?? '' }}" required>
-        </div>
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="small mb-1">Nama Perusahaan <span class="text-danger">*</span></label>
+                            <input type="text" name="company_name" class="form-control" 
+                                   value="{{ $setting->company_name ?? '' }}" required>
+                        </div>
 
-        <div class="form-group mb-3">
-            <label class="small mb-1">Alamat <span class="text-danger">*</span></label>
-            <textarea name="address" class="form-control summernote-address" 
-                      style="height: 150px;" required>{{ $setting->address ?? '' }}</textarea>
-        </div>
+                        <div class="form-group mb-3">
+                            <label class="small mb-1">Alamat <span class="text-danger">*</span></label>
+                            <textarea name="address" class="form-control summernote-address" 
+                                      style="height: 150px;" required>{{ $setting->address ?? '' }}</textarea>
+                        </div>
 
-        <div class="row g-2">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Telepon <span class="text-danger">*</span></label>
-                    <input type="text" name="phone" class="form-control" 
-                           value="{{ $setting->phone ?? '' }}" required>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">WhatsApp</label>
-                    <input type="text" name="whatsapp" class="form-control" 
-                           value="{{ $setting->whatsapp ?? '' }}">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control" 
-                           value="{{ $setting->email ?? '' }}" required>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Website</label>
-                    <input type="url" name="website" class="form-control" 
-                           value="{{ $setting->website ?? '' }}">
-                </div>
-            </div>
-        </div>
-    </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Telepon <span class="text-danger">*</span></label>
+                                    <input type="text" name="phone" class="form-control" 
+                                           value="{{ $setting->phone ?? '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">WhatsApp</label>
+                                    <input type="text" name="whatsapp" class="form-control" 
+                                           value="{{ $setting->whatsapp ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Email <span class="text-danger">*</span></label>
+                                    <input type="email" name="email" class="form-control" 
+                                           value="{{ $setting->email ?? '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Website</label>
+                                    <input type="url" name="website" class="form-control" 
+                                           value="{{ $setting->website ?? '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Right Column -->
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label class="small mb-1">Tagline</label>
-            <input type="text" name="tagline" class="form-control" 
-                   value="{{ $setting->tagline ?? '' }}">
-        </div>
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="small mb-1">Tagline</label>
+                            <input type="text" name="tagline" class="form-control" 
+                                   value="{{ $setting->tagline ?? '' }}">
+                        </div>
 
-        <div class="form-group mb-3">
-            <label class="small mb-1">Peta Lokasi (Link Google Maps)</label>
-            <input type="url" name="map_location" class="form-control" 
-                   value="{{ $setting->map_location ?? '' }}">
-        </div>
+                        <div class="form-group mb-3">
+                            <label class="small mb-1">Peta Lokasi (Link Google Maps)</label>
+                            <input type="url" name="map_location" class="form-control" 
+                                   value="{{ $setting->map_location ?? '' }}">
+                        </div>
 
-        <div class="row g-2">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Logo Perusahaan</label>
-                    <input type="file" name="logo" class="form-control" accept="image/*">
-                    <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB | Rekomendasi: 200x100px</small>
-                    @if(isset($setting) && $setting->logo)
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Logo Perusahaan</label>
+                                    <input type="file" name="logo" class="form-control" accept="image/*">
+                                    <small class="text-muted">Format: jpeg, png, jpg | Maks: 2MB | Rekomendasi: 200x100px</small>
+                                    @if(isset($setting) && $setting->logo)
                                         <div class="mt-2">
                                             <img src="{{ $setting->logo_url }}" alt="Logo" class="company-logo img-thumbnail">
+                                            @can('ubah', $currentMenuSlug)
                                             <div class="form-check mt-2">
                                                 <input class="form-check-input" type="checkbox" name="remove_logo" id="removeLogo">
                                                 <label class="form-check-label small" for="removeLogo">
                                                     Hapus logo saat disimpan
                                                 </label>
+                                            </div>
+                                            @endcan
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Icon (Favicon)</label>
+                                    <input type="file" name="icon" class="form-control" accept="image/*,.ico">
+                                    <small class="text-muted">Format: ico, png | Maks: 1MB | Ukuran: 32x32 atau 16x16 px</small>
+                                    
+                                    @if(isset($setting) && $setting->icon)
+                                        <div class="mt-2">
+                                            <img src="{{ $setting->icon_url }}" alt="Icon" class="img-thumbnail" style="max-height: 32px;">
+                                            @can('ubah', $currentMenuSlug)
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" name="remove_icon" id="removeIcon">
+                                                <label class="form-check-label small" for="removeIcon">
+                                                    Hapus icon saat disimpan
+                                                </label>
+                                            </div>
+                                            @endcan
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Icon (Favicon)</label>
-                    <input type="file" name="icon" class="form-control" accept="image/*,.ico">
-                    <small class="text-muted">Format: ico, png | Maks: 1MB | Ukuran: 32x32 atau 16x16 px</small>
-                    
-                    @if(isset($setting) && $setting->icon)
-                        <div class="mt-2">
-                            <img src="{{ $setting->icon_url }}" alt="Icon" class="img-thumbnail" style="max-height: 32px;">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" name="remove_icon" id="removeIcon">
-                                <label class="form-check-label small" for="removeIcon">
-                                    Hapus icon saat disimpan
-                                </label>
+
+                <!-- Email Settings Section -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5 class="mb-3">Pengaturan Email</h5>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Akun Email</label>
+                                    <input type="email" name="email_account" class="form-control" 
+                                           value="{{ $setting->email_account ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Password Email</label>
+                                    <input type="password" name="email_password" class="form-control" 
+                                           value="{{ $setting->email_password ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Host Email</label>
+                                    <input type="text" name="email_host" class="form-control" 
+                                           value="{{ $setting->email_host ?? '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="small mb-1">Port SMTP</label>
+                                    <input type="text" name="smtp_port" class="form-control" 
+                                           value="{{ $setting->smtp_port ?? '' }}">
+                                </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Email Settings Section -->
-<div class="row mt-3">
-    <div class="col-12">
-        <h5 class="mb-3">Pengaturan Email</h5>
-        <div class="row g-2">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Akun Email</label>
-                    <input type="email" name="email_account" class="form-control" 
-                           value="{{ $setting->email_account ?? '' }}">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Password Email</label>
-                    <input type="password" name="email_password" class="form-control" 
-                           value="{{ $setting->email_password ?? '' }}">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Host Email</label>
-                    <input type="text" name="email_host" class="form-control" 
-                           value="{{ $setting->email_host ?? '' }}">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="small mb-1">Port SMTP</label>
-                    <input type="text" name="smtp_port" class="form-control" 
-                           value="{{ $setting->smtp_port ?? '' }}">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+                @can('ubah', $currentMenuSlug)
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary px-4">
                         <i class="fas fa-save"></i> Simpan Perubahan
                     </button>
                 </div>
+                @endcan
             </form>
         </div>
     </div>
@@ -171,7 +182,7 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <style>
-        .company-logo {
+    .company-logo {
         max-width: 200px;
         max-height: 100px;
         width: auto;
@@ -236,7 +247,7 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script>
 $(document).ready(function() {
-    /// Initialize Summernote for address field with proper configuration
+    // Initialize Summernote for address field with proper configuration
     $('.summernote-address').summernote({
         height: 150,
         toolbar: [

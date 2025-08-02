@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 
 class DataStafController extends Controller
 {
-
     public function teamPage()
     {
         $staffs = Datastaf::where('status', true)
@@ -38,7 +37,6 @@ class DataStafController extends Controller
         ]);
     
         try {
-            // Bersihkan deskripsi sebelum disimpan
             $cleanDescription = $this->cleanSummernoteContent($validated['description']);
             $path = $request->file('profile_image')->store('staff-profiles', 'public');
             
@@ -67,69 +65,74 @@ class DataStafController extends Controller
     private function cleanSummernoteContent($content)
     {
         $content = trim($content);
-        
-        // Remove empty paragraphs and non-breaking spaces
         $content = preg_replace('/<p[^>]*>(&nbsp;|\s)*<\/p>/', '', $content);
         $content = str_replace('&nbsp;', ' ', $content);
-        
-        // Remove all HTML tags except allowed ones
         $content = strip_tags($content, '<br><strong><em><u><a>');
-        
-        // Clean up multiple line breaks
         $content = preg_replace('/(<br\s*\/?>\s*){2,}/', '<br>', $content);
         
-        // If content is empty after cleaning, return empty string
         if (empty(trim(strip_tags($content)))) {
             return '';
         }
         
         return $content;
     }
+
     public function update(Request $request, Datastaf $datastaf): JsonResponse
     {
-        // PERBAIKAN: Hapus validasi status
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
             'education' => 'required|string',
-            // 'status' => 'required|boolean' // DIHAPUS
         ]);
 
-        // Handle file upload if new image is provided
-        if ($request->hasFile('profile_image')) {
-            // Delete old image if exists
-            if ($datastaf->profile_image) {
-                Storage::disk('public')->delete($datastaf->profile_image);
+        try {
+            $cleanDescription = $this->cleanSummernoteContent($validated['description']);
+            $validated['description'] = $cleanDescription;
+
+            if ($request->hasFile('profile_image')) {
+                if ($datastaf->profile_image) {
+                    Storage::disk('public')->delete($datastaf->profile_image);
+                }
+                
+                $path = $request->file('profile_image')->store('staff-profiles', 'public');
+                $validated['profile_image'] = $path;
             }
-            
-            $path = $request->file('profile_image')->store('public/staff-profiles');
-            $validated['profile_image'] = str_replace('public/', '', $path);
-        } else {
-            // Keep the existing image if no new image is uploaded
-            $validated['profile_image'] = $datastaf->profile_image;
+
+            $datastaf->update($validated);
+
+            return response()->json([
+                'message' => 'Data staf berhasil diperbarui',
+                'data' => $datastaf
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating staff: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat memperbarui data',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $datastaf->update($validated);
-
-        return response()->json([
-            'message' => 'Data staf berhasil diperbarui',
-            'data' => $datastaf
-        ]);
     }
 
     public function destroy(Datastaf $datastaf): JsonResponse
     {
-        // Delete associated image
-        if ($datastaf->profile_image) {
-            Storage::disk('public')->delete($datastaf->profile_image);
+        try {
+            if ($datastaf->profile_image) {
+                Storage::disk('public')->delete($datastaf->profile_image);
+            }
+
+            $datastaf->delete();
+
+            return response()->json([
+                'message' => 'Data staf berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting staff: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus data',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $datastaf->delete();
-
-        return response()->json([
-            'message' => 'Data staf berhasil dihapus'
-        ]);
     }
 }

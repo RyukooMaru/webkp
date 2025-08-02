@@ -11,10 +11,17 @@
         </div>
     @endif
 
+    @php
+        $currentRouteName = Route::currentRouteName();
+        $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+    @endphp
+
     <div class="mb-3">
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddKategori">
             <i class="fas fa-plus"></i> Tambah Kategori
         </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -36,19 +43,26 @@
                                 <td>{{ $kategori->kategori_album }}</td>
                                 <td>{!! $kategori->tampil_gallery_html !!}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $kategori->id }}"
-                                        data-kategori="{{ $kategori->kategori_album }}"
-                                        data-tampil-gallery="{{ $kategori->tampil_gallery }}"
-                                        title="Edit Kategori">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $kategori->id }}"
-                                        data-kategori="{{ $kategori->kategori_album }}"
-                                        title="Hapus Kategori">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        @can('ubah', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-warning edit-btn"
+                                            data-id="{{ $kategori->id }}"
+                                            data-kategori="{{ $kategori->kategori_album }}"
+                                            data-tampil-gallery="{{ $kategori->tampil_gallery }}"
+                                            title="Edit Kategori">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @endcan
+
+                                        @can('hapus', $currentMenuSlug)
+                                        <button class="btn btn-sm btn-danger delete-btn"
+                                            data-id="{{ $kategori->id }}"
+                                            data-kategori="{{ $kategori->kategori_album }}"
+                                            title="Hapus Kategori">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -112,6 +126,25 @@
         border: none;
         font-weight: normal;
     }
+    .d-flex.gap-2 {
+        gap: 0.5rem;
+    }
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .alert {
+        border-left: 4px solid;
+    }
+    .modal-header {
+        padding: 0.75rem 1.5rem;
+    }
+    .modal-footer {
+        padding: 0.75rem 1.5rem;
+    }
 </style>
 @endpush
 
@@ -141,21 +174,21 @@ $(function() {
         const btn = $(this);
         const id = btn.data('id');
         form.attr('action', `${baseComprofUrl}/kategorialbum/${id}`);
-        
+
         $('#id').val(id);
         $('#kategori_album').val(btn.data('kategori'));
         $('#tampil_gallery').val(btn.data('tampil-gallery'));
         $('#modalTitle').text('Edit Kategori Album');
         $('#modalSubmit').text('Simpan Perubahan');
         form.find('input[name="_method"]').val('PUT');
-        
+
         modalInstance.show();
     });
 
     // Submit Form
     form.on('submit', function(e) {
         e.preventDefault();
-        
+
         $.ajax({
             url: form.attr('action'),
             method: form.find('input[name="_method"]').val(),
@@ -183,6 +216,7 @@ $(function() {
         const btn = $(this);
         const id = btn.data('id');
         const kategori = btn.data('kategori');
+        const deleteUrl = `{{ route('comprof.kategorialbum.destroy', ':id') }}`.replace(':id', id);
         const row = btn.parents('tr');
 
         Swal.fire({
@@ -202,12 +236,16 @@ $(function() {
                 $.ajax({
                     url: '/comprof/kategorialbum/${id}',
                     type: 'DELETE',
-                    data: { 
+                    data: {
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(response) {
                         row.fadeOut(400, function() {
                             row.remove();
+                            // Re-number the table
+                            $('#dataTable tbody tr').each(function(index) {
+                                $(this).find('td:first').text(index + 1);
+                            });
                         });
                         Swal.fire({
                             icon: 'success',
