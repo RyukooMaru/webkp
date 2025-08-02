@@ -14,10 +14,10 @@
 
     <div class="mb-3">
         @php
-        $currentRouteName = Route::currentRouteName();
-        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
         @endphp
-        @can('tambah', $currentMenuSlug) 
+        @can('tambah', $currentMenuSlug)
         <button type="button" class="btn btn-primary" id="btnTambahJualan">
             <i class="fas fa-plus fa-sm"></i> Buat Penjualan Baru
         </button>

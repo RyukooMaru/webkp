@@ -58,7 +58,7 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    @can('ubah', $currentMenuSlug) 
+                                @can('ubah', $currentMenuSlug)
                                     <button class="btn btn-sm btn-warning edit-btn" title="Edit Pesanan"
                                         data-id="{{ $order->id }}"
                                         data-pelanggan_id="{{ $order->pelanggan_id }}"
@@ -74,7 +74,7 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     @endcan
-                                    @can('hapus', $currentMenuSlug) 
+                                    @can('hapus', $currentMenuSlug)
                                     <button class="btn btn-sm btn-danger delete-btn" title="Hapus Pesanan"
                                         data-id="{{ $order->id }}"
                                         data-no_order="{{ $order->no_order }}">

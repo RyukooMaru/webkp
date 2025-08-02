@@ -51,7 +51,7 @@
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td class="text-center">{{ $pelanggan->kode }}</td>
                                 <td>{{ $pelanggan->anggota }}</td>
-                                <td>{{ $pelanggan->alamat }}</td>
+                                <td>{!! nl2br(e($pelanggan->alamat)) !!}</td>
                                 <td>{{ $pelanggan->telp }}</td>
                                 <td class="text-center">
                                     <span class="badge badge-{{ $pelanggan->status == 'Aktif' ? 'success' : 'danger' }}">
@@ -76,14 +76,14 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     @endcan
-                                    @can('hapus', $currentMenuSlug) 
+                                    @can('hapus', $currentMenuSlug)                            
                                     <button class="btn btn-sm btn-danger delete-btn"
                                         title="Hapus Pelanggan"
                                         data-id="{{ $pelanggan->id }}"
                                         data-anggota="{{ $pelanggan->anggota }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    @endcan
+                                   @endcan
                                 </td>
                             </tr>
                         @empty

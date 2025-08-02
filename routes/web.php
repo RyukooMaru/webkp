@@ -416,9 +416,9 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
     Route::resource('customer-orders', DaftarPesananController::class);
     Route::resource('penjualan', PenjualanController::class)->only(['index', 'store']);
 
-    Route::prefix('api')->name('api.')->group(function () {
+
+        Route::prefix('api')->name('api.')->group(function () {
         Route::prefix('jualan')->name('jualan.')->group(function () {
-            // Route to get outstanding orders for a specific customer
             Route::get('/outstanding-orders/{pelanggan}', [PenjualanController::class, 'getOutstandingOrders'])->name('outstanding-orders');
 
             // Route to get the details of a specific customer order
