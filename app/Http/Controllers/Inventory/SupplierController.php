@@ -6,24 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory\Supplier;
 use App\Models\Inventory\CaraBayar;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
 {
     public function index()
     {
         $suppliers = Supplier::with('caraBayar')
-        ->orderBy('nama_supplier')
-        ->get()
-        ->unique('nama_supplier'); // Ini akan mengambil hanya satu entri per nama supplier
+            ->orderBy('kode_supplier', 'asc') // Diubah dari created_at ke kode_supplier
+            ->get();
 
-    $caraBayarOptions = CaraBayar::all();
-    return view('inventory.supplier.index', compact('suppliers', 'caraBayarOptions'));
-}
+        $caraBayarOptions = CaraBayar::all();
+        return view('inventory.supplier.index', compact('suppliers', 'caraBayarOptions'));
+    }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'kode_supplier' => 'required|string|max:20|unique:suppliers',
             'nama_supplier' => 'required|string|max:255',
             'alamat' => 'required|string',
@@ -41,52 +40,78 @@ class SupplierController extends Controller
             'email.unique' => 'Email sudah digunakan'
         ]);
 
-        Supplier::create($request->all());
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        return redirect()->route('supplier.index')
-            ->with('success', 'Supplier berhasil ditambahkan.');
+        try {
+            $supplier = Supplier::create($request->all());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Supplier berhasil ditambahkan',
+                'data' => $supplier
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan supplier: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, $id)
     {
-        $rules = [
+        $supplier = Supplier::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'kode_supplier' => 'required|string|max:20|unique:suppliers,kode_supplier,'.$supplier->id,
+            'nama_supplier' => 'required|string|max:255',
             'alamat' => 'required|string',
             'contact_person' => 'required|string|max:100',
+            'telp' => 'required|string|max:20|unique:suppliers,telp,'.$supplier->id,
+            'email' => 'nullable|email|max:100|unique:suppliers,email,'.$supplier->id,
             'tanggal' => 'required|date',
             'cara_bayar_id' => 'required|exists:cara_bayar_tabel,id',
             'lama_bayar' => 'nullable|integer|min:0',
             'potongan' => 'nullable|numeric|between:0,100',
-        ];
+        ]);
 
-        // Conditional unique rules
-        if ($request->kode_supplier !== $supplier->kode_supplier) {
-            $rules['kode_supplier'] = 'required|string|max:20|unique:suppliers';
-        }
-        if ($request->telp !== $supplier->telp) {
-            $rules['telp'] = 'required|string|max:20|unique:suppliers';
-        }
-        if ($request->email !== $supplier->email) {
-            $rules['email'] = 'nullable|email|max:100|unique:suppliers';
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        // Nama supplier boleh sama asalkan kode berbeda
-        $rules['nama_supplier'] = 'required|string|max:255';
-
-        $request->validate($rules);
-
-        $supplier->update($request->all());
-
-        return response()->json(['success' => true, 'message' => 'Supplier berhasil diperbarui.']);
+        try {
+            $supplier->update($request->all());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Supplier berhasil diperbarui',
+                'data' => $supplier
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui supplier: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function destroy(Supplier $supplier)
+    public function destroy($id)
     {
         try {
+            $supplier = Supplier::findOrFail($id);
             $supplierName = $supplier->nama_supplier;
             
-            // Cek apakah supplier digunakan di tabel lain
-            if ($supplier->penerimaan()->exists()) {
-                throw new \Exception('Supplier tidak dapat dihapus karena sudah digunakan dalam data penerimaan');
+            // Check if supplier is used in other tables
+            if ($supplier->penerimaan()->exists() || $supplier->purchaseOrders()->exists()) {
+                throw new \Exception('Supplier tidak dapat dihapus karena sudah digunakan dalam transaksi');
             }
             
             $supplier->delete();

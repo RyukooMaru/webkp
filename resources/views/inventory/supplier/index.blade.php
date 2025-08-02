@@ -1,21 +1,35 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+@endphp
+
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Data Supplier</h1>
+    
     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
+    
+    <!-- Tombol Tambah dengan Permission Check -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" id="btnAddSupplier">
-            <i class="fas fa-plus"></i> Tambah Supplier
-        </button>
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+        @endphp
+        
+        @can('tambah', $currentMenuSlug)
+            <button type="button" class="btn btn-primary" id="btnAddSupplier">
+                <i class="fas fa-plus"></i> Tambah Supplier
+            </button>
+        @endcan
     </div>
+    
     <!-- Tabel data -->
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -35,44 +49,54 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @forelse($suppliers as $index => $supplier)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $supplier->kode_supplier }}</td>
-                            <td>{{ $supplier->nama_supplier }}</td>
-                            <td>{{ $supplier->alamat }}</td>
-                            <td>{{ $supplier->contact_person }}</td>
-                            <td>{{ $supplier->telp }}</td>
-                            <td>{{ $supplier->email }}</td>
-                            <td>{{ $supplier->tanggal->format('d M Y') }}</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-warning edit-btn"
-                                    data-id="{{ $supplier->id }}"
-                                    data-kode="{{ $supplier->kode_supplier }}"
-                                    data-nama="{{ $supplier->nama_supplier }}"
-                                    data-alamat="{{ $supplier->alamat }}"
-                                    data-contact="{{ $supplier->contact_person }}"
-                                    data-telp="{{ $supplier->telp }}"
-                                    data-email="{{ $supplier->email }}"
-                                    data-tanggal="{{ $supplier->tanggal->format('Y-m-d') }}"
-                                    data-cara_bayar_id="{{ $supplier->cara_bayar_id }}"
-                                    data-lama_bayar="{{ $supplier->lama_bayar }}"
-                                    data-potongan="{{ $supplier->potongan }}"
-                                    title="Edit Supplier">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn"
-                                    data-id="{{ $supplier->id }}"
-                                    data-nama="{{ $supplier->nama_supplier }}"
-                                    title="Hapus Supplier">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        @forelse($suppliers as $index => $supplier)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $supplier->kode_supplier }}</td>
+                                <td>{{ $supplier->nama_supplier }}</td>
+                                <td>{{ $supplier->alamat }}</td>
+                                <td>{{ $supplier->contact_person }}</td>
+                                <td>{{ $supplier->telp }}</td>
+                                <td>{{ $supplier->email }}</td>
+                                <td>{{ $supplier->tanggal->format('d M Y') }}</td>
+                                <td class="text-center">
+                                    @php
+                                        $currentRouteName = Route::currentRouteName();
+                                        $currentMenuSlug = Str::beforeLast($currentRouteName, '.'); 
+                                    @endphp
+                                    
+                                    @can('ubah', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-warning edit-btn"
+                                        data-id="{{ $supplier->id }}"
+                                        data-kode="{{ $supplier->kode_supplier }}"
+                                        data-nama="{{ $supplier->nama_supplier }}"
+                                        data-alamat="{{ $supplier->alamat }}"
+                                        data-contact="{{ $supplier->contact_person }}"
+                                        data-telp="{{ $supplier->telp }}"
+                                        data-email="{{ $supplier->email }}"
+                                        data-tanggal="{{ $supplier->tanggal->format('Y-m-d') }}"
+                                        data-cara_bayar_id="{{ $supplier->cara_bayar_id }}"
+                                        data-lama_bayar="{{ $supplier->lama_bayar }}"
+                                        data-potongan="{{ $supplier->potongan }}"
+                                        title="Edit Supplier">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    @endcan
+                                    
+                                    @can('hapus', $currentMenuSlug)
+                                    <button class="btn btn-sm btn-danger delete-btn"
+                                        data-id="{{ $supplier->id }}"
+                                        data-nama="{{ $supplier->nama_supplier }}"
+                                        title="Hapus Supplier">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="9" class="text-center text-muted">Tidak ada data supplier</td>
-                        </tr>
+                            <tr>
+                                <td colspan="9" class="text-center text-muted">Tidak ada data supplier</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>

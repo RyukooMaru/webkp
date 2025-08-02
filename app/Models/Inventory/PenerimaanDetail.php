@@ -37,7 +37,7 @@ class PenerimaanDetail extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Dtproduk::class, 'product_id');
+        return $this->belongsTo(Dtproduk::class, 'product_id')->withDefault();
     }
 
     public function uom(): BelongsTo

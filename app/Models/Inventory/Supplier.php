@@ -29,7 +29,7 @@ class Supplier extends Model
 
     public function caraBayar(): BelongsTo
     {
-        return $this->belongsTo(CaraBayar::class);
+        return $this->belongsTo(CaraBayar::class, 'cara_bayar_id');
     }
     public function penerimaan(): HasMany
     {
@@ -41,13 +41,11 @@ class Supplier extends Model
         return $this->hasMany(PurchaseOrder::class, 'supplier_id');
     }
 
-    // Helper method untuk menampilkan identitas unik supplier
     public function getUniqueIdentifierAttribute()
     {
         return $this->kode_supplier . ' - ' . $this->nama_supplier . ' (' . $this->telp . ')';
     }
 
-    // Format untuk select2 dropdown
     public function toSelect2Format()
     {
         return [

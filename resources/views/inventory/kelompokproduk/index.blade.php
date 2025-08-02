@@ -1,5 +1,10 @@
 @extends('layouts.admin')
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+@endphp
+
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Kelompok Produk</h1>
@@ -11,10 +16,18 @@
         </div>
     @endif
 
+    <!-- Tombol Tambah dengan Permission Check -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddKelompok">
-            <i class="fas fa-plus"></i> Tambah Kelompok
-        </button>
+        @php
+            $currentRouteName = Route::currentRouteName();
+            $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+        @endphp
+
+        @can('tambah', $currentMenuSlug)
+            <button type="button" class="btn btn-primary" data-toggle="modal" id="btnAddKelompok">
+                <i class="fas fa-plus"></i> Tambah Kelompok
+            </button>
+        @endcan
     </div>
 
     <div class="card shadow mb-4">
@@ -31,21 +44,31 @@
                     <tbody>
                         @forelse($kelompokProduks as $index => $kelompok)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $index + 1 }}</td>
                                 <td>{{ $kelompok->nama_kelompok }}</td>
-                                <td>
+                                <td class="text-center">
+                                    @php
+                                        $currentRouteName = Route::currentRouteName();
+                                        $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+                                    @endphp
+
+                                    @can('ubah', $currentMenuSlug)
                                     <button class="btn btn-sm btn-warning edit-btn"
-                                        data-id="{{ $kelompok->id }}"
-                                        data-nama="{{ $kelompok->nama_kelompok }}"
-                                        title="Edit Kelompok Produk">
+                                            data-id="{{ $kelompok->id }}"
+                                            data-nama="{{ $kelompok->nama_kelompok }}"
+                                            title="Edit Kelompok Produk">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endcan
+
+                                    @can('hapus', $currentMenuSlug)
                                     <button class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ $kelompok->id }}"
-                                        data-nama="{{ $kelompok->nama_kelompok }}"
-                                        title="Hapus Kelompok Produk">
+                                            data-id="{{ $kelompok->id }}"
+                                            data-nama="{{ $kelompok->nama_kelompok }}"
+                                            title="Hapus Kelompok Produk">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty
@@ -59,28 +82,26 @@
         </div>
     </div>
 
-    <!-- Modal: Universal Modal for Add/Edit -->
+    <!-- Modal: Tambah/Edit -->
     <div class="modal fade" id="universalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <form id="mainForm" method="POST" class="modal-content">
                 @csrf
+                <input type="hidden" name="_method" id="formMethod" value="POST">
                 <input type="hidden" id="id" name="id">
-                @method('POST')
 
                 <div class="modal-header py-2">
                     <h5 class="modal-title" id="modalTitle">Tambah Kelompok Produk</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Tutup">
-                    <span aria-hidden="true">&times;</span>
-                     </button>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
                 <div class="modal-body p-2">
-                    <div class="col-12">
-                        <div class="form-group mb-2">
-                            <label class="small mb-0">Nama Kelompok <span class="text-danger">*</span></label>
-                            <input type="text" id="nama_kelompok" name="nama_kelompok" 
-                                class="form-control form-control-sm" required>
-                        </div>
+                    <div class="form-group mb-2">
+                        <label class="small mb-0">Nama Kelompok <span class="text-danger">*</span></label>
+                        <input type="text" id="nama_kelompok" name="nama_kelompok"
+                               class="form-control form-control-sm" required>
                     </div>
                 </div>
 
@@ -96,28 +117,35 @@
 
 @push('styles')
 <style>
+    /* Pastikan semua tombol terlihat */
+    .btn {
+        display: inline-block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
     /* Atur vertikal tengah untuk semua sel */
-    #dataTable th, 
+    #dataTable th,
     #dataTable td {
         vertical-align: middle !important;
     }
-    
+
     /* Atur horizontal alignment */
     #dataTable th {
         text-align: center;
     }
-    
+
     /* Kolom No dan Aksi di tengah */
     #dataTable td:first-child,
     #dataTable td:last-child {
         text-align: center;
     }
-    
+
     /* Kolom Nama Kelompok rata kiri */
     #dataTable td:nth-child(2) {
         text-align: left;
     }
-    
+
     /* Responsive design untuk mobile */
     @media (max-width: 768px) {
         #dataTable td:nth-child(2) {
@@ -131,82 +159,117 @@
 
 @push('scripts')
 <script>
-$(function() {
-    const modalEl = document.getElementById('universalModal');
-    const modalInstance = new bootstrap.Modal(modalEl);
+$(document).ready(function () {
+    const modal = new bootstrap.Modal('#universalModal');
     const form = $('#mainForm');
-    const baseInventoryUrl = "{{ url('inventory') }}"; // Get base URL for inventory
+    let dataTable;
 
+    // Definisikan routes di awal
+    const routes = {
+        store: "{{ route('kelompokproduk.store') }}",
+        update: "{{ route('kelompokproduk.update', ['kelompokproduk' => ':id']) }}",
+        destroy: "{{ route('kelompokproduk.destroy', ['kelompokproduk' => ':id']) }}"
+    };
 
-    $('#dataTable').DataTable();
+    // Inisialisasi DataTable
+    function initDataTable() {
+        if ($.fn.DataTable.isDataTable('#dataTable')) {
+            dataTable.destroy();
+        }
+        dataTable = $('#dataTable').DataTable({
+            "order": [],
+            "columnDefs": [
+                { "orderable": false, "targets": [0, 2] }
+            ]
+        });
+    }
+    initDataTable();
 
     // Tambah Data
-    $('#btnAddKelompok').click(() => {
+    $('#btnAddKelompok').click(function() {
         form.trigger('reset');
-        $('#modalTitle').text('Tambah Kelompok Produk Baru');
-        $('#modalSubmit').text('Simpan');
-        form.attr('action', `${baseInventoryUrl}/kelompokproduk`); // Corrected for store
-        form.find('input[name="_method"]').val('POST');
-        modalInstance.show();
+        $('#modalTitle').text('Tambah Kelompok Produk');
+        $('#formMethod').val('POST');
+        form.attr('action', routes.store);
+        modal.show();
     });
 
     // Edit Data
-    $('#dataTable').on('click', '.edit-btn', function() {
-        const btn = $(this);
-        form.attr('action', `${baseInventoryUrl}/kelompokproduk/${btn.data('id')}`);
-        form.find('input[name="_method"]').val('PUT');
-        $('#id').val(btn.data('id'));
-        $('#nama_kelompok').val(btn.data('nama'));
+    $(document).on('click', '.edit-btn', function() {
+        const id = $(this).data('id');
+        const nama = $(this).data('nama');
+
         $('#modalTitle').text('Edit Kelompok Produk');
-        $('#modalSubmit').text('Simpan Perubahan');
-        modalInstance.show();
+        $('#formMethod').val('PUT');
+        $('#id').val(id);
+        $('#nama_kelompok').val(nama);
+
+        // Set action URL dengan mengganti placeholder :id
+        form.attr('action', routes.update.replace(':id', id));
+
+        modal.show();
     });
 
     // Submit Form
     form.on('submit', function(e) {
         e.preventDefault();
+        const formData = $(this).serialize();
+        const url = form.attr('action');
+        const method = $('#formMethod').val();
 
         $.ajax({
-            url: form.attr('action'),
-            method: form.find('input[name="_method"]').val(),
-            data: form.serialize(),
+            url: url,
+            type: method,
+            data: formData,
             success: function(response) {
-                modalInstance.hide();
-                Swal.fire('Berhasil', response.message, 'success');
-                setTimeout(() => location.reload(), 1000);
+                modal.hide();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
             },
             error: function(xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    let errors = xhr.responseJSON.errors;
-                    let messages = '';
-                    Object.values(errors).forEach(arr => arr.forEach(msg => messages += msg + '<br>'));
-                    Swal.fire('Error', messages, 'error');
-                } else {
-                    Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                let errorMessage = 'Terjadi kesalahan pada server';
+                if (xhr.status === 422) {
+                    const errors = xhr.responseJSON.errors;
+                    errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
                 }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: errorMessage
+                });
             }
         });
     });
 
     // Hapus Data
-    $('#dataTable').on('click', '.delete-btn', function() {
-        const btn = $(this);
-        const id = btn.data('id');
-        const nama = btn.data('nama');
-        const row = btn.parents('tr');
+    $(document).on('click', '.delete-btn', function() {
+        const id = $(this).data('id');
+        const nama = $(this).data('nama');
+        const url = routes.destroy.replace(':id', id);
+        const row = $(this).closest('tr');
 
         Swal.fire({
             title: 'Hapus Kelompok Produk?',
-            html: `Yakin ingin menghapus kelompok produk <strong>${nama}</strong>?`,
+            html: `Yakin ingin menghapus <strong>${nama}</strong>?`,
             icon: 'warning',
             showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            customClass: {
-                confirmButton: 'btn btn-danger',
-                cancelButton: 'btn btn-secondary'
-            },
-            buttonsStyling: false
+            cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
 $.ajax({
@@ -226,6 +289,14 @@ $.ajax({
             html: response.message,
             timer: 2000,
             showConfirmButton: false
+        });
+
+        // Hapus row dan perbarui nomor urut
+        dataTable.row(row).remove().draw(false);
+
+        // Perbarui nomor urut
+        $('#dataTable tbody tr').each(function(index) {
+            $(this).find('td:first').text(index + 1);
         });
     },
     error: function(xhr) {
