@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('m_warehouse', function (Blueprint $table) {
             $table->increments('WARE_Auto');
             $table->string('WARE_Name', 50)->nullable();
-            $table->string('WARE_Address', 50)->nullable();
+            $table->string('WARE_Address', 300)->nullable();
             $table->string('WARE_Phone', 15)->nullable();
             $table->string('WARE_Fax', 15)->nullable();
             $table->string('WARE_Email', 50)->nullable();

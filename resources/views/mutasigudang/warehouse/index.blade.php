@@ -1,6 +1,6 @@
-    @extends('layouts.admin')
+@extends('layouts.admin')
+@section('main-content')
 
-    @section('main-content')
     <div class="container-fluid">
         <h1 class="h3 mb-2 text-gray-800">Daftar Gudang</h1>
 
@@ -27,7 +27,6 @@
                             <th>Gudang</th>
                             <th>Alamat</th>
                             <th>Telepon</th>
-                            <th>Fax</th>
                             <th>Email</th>
                             <th>Web</th>
                             <th>Catatan 1</th>
@@ -44,7 +43,6 @@
                             <td>{{ $warehouse->WARE_Name }}</td>
                             <td>{{ $warehouse->WARE_Address }}</td>
                             <td>{{ $warehouse->WARE_Phone }}</td>
-                            <td>{{ $warehouse->WARE_Fax }}</td>
                             <td>{{ $warehouse->WARE_Email }}</td>
                             <td>{{ $warehouse->WARE_Web }}</td>
                             <td>{{ $warehouse->ware_note1 }}</td>
@@ -58,7 +56,6 @@
                                     data-name="{{ $warehouse->WARE_Name }}"
                                     data-address="{{ $warehouse->WARE_Address }}"
                                     data-phone="{{ $warehouse->WARE_Phone }}"
-                                    data-fax="{{ $warehouse->WARE_Fax }}"
                                     data-email="{{ $warehouse->WARE_Email }}"
                                     data-web="{{ $warehouse->WARE_Web }}"
                                     data-note1="{{ $warehouse->ware_note1 }}"
@@ -82,6 +79,7 @@
             </div>
         </div>
     </div>
+
     </div>
 
     <!-- Modal Tambah/Edit -->
@@ -124,13 +122,10 @@
                             </div>
                         </div>
 
+                        <!-- Perbaikan: Input Web sekarang berada di dalam row-nya sendiri agar rapi -->
                         <div class="row mb-3">
-                            <label class="col-sm-3 col-form-label">Fax</label>
-                            <div class="col-sm-3">
-                                <input type="text" name="WARE_Fax" class="form-control">
-                            </div>
-                            <label class="col-sm-2 col-form-label">Web</label>
-                            <div class="col-sm-4">
+                            <label class="col-sm-3 col-form-label">Web</label>
+                            <div class="col-sm-9">
                                 <input type="text" name="WARE_Web" class="form-control">
                             </div>
                         </div>
@@ -186,14 +181,13 @@ $(document).ready(function() {
         const id = $(this).data('id');
 
         $('#warehouseModalLabel').text('Edit Gudang');
-        form.attr('action', `/warehouse/${id}`); // URL untuk update
+        form.attr('action', `/mutasigudang/warehouse/${id}`);
         $('#formMethod').val('PUT'); // Method untuk update
 
         // Isi semua field form dari data-attributes tombol
         form.find('[name="WARE_Name"]').val($(this).data('name'));
         form.find('[name="WARE_Address"]').val($(this).data('address'));
         form.find('[name="WARE_Phone"]').val($(this).data('phone'));
-        form.find('[name="WARE_Fax"]').val($(this).data('fax'));
         form.find('[name="WARE_Email"]').val($(this).data('email'));
         form.find('[name="WARE_Web"]').val($(this).data('web'));
         form.find('[name="ware_note1"]').val($(this).data('note1'));
@@ -284,4 +278,3 @@ $(document).ready(function() {
 });
 </script>
 @endpush
-

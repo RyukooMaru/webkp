@@ -17,7 +17,6 @@ class Warehouse extends Model
         'WARE_Name',
         'WARE_Address',
         'WARE_Phone',
-        'WARE_Fax',
         'WARE_Email',
         'WARE_Web',
         'ware_note1',
