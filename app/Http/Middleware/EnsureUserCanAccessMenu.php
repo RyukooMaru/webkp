@@ -119,6 +119,10 @@ class EnsureUserCanAccessMenu
             'publish',
             'publishEdit',
             'updateMenuAccess',
+            'submit',
+            'fetchDetails',
+            'syncDetails',
+            'getTransferDetails',
 
             // Aksi Approval
             'approve',

@@ -1,23 +1,49 @@
-@extends('layouts.auth') {{-- Pastikan layout ini memuat semua aset yang diperlukan (CSS, JS) --}}
+@extends('layouts.auth')
 
 @section('main-content')
+<style>
+    body {
+        background-color: #f4f4f4;
+    }
+    .bg-login-image {
+        background: url('/img/cover-login.png');
+        background-position: center;
+        background-size: cover;
+    }
+    .btn-custom-primary {
+        background-color: #5a2a83;
+        border-color: #5a2a83;
+        color: white;
+    }
+    .btn-custom-primary:hover {
+        background-color: #4c1d6b;
+        border-color: #4c1d6b;
+    }
+    .card {
+        border-radius: 1rem;
+    }
+</style>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-xl-10 col-lg-12 col-md-9">
-            <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card shadow-lg my-5">
                 <div class="card-body p-0">
                     <div class="row">
+                        <!-- Gambar ilustrasi -->
                         <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                        <!-- Form Login -->
                         <div class="col-lg-6">
                             <div class="p-5">
-                                <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">{{ __('Login') }}</h1>
+                                <div class="text-center mb-4">
+                                    <h1 class="h4 text-dark">{{ __('Selamat Datang') }}</h1>
+                                    <p class="text-muted mb-0">Silakan masuk ke akun Anda</p>
                                 </div>
 
-                                {{-- Menampilkan validasi error dari Laravel --}}
+                                {{-- Tampilkan error validasi --}}
                                 @if ($errors->any())
-                                    <div class="alert alert-danger border-left-danger" role="alert">
-                                        <ul class="pl-4 my-2">
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
                                             @endforeach
@@ -25,76 +51,60 @@
                                     </div>
                                 @endif
 
-                                <form method="POST" action="{{ route('login') }}" class="user">
-                                    @csrf {{-- Token CSRF untuk keamanan form --}}
+                                <form method="POST" action="{{ route('login') }}" class="user mt-3">
+                                    @csrf
 
                                     <div class="form-group">
-                                        {{-- Input untuk Nama Pengguna / ID Member --}}
-                                        <input type="text" 
-                                               class="form-control form-control-user @error('Mem_UserName') is-invalid @enderror" 
-                                               name="Mem_UserName" 
-                                               id="Mem_UserName" {{-- Tambahkan ID untuk autocomplete --}}
-                                               placeholder="{{ __('Nama Pengguna') }}" 
-                                               value="{{ old('Mem_UserName') }}" 
-                                               required 
-                                               autocomplete="username" {{-- Autocomplete untuk browser --}}
-                                               autofocus>
-
+                                        <label for="Mem_UserName" class="text-muted small">Nama Pengguna</label>
+                                        <input type="text"
+                                               class="form-control form-control-user @error('Mem_UserName') is-invalid @enderror"
+                                               name="Mem_UserName"
+                                               id="Mem_UserName"
+                                               placeholder="Masukkan nama pengguna"
+                                               value="{{ old('Mem_UserName') }}"
+                                               required autofocus>
                                         @error('Mem_UserName')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <div class="form-group">
-                                        {{-- Input untuk Password --}}
-                                        <input type="password" 
-                                               class="form-control form-control-user @error('password') is-invalid @enderror" 
-                                               name="mem_password" {{-- Ganti name dari 'password' menjadi 'mem_password' --}}
-                                               id="mem_password" {{-- Tambahkan ID untuk autocomplete --}}
-                                               placeholder="{{ __('Password') }}" 
-                                               required 
-                                               autocomplete="current-password">
-
+                                    <div class="form-group mt-3">
+                                        <label for="mem_password" class="text-muted small">Password</label>
+                                        <input type="password"
+                                               class="form-control form-control-user @error('password') is-invalid @enderror"
+                                               name="mem_password"
+                                               id="mem_password"
+                                               placeholder="Masukkan password"
+                                               required>
                                         @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="remember">{{ __('Ingat Saya') }}</label>
-                                        </div>
+                                    <div class="form-group form-check mt-3">
+                                        <input type="checkbox" class="form-check-input" name="remember" id="remember"
+                                            {{ old('remember') ? 'checked' : '' }}>
+                                        <label class="form-check-label small text-muted" for="remember">Ingat saya</label>
                                     </div>
 
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            {{ __('Login') }}
-                                        </button>
-                                    </div>
-
-                                    <hr>
-
+                                    <button type="submit" class="btn btn-custom-primary btn-user btn-block mt-4">
+                                        {{ __('Login') }}
+                                    </button>
                                 </form>
 
-                                <hr>
-
                                 @if (Route::has('password.request'))
-                                    <div class="text-center">
-                                        <a class="small" href="{{ route('password.request') }}">
-                                            {{ __('Lupa Password?') }}
+                                    <div class="text-center mt-3">
+                                        <a class="small text-muted" href="{{ route('password.request') }}">
+                                            {{ __('Lupa password?') }}
                                         </a>
                                     </div>
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+                            </div> <!-- /.p-5 -->
+                        </div> <!-- /.col-lg-6 -->
+                    </div> <!-- /.row -->
+                </div> <!-- /.card-body -->
+            </div> <!-- /.card -->
         </div>
     </div>
 </div>

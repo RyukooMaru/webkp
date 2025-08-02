@@ -154,7 +154,8 @@
                             <table class="table table-bordered" id="detailTable" width="100%" cellspacing="0">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>Kode & Nama Produk</th>
+                                        <th>Kode Produk</th>
+                                        <th>Nama Produk</th>
                                         <th>Satuan</th>
                                         <th class="text-end">Qty Dikirim</th>
                                         <th class="text-end bg-light" style="width: 15%;">Qty Diterima</th>
@@ -167,7 +168,8 @@
                                     @if($penerimaan->details && $penerimaan->details->count() > 0)
                                         @foreach($penerimaan->details as $index => $detail)
                                         <tr>
-                                            <td>{{ $detail->Rcv_ProdCode }}<br><small>{{ $detail->Rcv_prodname }}</small><input type="hidden" name="details[{{$index}}][Rcv_ProdCode]" value="{{ $detail->Rcv_ProdCode }}"><input type="hidden" name="details[{{$index}}][Rcv_prodname]" value="{{ $detail->Rcv_prodname }}"><input type="hidden" name="details[{{$index}}][Rcv_cogs]" class="detail-cogs" value="{{ $detail->Rcv_cogs }}"></td>
+                                            <td>{{ $detail->Rcv_ProdCode }}<input type="hidden" name="details[{{$index}}][Rcv_ProdCode]" value="{{ $detail->Rcv_ProdCode }}"><input type="hidden" name="details[{{$index}}][Rcv_prodname]" value="{{ $detail->Rcv_prodname }}"><input type="hidden" name="details[{{$index}}][Rcv_cogs]" class="detail-cogs" value="{{ $detail->Rcv_cogs }}"></td>
+                                            <td>{{ $detail->Rcv_prodname }}<input type="hidden" name="details[{{$index}}][Rcv_ProdCode]" value="{{ $detail->Rcv_ProdCode }}"><input type="hidden" name="details[{{$index}}][Rcv_prodname]" value="{{ $detail->Rcv_prodname }}"><input type="hidden" name="details[{{$index}}][Rcv_cogs]" class="detail-cogs" value="{{ $detail->Rcv_cogs }}"></td>
                                             <td>{{ $detail->Rcv_uom }}<input type="hidden" name="details[{{$index}}][Rcv_uom]" value="{{ $detail->Rcv_uom }}"></td>
                                             <td class="text-end detail-qty-sent-display">{{ $detail->Rcv_Qty_Sent }}<input type="hidden" name="details[{{$index}}][Rcv_Qty_Sent]" value="{{ $detail->Rcv_Qty_Sent }}"></td>
                                             <td><input type="number" name="details[{{$index}}][Rcv_Qty_Received]" class="form-control text-end detail-calc detail-qty-received" value="{{ $detail->Rcv_Qty_Received }}" min="0" max="{{ $detail->Rcv_Qty_Sent }}" {{ $penerimaan->rcv_posting == 'T' ? 'readonly' : '' }}></td>

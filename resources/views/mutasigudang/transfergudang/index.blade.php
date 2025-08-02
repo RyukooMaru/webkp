@@ -71,7 +71,7 @@
                                         <a href="{{ route('transfergudang.edit', $transfer->Trx_Auto) }}" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
                                         <button class="btn btn-sm btn-danger delete-draft-btn" data-id="{{ $transfer->Trx_Auto }}" title="Hapus Draft"><i class="fas fa-trash"></i></button>
                                     @else
-                                        <a href="{{ route('transfergudang.index', $transfer->Trx_Auto) }}" class="btn btn-sm btn-info" title="Lihat"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('transfergudang.edit', $transfer->Trx_Auto) }}" class="btn btn-sm btn-info" title="Lihat"><i class="fas fa-eye"></i></a>
                                     @endif
                                 </td>
                             </tr>

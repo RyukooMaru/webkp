@@ -13,6 +13,8 @@ use Exception;
 
 class TransferGudangController extends Controller
 {
+
+
     /**
      * Menampilkan halaman daftar transfer.
      */
@@ -160,6 +162,7 @@ class TransferGudangController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Barang berhasil ditambahkan.']);
     }
+
 
     /**
      * Menghapus item detail dari draft transfer.
