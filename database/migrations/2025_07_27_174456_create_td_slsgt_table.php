@@ -19,9 +19,9 @@ return new class extends Migration
             $table->decimal('Trx_QtyReject', 18, 2)->default(0.00);
 
             // Kolom lainnya
-            $table->decimal('trx_discount', 15, 2)->default(0)->after('trx_cogs');
-            $table->decimal('trx_taxes', 15, 2)->default(0)->after('trx_discount');
-            $table->decimal('trx_nettprice', 15, 2)->default(0)->after('trx_taxes');
+            $table->decimal('trx_discount', 15, 2)->default(0);
+            $table->decimal('trx_taxes', 15, 2)->default(0);
+            $table->decimal('trx_nettprice', 15, 2)->default(0);
             $table->string('trx_prodname', 100)->nullable();
             $table->string('trx_uom', 10)->nullable();
             $table->decimal('trx_cogs', 18, 2)->nullable();

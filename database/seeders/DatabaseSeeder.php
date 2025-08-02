@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
                             KaryawanSeeder::class,
                             AccClassSeeder::class,
                             AccSubclassSeeder::class,
-                            MenuSeeder::class,
                             CaraBayarSeeder::class,
                             LiburNasionalSeeder::class,
                             RoleSeeder::class,

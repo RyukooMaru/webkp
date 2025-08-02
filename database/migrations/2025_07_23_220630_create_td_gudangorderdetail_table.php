@@ -24,9 +24,9 @@ return new class extends Migration
             $table->foreign('Pur_Auto')
                   ->references('Pur_Auto')->on('th_gudangorder')
                   ->onDelete('cascade');
-            $table->decimal('Pur_Discount', 15, 2)->default(0)->after('Pur_GrossPrice');
-            $table->decimal('Pur_Taxes', 15, 2)->default(0)->after('Pur_Discount');
-            $table->decimal('Pur_NettPrice', 15, 2)->default(0)->after('Pur_Taxes');
+            $table->decimal('Pur_Discount', 15, 2)->default(0);
+            $table->decimal('Pur_Taxes', 15, 2)->default(0);
+            $table->decimal('Pur_NettPrice', 15, 2)->default(0);
         });
     }
 
