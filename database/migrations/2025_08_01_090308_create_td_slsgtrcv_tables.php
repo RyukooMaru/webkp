@@ -1,38 +1,48 @@
 <?php
 
-namespace App\Models\MutasiGudang;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class TerimaGudangHeader extends Model
+return new class extends Migration
 {
-    use HasFactory;
-
-    // Nama tabel di database
-    protected $table = 'th_slsgtrcv';
-
-    // Kolom yang bisa diisi secara massal (mass assignable)
-    protected $fillable = [
-        'Rcv_number',
-        'ref_trx_auto', // Referensi ke ID transfer gudang
-        'user_id',
-        'Rcv_Date',
-        'Rcv_WareCode', // Gudang penerima
-        'Rcv_From',     // Gudang pengirim
-        'rcv_posting',
-        'Rcv_Note',
-    ];
-
-    // Relasi ke detail barang
-    public function details()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        return $this->hasMany(TerimaGudangDetail::class, 'terima_gudang_id', 'id');
+        Schema::create('td_slsgtrcv', function (Blueprint $table) {
+            // --- Kolom Kunci ---
+            $table->id(); // Kunci utama standar Laravel
+            $table->unsignedBigInteger('terima_gudang_id'); // Kunci asing ke th_slsgtrcv.id
+
+            // --- Informasi Produk ---
+            $table->string('Rcv_ProdCode', 50);
+            $table->string('Rcv_prodname', 255)->nullable();
+            $table->string('Rcv_uom', 50)->nullable();
+
+            // --- Informasi Kuantitas (Sangat Penting) ---
+            $table->decimal('Rcv_Qty_Sent', 15, 2)->default(0);    // Jumlah yang seharusnya dikirim (dari transfer)
+            $table->decimal('Rcv_Qty_Received', 15, 2)->default(0); // Jumlah yang benar-benar diterima
+            $table->decimal('Rcv_Qty_Rejected', 15, 2)->default(0); // Jumlah yang diterima tapi rusak/ditolak
+
+            // --- Informasi Finansial ---
+            $table->decimal('Rcv_cogs', 15, 2)->default(0); // Harga per item (dari transfer)
+            $table->decimal('Rcv_subtotal', 15, 2)->default(0); // Total nilai yang diterima (Qty_Received * COGS)
+
+            // --- Timestamps ---
+            $table->timestamps();
+
+            // --- Mendefinisikan Foreign Key Constraint ---
+            $table->foreign('terima_gudang_id')->references('id')->on('th_slsgtrcv')->onDelete('cascade');
+        });
     }
 
-    // Opsional: Relasi ke model Transfer Gudang (jika ada)
-    // public function transferGudang()
-    // {
-    //     return $this->belongsTo(TransferGudangHeader::class, 'ref_trx_auto', 'Trx_Auto');
-    // }
-}
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('td_slsgtrcv_tables');
+    }
+};
