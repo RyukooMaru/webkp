@@ -18,7 +18,7 @@ class WarehouseController extends Controller
     {
         $request->validate([
             'WARE_Name' => 'required|max:50',
-            'WARE_Address' => 'nullable|max:50',
+            'WARE_Address' => 'nullable|max:300',
             'WARE_Phone' => 'nullable|max:15',
             'WARE_Fax' => 'nullable|max:15',
             'WARE_Email' => 'nullable|email|max:50',
@@ -39,7 +39,7 @@ class WarehouseController extends Controller
 
         $request->validate([
             'WARE_Name' => 'required|max:50',
-            'WARE_Address' => 'nullable|max:50',
+            'WARE_Address' => 'nullable|max:300',
             'WARE_Phone' => 'nullable|max:15',
             'WARE_Fax' => 'nullable|max:15',
             'WARE_Email' => 'nullable|email|max:50',
