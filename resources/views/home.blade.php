@@ -29,7 +29,7 @@
                         @forelse($topProductsQty as $product)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{ $product->nama_produk }}
-                                <span class="badge bg-primary rounded-pill">{{ $product->total_qty }}</span>
+                                <span class="badge bg-primary text-white rounded">{{ $product->total_qty }}</span>
                             </li>
                         @empty
                             <li class="list-group-item">Data tidak ditemukan.</li>
@@ -202,6 +202,56 @@ document.addEventListener("DOMContentLoaded", function() {
                     legend: {
                         display: true, // Tampilkan legenda agar tahu warna departemen
                         position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+
+    const ctxAttendance = document.getElementById('attendanceChart');
+    if (ctxAttendance) {
+        new Chart(ctxAttendance, {
+            type: 'bar', // Tipe grafik adalah bar
+            data: {
+                // Label sumbu-X diambil dari controller
+                labels: @json($attendanceLabels),
+                datasets: [{
+                    label: 'Jumlah Karyawan',
+                    // Data (nilai) diambil dari controller
+                    data: @json($attendanceValues),
+                    // Tentukan warna untuk setiap bar
+                    backgroundColor: [
+                        'rgba(28, 200, 138, 0.8)', // Hijau untuk HADIR
+                        'rgba(246, 194, 62, 0.8)', // Kuning untuk SAKIT
+                        'rgba(78, 115, 223, 0.8)', // Biru untuk IZIN
+                        'rgba(231, 74, 59, 0.8)'  // Merah untuk ALFA
+                    ],
+                    borderColor: [
+                        'rgba(28, 200, 138, 1)',
+                        'rgba(246, 194, 62, 1)',
+                        'rgba(78, 115, 223, 1)',
+                        'rgba(231, 74, 59, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Pastikan sumbu Y hanya menampilkan bilangan bulat
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        // Sembunyikan legenda dataset karena sudah jelas dari warna
+                        display: false
                     }
                 }
             }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SPModels\PenjualanDetail; // Pastikan namespace ini benar
+use App\Models\Inventory\Dtproduk;      // <--- SESUAIKAN DENGAN MODEL ANDA
 use Carbon\Carbon;
 use App\Models\Presensi\Employee; // Pastikan model Employee sudah ada
+use App\Models\Presensi\RealAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,46 +30,41 @@ class HomeController extends Controller
     public function index()
     {
 
-        // === 1. DATA UNTUK GRAFIK PENJUALAN PER BULAN ===
-        $currentYear = Carbon::now()->year;
+    // === 1. DATA UNTUK GRAFIK PENJUALAN PER BULAN ===
+    $currentYear = Carbon::now()->year;
+    // Query ini bisa Anda sesuaikan jika nama model/tabel penjualan berbeda
+    $salesByMonth = PenjualanDetail::select(
+    DB::raw('MONTH(created_at) as month'),
+    DB::raw('SUM(nominal) as total_penjualan')
+    )
+    ->whereYear('created_at', $currentYear)
+    ->groupBy('month')
+    ->orderBy('month', 'asc')
+    ->get();
+    $penjualanBulananData = array_fill(0, 12, 0);
+    foreach ($salesByMonth as $sale) {
+    $penjualanBulananData[$sale->month - 1] = (int)$sale->total_penjualan;
+    }
 
-        $salesByMonth = PenjualanDetail::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(nominal) as total_penjualan')
-        )
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
-            ->orderBy('month', 'asc')
-            ->get();
+    // =========================================================================
+    // === KODE YANG DIPERBARUI: TOP PRODUK BERDASARKAN STOK INVENTORY ===
+    // =========================================================================
 
-        // Siapkan array 12 bulan dengan nilai default 0
-        $penjualanBulananData = array_fill(0, 12, 0); // Indeks 0-11 untuk bulan Jan-Des
-        foreach ($salesByMonth as $sale) {
-            // Indeks array adalah bulan - 1 (Januari=0, Februari=1, dst.)
-            $penjualanBulananData[$sale->month - 1] = (int)$sale->total_penjualan;
-        }
-
-        // === 2. DATA TOP PRODUK (BERDASARKAN QTY) ===
-        $topProductsQty = PenjualanDetail::select(
-            'products.nama_produk',
-            DB::raw('SUM(penjualan_details.qty) as total_qty')
-        )
-            // PERBAIKAN: Gunakan nama tabel yang benar 'dataproduk_tabel'
-            ->join('dataproduk_tabel as products', 'penjualan_details.product_id', '=', 'products.id')
-            ->groupBy('products.nama_produk')
-            ->orderBy('total_qty', 'desc')
+    // === DATA TOP PRODUK (BERDASARKAN STOK QTY) ===
+    // Mengambil langsung dari model Dtproduk, diurutkan berdasarkan kolom 'qty'
+    $topProductsQty = Dtproduk::select('nama_produk', 'qty as total_qty') // Menggunakan alias 'total_qty' agar sesuai dengan view
+            ->orderBy('qty', 'desc')
             ->limit(5)
             ->get();
 
-        // === 3. DATA TOP PRODUK (BERDASARKAN NOMINAL) ===
-        $topProductsNominal = PenjualanDetail::select(
-            'products.nama_produk',
-            DB::raw('SUM(penjualan_details.nominal) as total_nominal')
-        )
-            // PERBAIKAN: Gunakan nama tabel yang benar 'dataproduk_tabel'
-            ->join('dataproduk_tabel as products', 'penjualan_details.product_id', '=', 'products.id')
-            ->groupBy('products.nama_produk')
-            ->orderBy('total_nominal', 'desc')
+    // === DATA TOP PRODUK (BERDASARKAN NILAI INVENTORY) ===
+    // Mengambil dari model Dtproduk, diurutkan berdasarkan hasil kalkulasi (qty * harga_beli)
+    $topProductsNominal = Dtproduk::select(
+                'nama_produk',
+                // Kalikan qty dengan harga_beli untuk mendapatkan total nilai
+                DB::raw('(qty * harga_beli) as total_nominal')
+            )
+            ->orderBy('total_nominal', 'desc') // Urutkan berdasarkan hasil kalkulasi
             ->limit(5)
             ->get();
 
@@ -109,6 +106,34 @@ class HomeController extends Controller
 $departmentLabels = $departmentCounts->pluck('department_name')->toArray();
 $departmentValues = $departmentCounts->pluck('total')->toArray();
 
+// =========================================================================
+// === BARU: DATA UNTUK GRAFIK PRESENSI HARI INI ===
+// =========================================================================
+
+        // 1. Daftar status yang ingin ditampilkan
+        $statusList = ['HADIR', 'SAKIT', 'IZIN', 'ALFA'];
+
+        // 2. Buat array untuk menampung hitungan
+        $attendanceCounts = array_fill_keys($statusList, 0);
+
+        // 3. Ambil data presensi HANYA untuk hari ini DARI TABEL YANG BENAR
+        $todayAttendance = Realabsensi::select('TS_STATUS', DB::raw('count(*) as total'))
+            ->whereDate('TS_TANGGAL', Carbon::today()) // <-- Menggunakan kolom TS_TANGGAL
+            ->groupBy('TS_STATUS')                   // <-- Menggunakan kolom TS_STATUS
+            ->get();
+
+        // 4. Isi array hitungan dengan data dari database
+        foreach ($todayAttendance as $item) {
+            // Gunakan strtoupper untuk memastikan konsistensi (misal: 'hadir' menjadi 'HADIR')
+            $status = strtoupper($item->TS_STATUS);
+            if (array_key_exists($status, $attendanceCounts)) {
+                $attendanceCounts[$status] = $item->total;
+            }
+        }
+
+        // 5. Siapkan label dan data untuk Chart.js
+        $attendanceLabels = array_keys($attendanceCounts);
+        $attendanceValues = array_values($attendanceCounts);
 
     // === 3. GABUNGKAN SEMUA DATA DALAM SATU RETURN VIEW ===
     return view('home', [
@@ -124,8 +149,8 @@ $departmentValues = $departmentCounts->pluck('total')->toArray();
         'departmentValues' => $departmentValues,
 
         // Data dummy untuk Presensi (sesuai permintaan "nanti dulu")
-        'attendanceLabels' => ['Masuk', 'Sakit', 'Izin', 'Alfa'],
-        'attendanceValues' => [0, 0, 0, 0], // Kosongkan dulu
+        'attendanceLabels' => $attendanceLabels,
+        'attendanceValues' => $attendanceValues,
     ]);
 }
     }
