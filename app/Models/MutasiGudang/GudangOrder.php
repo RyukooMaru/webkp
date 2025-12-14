@@ -4,8 +4,9 @@ namespace App\Models\MutasiGudang;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\MutasiGudang\GudangOrderDetail;
-use Illuminate\Database\Eloquent\Casts\Attribute; // Penting untuk Laravel 9+
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
 class GudangOrder extends Model
@@ -14,11 +15,6 @@ class GudangOrder extends Model
 
     protected $table = 'th_gudangorder';
     protected $primaryKey = 'Pur_Auto';
-
-    /**
-     * PERBAIKAN: Menonaktifkan fitur timestamps otomatis (created_at & updated_at).
-     * Tambahkan baris ini. Laravel tidak akan lagi mencari atau mencoba mengisi kolom ini.
-     */
     public $timestamps = false;
 
     protected $fillable = [
@@ -37,17 +33,26 @@ class GudangOrder extends Model
         'Pur_Date' => 'date',
     ];
 
+    public function gudangPengirim()
+    {
+        return $this->belongsTo(Warehouse::class, 'pur_warehouse', 'WARE_Auto');
+    }
+
+    public function gudangPenerima()
+    {
+        return $this->belongsTo(Warehouse::class, 'pur_destination', 'WARE_Auto');
+    }
+
 
     public function details()
-    {
+    { 
         return $this->hasMany(GudangOrderDetail::class, 'Pur_Auto', 'Pur_Auto');
     }
 
     protected function totalBruto(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->details->sum(function ($detail) {
-                // Kalkulasi subtotal untuk setiap item detail
+            get: fn () => $this->details->sum(function ($detail) { 
                 return $detail->Pur_Qty * $detail->Pur_GrossPrice;
             }),
         );
@@ -58,12 +63,7 @@ class GudangOrder extends Model
         return Attribute::make(
             get: fn () => $this->details->sum('Pur_Discount'),
         );
-    }
-
-    /**
-     * ACCESSOR: Menghitung total pajak dari semua detail.
-     * Dapat dipanggil di view dengan: $order->total_taxes
-     */
+    } 
     protected function totalTaxes(): Attribute
     {
         return Attribute::make(
@@ -71,10 +71,6 @@ class GudangOrder extends Model
         );
     }
 
-    /**
-     * ACCESSOR: Menghitung Grand Total (Harga Bersih) dari semua detail.
-     * Dapat dipanggil di view dengan: $order->grand_total
-     */
     protected function grandTotal(): Attribute
     {
         return Attribute::make(

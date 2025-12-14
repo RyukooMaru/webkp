@@ -4,7 +4,7 @@ namespace App\Models\MutasiGudang;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Inventory\Dtproduk;
 
 class TransferDetail extends Model
 {
@@ -12,27 +12,39 @@ class TransferDetail extends Model
 
     protected $table = 'td_slsgt';
     protected $primaryKey = 'id';
-    public $timestamps = true;
+    public $timestamps = false;
+    public $incrementing = true;
 
     protected $fillable = [
+        'Trx_Auto',
         'trx_number',
         'Trx_ProdCode',
         'trx_prodname',
         'trx_uom',
         'Trx_QtyTrx',
-        'Trx_QtyRcv',
-        'Trx_QtyReject',
         'trx_cogs',
-        'trx_posting',
-        'trx_rcvposting',
-        'Trx_UpdateID',
-        'trx_discount',  // <-- PASTIKAN ADA
-        'trx_taxes',     // <-- PASTIKAN ADA
-        'trx_nettprice', // <-- PASTIKAN ADA
+        'trx_discount',
+        'trx_taxes',
+        'trx_nettprice',
     ];
 
-    public function header(): BelongsTo
+    public function header()
     {
-        return $this->belongsTo(TransferHeader::class, 'trx_number', 'trx_number');
+        return $this->belongsTo(TransferHeader::class, 'Trx_Auto', 'Trx_Auto');
+    }
+
+    public function produk()
+    {
+        return $this->hasOne(Dtproduk::class, 'kode_produk', 'Trx_ProdCode');
+    }
+
+        public function getNamaProdukAttribute()
+    {
+        return $this->produk->nama_produk ?? $this->trx_prodname ?? $this->Trx_ProdCode;
+    }
+
+    public function getSatuanAmanAttribute()
+    {
+        return $this->trx_uom ?? $this->produk->satuan ?? 'PCS';
     }
 }

@@ -17,6 +17,7 @@ class EnsureUserCanAccessMenu
 
         $routeName = $request->route()->getName();
 
+
         // Jika route tidak memiliki nama atau route khusus yang boleh diakses
         if (is_null($routeName)) {
             return $next($request);
@@ -30,18 +31,6 @@ class EnsureUserCanAccessMenu
 
         // Konversi route name ke menu slug
         $menuSlug = $this->convertRouteToMenuSlug($routeName);
-
-        // --- DEBUGGING: TAMPILKAN HASILNYA ---
-        // Hapus baris dd() ini setelah debugging selesai.
-        // dd([
-        //     'full_route_name' => $routeName,
-        //     'calculated_menu_slug' => $menuSlug,
-        //     'user_role_name' => Auth::user()->role->name ?? 'No Role',
-        //     'menus_allowed_for_user_slugs' => Auth::user()->role->menus->pluck('slug')->toArray() ?? [],
-        //     'is_slug_in_allowed_list' => (Auth::user()->role && Auth::user()->role->menus->contains('slug', $menuSlug)),
-        //     'gate_allows_access' => Gate::allows('access_menu', $menuSlug)
-        // ]);
-        // --- AKHIR DEBUGGING ---
 
         // Jika user tidak memiliki akses ke menu tersebut
         if (!Gate::allows('access_menu', $menuSlug)) {
@@ -68,8 +57,9 @@ class EnsureUserCanAccessMenu
         $specialMappings = [
             'home' => 'dashboard',
             'profile' => 'profile',
-            'rekap.generate' => 'absensi'
-            // Tambahkan mapping khusus lainnya di sini
+            'rekap.generate' => 'absensi',
+            'inventory.stock_report' => 'warehouse',
+            'transfergudang.inTransit' => 'transfergudang',
         ];
 
         if (array_key_exists($routeName, $specialMappings)) {
@@ -132,6 +122,9 @@ class EnsureUserCanAccessMenu
             // Aksi Printing
             'print',
             'printAll',
+            'getProducts',
+
+            'inTransit'
         ];
 
         if (count($parts) > 1 && in_array($action, $standardActions)) {

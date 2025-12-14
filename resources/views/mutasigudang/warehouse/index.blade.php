@@ -7,10 +7,14 @@
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+        
         <div class="mb-3">
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#warehouseModal">
                 <i class="fas fa-plus"></i> Tambah Gudang
             </button>
+            <a href="{{ route('inventory.stock_report') }}" class="btn btn-success mb-3 ms-2">
+                <i class="fas fa-file-alt"></i> Laporan Stok
+            </a>
         </div>
 
 
@@ -31,26 +35,24 @@
                             <th>Web</th>
                             <th>Catatan 1</th>
                             <th>Catatan 2</th>
-                            <th>Pengguna</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($warehouses as $index => $warehouse)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $warehouse->WARE_Name }}</td>
-                            <td>{{ $warehouse->WARE_Address }}</td>
-                            <td>{{ $warehouse->WARE_Phone }}</td>
-                            <td>{{ $warehouse->WARE_Email }}</td>
-                            <td>{{ $warehouse->WARE_Web }}</td>
-                            <td>{{ $warehouse->ware_note1 }}</td>
-                            <td>{{ $warehouse->ware_note2 }}</td>
-                            <td>{{ auth()->user()->name ?? '-' }}</td>
-                            <td>{{ $warehouse->WARE_EntryDate ? \Carbon\Carbon::parse($warehouse->WARE_EntryDate)->format('d F Y') : '' }}</td>
-                            <td>
-                                <div class="d-flex gap-2">
+                    @forelse($warehouses as $index => $warehouse)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $warehouse->WARE_Name }}</td>
+                        <td>{{ $warehouse->WARE_Address }}</td>
+                        <td>{{ $warehouse->WARE_Phone }}</td>
+                        <td>{{ $warehouse->WARE_Email }}</td>
+                        <td>{{ $warehouse->WARE_Web }}</td>
+                        <td>{{ $warehouse->ware_note1 }}</td>
+                        <td>{{ $warehouse->ware_note2 }}</td>
+                        <td>{{ $warehouse->WARE_EntryDate ? \Carbon\Carbon::parse($warehouse->WARE_EntryDate)->format('d F Y') : '' }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
                                 <button class="btn btn-sm btn-warning edit-btn"
                                     data-id="{{ $warehouse->WARE_Auto }}"
                                     data-name="{{ $warehouse->WARE_Name }}"
@@ -63,18 +65,33 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button
-                                type="button"
-                                class="btn btn-sm btn-danger delete-btn"
-                                data-id="{{ $warehouse->WARE_Auto }}"
-                                data-name="{{ $warehouse->WARE_Name ?? 'item ini' }}"
-                                data-url="{{ route('warehouse.destroy', $warehouse->WARE_Auto) }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                                    type="button"
+                                    class="btn btn-sm btn-danger delete-btn"
+                                    data-id="{{ $warehouse->WARE_Auto }}"
+                                    data-name="{{ $warehouse->WARE_Name ?? 'item ini' }}"
+                                    data-url="{{ route('warehouse.destroy', $warehouse->WARE_Auto) }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-5">
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <img src="{{ asset('img/svg/undraw_editable_dywm.svg') }}" alt="Tidak ada data" style="height: 150px; width: auto; opacity: 0.8;" class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800 mb-2">Data Gudang Kosong</h5>
+                                <p class="text-gray-500 mb-3">
+                                    Belum ada master data gudang yang didaftarkan.
+                                </p>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#warehouseModal">
+                                    <i class="fas fa-plus"></i> Tambah Gudang Pertama
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
                 </table>
             </div>
         </div>
@@ -82,7 +99,6 @@
 
     </div>
 
-    <!-- Modal Tambah/Edit -->
     <div class="modal fade" id="warehouseModal" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form method="POST" id="warehouseForm">
@@ -122,7 +138,6 @@
                             </div>
                         </div>
 
-                        <!-- Perbaikan: Input Web sekarang berada di dalam row-nya sendiri agar rapi -->
                         <div class="row mb-3">
                             <label class="col-sm-3 col-form-label">Web</label>
                             <div class="col-sm-9">
@@ -160,13 +175,10 @@
 </div>
 @endsection
 
-<!-- Script -->
 @push('scripts')
 <script>
 $(document).ready(function() {
     $('#dataTable').DataTable();
-
-    // Saat tombol "Tambah Gudang" diklik, siapkan modal untuk mode 'create'
     $('.btn-primary[data-bs-target="#warehouseModal"]').on('click', function() {
         $('#warehouseModalLabel').text('Tambah Gudang');
         $('#warehouseForm').attr('action', '{{ route('warehouse.store') }}');
@@ -174,7 +186,6 @@ $(document).ready(function() {
         $('#warehouseForm')[0].reset();
     });
 
-    // Saat tombol "Edit" diklik, siapkan modal untuk mode 'edit'
     $('.edit-btn').on('click', function() {
         const modal = $('#warehouseModal');
         const form = $('#warehouseForm');
@@ -182,9 +193,8 @@ $(document).ready(function() {
 
         $('#warehouseModalLabel').text('Edit Gudang');
         form.attr('action', `/mutasigudang/warehouse/${id}`);
-        $('#formMethod').val('PUT'); // Method untuk update
+        $('#formMethod').val('PUT');
 
-        // Isi semua field form dari data-attributes tombol
         form.find('[name="WARE_Name"]').val($(this).data('name'));
         form.find('[name="WARE_Address"]').val($(this).data('address'));
         form.find('[name="WARE_Phone"]').val($(this).data('phone'));
@@ -197,19 +207,18 @@ $(document).ready(function() {
     });
 
     $('#warehouseForm').on('submit', function(event) {
-        event.preventDefault(); // Mencegah halaman reload!
+        event.preventDefault();
 
         const form = $(this);
         const url = form.attr('action');
-        const method = form.find('input[name="_method"]').val(); // Ambil method (POST/PUT)
-        const data = form.serialize(); // Ambil semua data form
-
+        const method = form.find('input[name="_method"]').val();
+        const data = form.serialize();
         $.ajax({
             url: url,
-            type: 'POST', // AJAX selalu POST, method asli (PUT/DELETE) dikirim di data
+            type: 'POST',
             data: data,
             success: function(response) {
-                $('#warehouseModal').modal('hide'); // Sembunyikan modal
+                $('#warehouseModal').modal('hide'); 
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
@@ -217,11 +226,10 @@ $(document).ready(function() {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    location.reload(); // Muat ulang halaman untuk melihat data baru
+                    location.reload();
                 });
             },
             error: function(xhr) {
-                // Tampilkan error validasi jika ada
                 const errors = xhr.responseJSON.errors;
                 let errorMessages = '';
                 if (errors) {
@@ -236,14 +244,14 @@ $(document).ready(function() {
         });
     });
 
-    // Saat tombol "Delete" diklik
+
     $('.delete-btn').on('click', function (event) {
         event.preventDefault();
 
         const button = $(this);
         const itemName = button.data('name') || 'item ini';
         const deleteUrl = button.data('url');
-        const csrfToken = '{{ csrf_token() }}'; // Cara lebih aman mengambil token
+        const csrfToken = '{{ csrf_token() }}';
 
         Swal.fire({
             title: 'Apakah Anda yakin?',

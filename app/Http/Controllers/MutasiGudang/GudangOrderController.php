@@ -8,155 +8,120 @@ use App\Models\MutasiGudang\GudangOrderDetail;
 use App\Models\MutasiGudang\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Models\Inventory\Dtproduk;
 use Carbon\Carbon;
 use Exception;
 
-
-
 class GudangOrderController extends Controller
 {
-
     private function generateOrderNumber()
     {
-        $today = Carbon::now()->format('dm y'); // 301225
-        $prefix = 'PG-' . str_replace(' ', '', $today); // PG-301225
-
-        // Hitung jumlah orderan hari ini
-        $todayDate = Carbon::now()->toDateString(); // Format Y-m-d
-
-        $count = DB::table('th_gudangorder')
-            ->whereDate('Pur_Date', $todayDate)
-            ->count();
-
-        // Tambahkan 1 untuk urutan baru
-        $nextNumber = str_pad($count + 1, 3, '0', STR_PAD_LEFT); // 001, 002, dst
-
-        return $prefix . $nextNumber; // PG-301225001
+        $today = Carbon::now()->format('dm y');
+        $prefix = 'PG-' . str_replace(' ', '', $today);
+        $todayDate = Carbon::now()->toDateString();
+        $count = DB::table('th_gudangorder')->whereDate('Pur_Date', $todayDate)->count();
+        $nextNumber = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+        return $prefix . $nextNumber;
     }
+    
     public function index()
     {
-        $orders = GudangOrder::orderBy('Pur_Date', 'desc')->paginate(15);
-        return view('mutasigudang.gudangorder.index', compact('orders'));
-    }
+        $user = Auth::user();
+        $isSuperAdmin = ($user->role_id == 1);
+        $accessibleWarehouses = $user->warehouse_access ?? [];
 
+        $query = GudangOrder::with('gudangPengirim', 'gudangPenerima');
+
+        if ($isSuperAdmin) {
+            $warehouses = Warehouse::all();
+        } else {
+            $warehouses = Warehouse::whereIn('WARE_Auto', $accessibleWarehouses)->get();
+            $query->where(function ($q) use ($accessibleWarehouses) {
+                $q->whereIn('pur_warehouse', $accessibleWarehouses)
+                  ->orWhereIn('pur_destination', $accessibleWarehouses);
+            });
+        }
+        
+        $orders = $query->orderBy('Pur_Auto', 'desc')->paginate(15);
+        return view('mutasigudang.gudangorder.index', compact('orders', 'warehouses'));
+    }
 
     public function create()
     {
-        // 1. Buat record baru untuk mendapatkan ID (Pur_Auto)
         $newOrder = GudangOrder::create([
-            'pur_ordernumber' => $this->generateOrderNumber(), // Nilai sementara
+            'pur_ordernumber' => $this->generateOrderNumber(),
             'Pur_Date' => Carbon::now(),
             'pur_status' => 'draft',
             'pur_emp' => Auth::user()->name,
-            'pur_warehouse' => '', // Dikosongkan agar dipilih di form
-            'pur_destination' => '', // Dikosongkan agar dipilih di form
+            'pur_warehouse' => null,
+            'pur_destination' => null,
         ]);
-
-        $newOrder->save();
-
-        // 3. Redirect ke halaman edit dengan membawa ID order
         return redirect()->route('gudangorder.edit', ['id' => $newOrder->Pur_Auto]);
     }
 
-    /**
-     * Modifikasi: Mengganti nama view ke view yang lebih spesifik untuk form (edit.blade.php)
-     * Pastikan data 'warehouses' sudah dikirim ke view.
-     */
     public function edit($id)
     {
-        $order = GudangOrder::with('details')->findOrFail($id);
-        $warehouses = Warehouse::all(); // Mengambil semua data gudang
+        $order = GudangOrder::with('details')->findOrFail($id);   
+        $user = Auth::user();
+        $isSuperAdmin = ($user->role_id == 1);
+        $accessibleWarehouses = $user->warehouse_access ?? [];
+        if ($isSuperAdmin) {
+            $warehouses = Warehouse::all();
+        } else {
+            $warehouses = Warehouse::whereIn('WARE_Auto', $accessibleWarehouses)->get();
+        }
+        $allWarehouses = Warehouse::all();
 
-        // Pastikan Anda memiliki view 'edit.blade.php' di dalam folder 'mutasigudang.gudangorder'
-        // Mengirim data order dan warehouses ke view
-        return view('mutasigudang.gudangorder.index', compact('order', 'warehouses'));
+        return view('mutasigudang.gudangorder.index', compact('order', 'warehouses', 'allWarehouses'));
     }
 
     public function show($id)
     {
         $order = GudangOrder::with('details')->findOrFail($id);
-        $warehouses = Warehouse::all(); // Mengambil semua data gudang
+        $user = Auth::user();
+        $isSuperAdmin = ($user->role_id == 1);
+        $accessibleWarehouses = $user->warehouse_access ?? [];
+        if ($isSuperAdmin) {
+            $warehouses = Warehouse::all(); 
+        } else {
+            $warehouses = Warehouse::whereIn('WARE_Auto', $accessibleWarehouses)->get();
+        }
+        $allWarehouses = Warehouse::all();
 
-        // Pastikan Anda memiliki view 'show.blade.php' untuk menampilkan detail
         return view('mutasigudang.gudangorder.index', [
             'order'      => $order,
             'warehouses' => $warehouses,
+            'allWarehouses' => $allWarehouses,
             'showMode'   => true
         ]);
     }
 
-    /**
-     * Modifikasi: Validasi untuk 'pur_destination' ditambahkan.
-     */
     public function updateHeader(Request $request, $id)
     {
         $order = GudangOrder::findOrFail($id);
-
         if ($order->pur_status !== 'draft') {
-            return response()->json(['success' => false, 'message' => 'Hanya order draft yang bisa diubah.'], 403);
+            return response()->json(['success' => false, 'message' => 'Hanya draft yang bisa diubah.'], 403);
         }
 
-        // Validasi input dari form
         $validatedData = $request->validate([
             'pur_ordernumber'   => 'required|string|max:255',
             'Pur_Date'          => 'required|date',
-            'pur_warehouse'     => 'required|string|max:255', // Lokasi Asal
-            'pur_destination'   => 'required|string|max:255', // Lokasi Tujuan
+            'from_warehouse_id' => 'required|string|exists:m_warehouse,WARE_Auto',
+            'to_warehouse_id'   => 'required|string|exists:m_warehouse,WARE_Auto',
             'Pur_Note'          => 'nullable|string',
         ]);
 
-        $order->update($validatedData);
+        $order->update([
+            'pur_ordernumber' => $validatedData['pur_ordernumber'],
+            'Pur_Date'        => $validatedData['Pur_Date'],
+            'pur_warehouse'   => $validatedData['from_warehouse_id'],
+            'pur_destination' => $validatedData['to_warehouse_id'],
+            'Pur_Note'        => $validatedData['Pur_Note'],
+        ]);
 
         return response()->json(['success' => true, 'message' => 'Header berhasil diperbarui.']);
-    }
-
-    // --- FUNGSI LAINNYA (storeDetail, destroy, destroyDetail, submit) TETAP SAMA ---
-    // ... (kode fungsi lainnya tidak diubah)
-    public function destroy($id)
-    {
-        // 1. Temukan order berdasarkan ID. Jika tidak ada, Laravel akan otomatis menampilkan error 404.
-        $order = GudangOrder::findOrFail($id);
-
-        // 2. Lakukan validasi. Hanya order dengan status 'draft' yang boleh dihapus.
-        if ($order->pur_status !== 'draft') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hanya permintaan dengan status DRAFT yang dapat dihapus.'
-            ], 403); // Kode 403 artinya "Forbidden" atau tidak diizinkan.
-        }
-
-        // 3. Mulai transaksi database untuk menjaga integritas data.
-        DB::beginTransaction();
-
-        try {
-            // 4. Hapus semua record detail yang terkait dengan order ini terlebih dahulu.
-            // Ini penting untuk menghindari error foreign key constraint.
-            $order->details()->delete();
-
-            // 5. Setelah semua detail berhasil dihapus, hapus data header order.
-            $order->delete();
-
-            // 6. Jika tidak ada error, konfirmasi semua perubahan ke database.
-            DB::commit();
-
-            // 7. Kirim respons sukses kembali ke JavaScript.
-            return response()->json([
-                'success' => true,
-                'message' => 'Draft permintaan berhasil dihapus.'
-            ]);
-
-        } catch (Exception $e) {
-            // 8. Jika terjadi kesalahan di tengah proses (langkah 4 atau 5),
-            // batalkan semua query yang sudah dijalankan.
-            DB::rollBack();
-
-            // 9. Kirim respons error kembali ke JavaScript, sertakan pesan error untuk debugging.
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
-            ], 500); // Kode 500 artinya "Internal Server Error".
-        }
     }
 
     public function storeDetail(Request $request)
@@ -169,36 +134,56 @@ class GudangOrderController extends Controller
                 'Pur_UOM' => 'required|string|max:50',
                 'Pur_Qty' => 'required|numeric|min:1',
                 'Pur_GrossPrice' => 'required|numeric|min:0',
-                'Pur_Discount' => 'nullable|numeric|min:0', // Diskon bisa jadi 0 atau null
-                'Pur_Taxes' => 'nullable|numeric|min:0',    // Pajak bisa jadi 0 atau null
-
+                'Pur_Discount' => 'nullable|numeric|min:0',
+                'Pur_Taxes' => 'nullable|numeric|min:0',
+                'Pur_NettPrice' => 'required|numeric',
             ]);
+            
+            $order = GudangOrder::findOrFail($validatedData['Pur_Auto']);
+            $detail = GudangOrderDetail::create($validatedData);
 
-           // Ini adalah praktik terbaik untuk memastikan data akurat
-        $qty = (float) $validatedData['Pur_Qty'];
-        $grossPrice = (float) $validatedData['Pur_GrossPrice'];
-        $discount = (float) ($validatedData['Pur_Discount'] ?? 0); // Default ke 0 jika null
-        $taxes = (float) ($validatedData['Pur_Taxes'] ?? 0);       // Default ke 0 jika null
+            return response()->json(['success' => true, 'data' => $detail]);
 
-        $subtotal = $qty * $grossPrice;
-        $netPrice = ($subtotal - $discount) + $taxes;
-
-        // 3. Tambahkan harga bersih yang sudah dihitung ke dalam data yang akan disimpan
-        $validatedData['Pur_NettPrice'] = $netPrice;
-
-        // 4. Simpan data ke database
-        $detail = GudangOrderDetail::create($validatedData);
-
-        return response()->json(['success' => true, 'data' => $detail]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            Log::error('Error storeDetail: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getProductsByWarehouse($warehouse_id)
+    {
+        if ($warehouse_id == 'all') {
+             $products = Dtproduk::all();
+        } else {
+            $products = Dtproduk::where('WARE_Auto', $warehouse_id)->get();
+        }
+        return response()->json($products);
+    }
+
+    public function destroy($id)
+    {
+        $order = GudangOrder::findOrFail($id);
+        if ($order->pur_status !== 'draft') {
+            return response()->json(['success' => false, 'message' => 'Hanya DRAFT yang bisa dihapus.'], 403); 
+        }
+        DB::beginTransaction();
+        try {
+            $order->details()->delete();
+            $order->delete();
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Draft berhasil dihapus.']);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus: ' . $e->getMessage()], 500); 
+        }
+    }
+
     public function destroyDetail($orderId, $detailId)
     {
         $detail = GudangOrderDetail::findOrFail($detailId);
-        if ($detail->Pur_Auto != $orderId) {
-            return response()->json(['success' => false, 'message' => 'Detail tidak sesuai dengan order.'], 403);
+        
+        if ($detail->Pur_Auto != $orderId) { 
+            return response()->json(['success' => false, 'message' => 'Detail tidak sesuai.'], 403);
         }
         $detail->delete();
         return response()->json(['success' => true, 'message' => 'Barang berhasil dihapus.']);

@@ -54,28 +54,39 @@ class WarehouseController extends Controller
     }
 
     public function destroy($id)
-{
-    try {
-        $warehouse = Warehouse::findOrFail($id);
-        $warehouse->delete();
+    {
+        try {
+            $warehouse = Warehouse::findOrFail($id);
+            if ($warehouse->products()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gudang tidak dapat dihapus karena memiliki produk terkait.'
+                ], 500);
+            }
+            $warehouse->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Gudang berhasil dihapus.'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan saat menghapus data.'
-        ], 500);
+            return response()->json([
+                'success' => true,
+                'message' => 'Gudang berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data.'
+            ], 500);
+        }
     }
-}
 
-
-    // Opsional: Untuk kebutuhan AJAX edit (jika pakai fetch)
     public function json($id)
     {
         $warehouse = Warehouse::findOrFail($id);
         return response()->json($warehouse);
     }
+
+    public function getAll()
+    {
+        $warehouses = Warehouse::select('WARE_Auto', 'WARE_Name')->get();
+        return response()->json($warehouses);
+    }
+
 }
