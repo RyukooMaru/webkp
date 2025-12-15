@@ -22,6 +22,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
+        // Jalankan perintah auto clock out setiap 5 menit
+        $schedule->command('attendance:auto-clock-out')->everyFiveMinutes();
+
+        $schedule->command('notifications:prune')->daily();
     }
 
     /**

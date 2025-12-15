@@ -4,6 +4,7 @@ namespace App\Models\SPModels;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
+use App\Models\Inventory\Dtproduk;
 
 class PenjualanDetail extends Model
 {
@@ -34,6 +35,7 @@ class PenjualanDetail extends Model
      */
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        // UBAH MODEL DI SINI
+        return $this->belongsTo(Dtproduk::class, 'product_id'); // <-- GANTI DENGAN MODEL PRODUK ANDA YANG BENAR
     }
 }
