@@ -52,6 +52,8 @@ use App\Http\Controllers\MutasiGudang\TransferGudangController;
 use App\Http\Controllers\MutasiGudang\TerimaGudangController;
 use App\Http\Controllers\Inventory\StockReportController;
 use App\Http\Controllers\TestController;
+use App\Models\Inventory\Penerimaan;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -103,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
-
+    
 });
 
 Route::middleware(['auth', 'can.access.menu'])->group(function () {
@@ -237,6 +239,11 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::delete('/penerimaan/{penerimaan}', [PenerimaanController::class, 'destroy'])->name('penerimaan.destroy');
         // Custom routes for Penerimaan operations
         Route::put('/penerimaan/{id}/update-header', [PenerimaanController::class, 'updateHeader'])->name('penerimaan.update-header');
+        Route::get('/penerimaan/po-by-supplier/{supplier_id}', [PenerimaanController::class, 'getPOBySupplier'])->name('penerimaan.po.by.supplier');
+        Route::get('/inventory/penerimaan/po-detail/{po_id}', [PenerimaanController::class, 'getPODetail'])->name('penerimaan.po.detail');
+        Route::post('/penerimaan/{id}/load-po-detail', [PenerimaanController::class, 'loadPODetailToPenerimaan'])->name('penerimaan.load.po.detail');
+        Route::get('/penerimaan/{id}/details', [PenerimaanController::class, 'getDetails'])->name('penerimaan.details');
+        Route::get('/inventory/penerimaan/get-supplier-from-po/{po_id}', function ($po_id) {$po = \App\Models\Inventory\PurchaseOrder::findOrFail($po_id);return response()->json(['supplier_id' => $po->supplier_id]);});
         Route::post('/penerimaan/{penerimaanId}/details', [PenerimaanController::class, 'storeDetail'])->name('penerimaan.store-detail');
         Route::put('/penerimaan/{penerimaanId}/details/{detailId}', [PenerimaanController::class, 'updateDetail'])->name('penerimaan.update-detail');
         Route::delete('/penerimaan/{penerimaanId}/details/{detailId}', [PenerimaanController::class, 'deleteDetail'])->name('penerimaan.delete-detail');
@@ -263,7 +270,7 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
     });
 
     // --- Gudang Routes ---
-
+    
     Route::prefix('mutasigudang')->middleware(['auth'])->group(function () {
 
         // Gudang
@@ -290,10 +297,10 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::get('transfergudang', [TransferGudangController::class, 'index'])->name('transfergudang.index');
         Route::get('transfergudang/create', [TransferGudangController::class, 'create'])->name('transfergudang.create');
         Route::get('transfergudang/{id}/edit', [TransferGudangController::class, 'edit'])->name('transfergudang.edit');
-        Route::get('transfergudang/{id}', [TransferGudangController::class, 'show'])->name('transfergudang.show');
+        Route::get('transfergudang/{id}', [TransferGudangController::class, 'show'])->name('transfergudang.show'); 
         Route::delete('transfergudang/{id}', [TransferGudangController::class, 'destroy'])->name('transfergudang.destroy');
         Route::put('transfergudang/{id}/update-header', [TransferGudangController::class, 'updateHeader'])->name('transfergudang.updateHeader');
-        Route::put('transfergudang/{id}/submit', [TransferGudangController::class, 'submit'])->name('transfergudang.submit');
+        Route::put('transfergudang/{id}/submit', [TransferGudangController::class, 'submit'])->name('transfergudang.submit'); 
         Route::post('transfergudang/detail/store', [TransferGudangController::class, 'storeDetail'])->name('transfergudang.storeDetail');
         Route::delete('transfergudang/{id}/details/{detailId}', [TransferGudangController::class, 'destroyDetail'])->name('transfergudang.destroyDetail');
         Route::get('transfergudang/fetch-details/{permintaanId}', [TransferGudangController::class, 'fetchPermintaanDetails'])->name('transfergudang.fetchDetails');
@@ -423,13 +430,12 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
     Route::resource('pelanggan', PelangganController::class);
     Route::resource('customer-orders', DaftarPesananController::class);
     Route::resource('penjualan', PenjualanController::class)->only(['index', 'store']);
-    Route::post('penjualan/{id}/approve', [\App\Http\Controllers\ControllerSP\PenjualanController::class, 'approve'])->name('penjualan.approve');
-    Route::get('penjualan/{id}', [\App\Http\Controllers\ControllerSP\PenjualanController::class, 'show'])->name('penjualan.show');
+
 
         Route::prefix('api')->name('api.')->group(function () {
-            Route::get('/customer-orders/{id}/details', [\App\Http\Controllers\ControllerSP\DaftarPesananController::class, 'getOrderDetails']);
         Route::prefix('jualan')->name('jualan.')->group(function () {
             Route::get('/outstanding-orders/{pelanggan}', [PenjualanController::class, 'getOutstandingOrders'])->name('outstanding-orders');
+
             // Route to get the details of a specific customer order
             Route::get('/order-details/{customerOrder}', [PenjualanController::class, 'getOrderDetails'])->name('order-details');
         });

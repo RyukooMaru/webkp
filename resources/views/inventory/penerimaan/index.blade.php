@@ -88,8 +88,8 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <form id="headerForm">@csrf
-                            <input type="hidden" id="penerimaanId" value="{{ $header->penerimaan_id }}">
+                        <form id="headerForm" onsubmit="return false;">@csrf
+                            <input type="hidden" id="penerimaan_id" onsubmit="return false;" value="{{ $header->penerimaan_id }}">
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">No. Penerimaan</label>
@@ -119,13 +119,6 @@
                                     <select name="po_id" id="po_id" class="form-control" 
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Purchase Order</option>
-                                        @foreach($purchaseOrders as $po)
-                                            <option value="{{ $po->po_id }}"
-                                                {{ $header->po_id == $po->po_id ? 'selected' : '' }}
-                                                data-supplier="{{ $po->supplier_id }}">
-                                                {{ $po->po_number }}
-                                            </option>
-                                        @endforeach
                                     </select>
                                 </div>
 
@@ -188,12 +181,6 @@
                 {{-- TOMBOL ACTION --}}
                 @if($header->status === 'draft')
                 <div class="mb-3 d-flex">
-                    @can('tambah', $currentMenuSlug)
-                    <button type="button" id="addDetailButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
-                        data-bs-target="#dtlModal">
-                        <i class="fas fa-plus"></i> Tambah Barang
-                    </button>
-                    @endcan
                     
                     @can('ubah', $currentMenuSlug)
                     <button id="btnPublish" class="btn btn-success mr-2">
@@ -201,11 +188,6 @@
                     </button>
                     @endcan
                     
-                    @can('hapus', $currentMenuSlug)
-                    <button id="btnCancelDraft" class="btn btn-danger">
-                        <i class="fas fa-times"></i> Batalkan
-                    </button>
-                    @endcan
                 </div>
                 @endif
 
@@ -229,56 +211,12 @@
                                         <th width='10%'>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach($header->details as $detail)
-                                        <tr>
-                                            <td>{{ $detail->product->kode_produk }}</td>
-                                            <td>{{ $detail->product->nama_produk }}</td>
-                                            <td class="text-right">{{ number_format($detail->qty) }}</td>
-                                            <td>{{ $detail->uom->UOM_Code }}</td>
-                                            <td class="text-right">{{ number_format($detail->harga_beli, 0, ',', '.') }}</td>
-                                            <td class="text-right">{{ number_format($detail->diskon_persen, 2) }}</td>
-                                            <td class="text-right">{{ number_format($detail->pajak_persen, 2) }}</td>
-                                            <td class="text-right">{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
-                                            <td>{{ $detail->catatan }}</td>
-                                            <td>
-                                                @if($header->status === 'draft')
-                                                    @can('ubah', $currentMenuSlug)
-                                                    <button class="btn btn-sm btn-warning edit-btn" 
-                                                        data-id="{{ $detail->detail_id }}"
-                                                        data-product_id="{{ $detail->product_id }}"
-                                                        data-uom_id="{{ $detail->uom_id }}"
-                                                        data-qty="{{ $detail->qty }}"
-                                                        data-harga_beli="{{ $detail->harga_beli }}"
-                                                        data-pajak_persen="{{ $detail->pajak_persen }}"
-                                                        data-diskon_persen="{{ $detail->diskon_persen }}"
-                                                        data-catatan="{{ $detail->catatan }}">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    @endcan
-                                                    
-                                                    @can('hapus', $currentMenuSlug)
-                                                    <button class="btn btn-sm btn-danger delete-btn" 
-                                                        data-id="{{ $detail->detail_id }}">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                    @endcan
-                                                @else
-                                                <span class="text-muted">Locked</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                <tbody id="detail_table_body">
                                 </tbody>
                                 <tfoot class="font-weight-bold">
                                     <tr>
                                         <td colspan="7" class="text-right">TOTAL</td>
-                                        <td class="text-right">
-                                            @php
-                                                $grandTotal = $header->details->sum('subtotal');
-                                            @endphp
-                                            {{ number_format($grandTotal, 0, ',', '.') }}
-                                        </td>
+                                        <td class="text-right" id="grand-total">0</td>
                                         <td colspan="2"></td>
                                     </tr>
                                 </tfoot>
@@ -559,123 +497,252 @@
         $(function() {
             const headerId = $('#penerimaanId').val();
             const modal = $('#dtlModal');
-            const form = $('#dtlForm');
+            const form = $('#dtlForm'); 
             let editMode = false,
                 currentDetailId = null;
 
             // Auto-calculate nominal in modal
-            $('.calc-trigger').on('input', calculateNominal);
+            // $('.calc-trigger').on('input', calculateNominal);
 
-            function calculateNominal() {
-                const qty = parseFloat($('#qty').val()) || 0;
-                const hargaBeli = parseFloat($('#harga_beli').val()) || 0;
-                const diskonPersen = parseFloat($('#diskon_persen').val()) || 0;
-                const pajakPersen = parseFloat($('#pajak_persen').val()) || 0;
+            // function calculateNominal() {
+            //     const qty = parseFloat($('#qty').val()) || 0;
+            //     const hargaBeli = parseFloat($('#harga_beli').val()) || 0;
+            //     const diskonPersen = parseFloat($('#diskon_persen').val()) || 0;
+            //     const pajakPersen = parseFloat($('#pajak_persen').val()) || 0;
 
-                // Calculate subtotal (price * qty)
-                const subtotal = qty * hargaBeli;
+            //     // Calculate subtotal (price * qty)
+            //     const subtotal = qty * hargaBeli;
 
-                // Apply discount and tax percentages
-                const diskonAmount = subtotal * (diskonPersen / 100);
-                const afterDiskon = subtotal - diskonAmount;
-                const pajakAmount = afterDiskon * (pajakPersen / 100);
+            //     // Apply discount and tax percentages
+            //     const diskonAmount = subtotal * (diskonPersen / 100);
+            //     const afterDiskon = subtotal - diskonAmount;
+            //     const pajakAmount = afterDiskon * (pajakPersen / 100);
 
-                // Calculate final price
-                const total = afterDiskon + pajakAmount;
-                $('#nominal').val(total.toLocaleString('id-ID'));
-                $('#subtotal').val(total);
-            }
+            //     // Calculate final price
+            //     const total = afterDiskon + pajakAmount;
+            //     $('#nominal').val(total.toLocaleString('id-ID'));
+            //     $('#subtotal').val(total);
+            // }
 
-            // Update product code and name when product is selected
-            $('#product_id').change(function() {
-                const selectedOption = $(this).find('option:selected');
-                $('#product_code').val(selectedOption.data('kode'));
-                $('#product_name').val(selectedOption.data('nama'));
-            });
+            // // Update product code and name when product is selected
+            // $('#product_id').change(function() {
+            //     const selectedOption = $(this).find('option:selected');
+            //     $('#product_code').val(selectedOption.data('kode'));
+            //     $('#product_name').val(selectedOption.data('nama'));
+            // });
 
             // Sync PO and Supplier selection
-            $('#po_id').change(function() {
-                const selectedOption = $(this).find('option:selected');
-                const supplierId = selectedOption.data('supplier');
-                if (supplierId) {
-                    $('#supplier_id').val(supplierId).trigger('change');
+            $(document).ready(function () {
+
+                $('#supplier_id').on('change', function () {
+                    let supplierId = $(this).val();
+
+                    if (po_id) {
+                        loadDetailFromDatabase(po_id);
+                    }
+
+                    $('#po_id').html('<option value="">Pilih Purchase Order</option>');
+
+                    if (supplierId === "") return;
+
+                    $.ajax({
+                        url: "{{ route('penerimaan.po.by.supplier', ['supplier_id' => ':supplier_id']) }}"
+                                .replace(':supplier_id', supplierId),
+                        method: "GET",
+                        success: function (res) {
+                            res.forEach(function (po) {
+                                $('#po_id').append(
+                                    `<option value="${po.po_id}">${po.po_number}</option>`
+                                );
+                            });
+                        }
+                    });
+                });
+
+                if ($('#supplier_id').val() !== "") {
+                    $('#supplier_id').trigger('change');
                 }
             });
 
-            // Header update
-            $('#headerForm').on('change', 'input, select, textarea', function() {
-                const data = $('#headerForm').serialize();
+            // // Header update
+            // $('#headerForm').on('change', 'input, select, textarea', function(e) {
+
+            //     if ($(this).attr('id') === 'supplier_id') {
+            //         return;
+            //     }
+
+            //     const data = $('#headerForm').serialize();
+            //     $.ajax({
+            //         url: `/inventory/penerimaan/${headerId}/update-header`,
+            //         type: 'PUT',
+            //         data: data,
+            //         success: function() {
+            //             showToast('success', 'Header berhasil diperbarui');
+            //         },
+            //         error: function(xhr) {
+            //             showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
+            //         }
+            //     });
+            // });
+
+            // FUNGSI: Ambil detail PO dari server lalu tampilkan ke tabel
+            // --- AUTLOAD DETAIL PO SAAT NO. PO DIPILIH --- //
+            $('#po_id').on('change', function () {
+                let po_id = $(this).val();
+                let penerimaan_id = $('#penerimaan_id').val();
+
+                if (!po_id) {
+                    $("#detail_table_body").html('');
+                    $("#grand-total").text('0');
+                    return;
+                }
+
+                if (!penerimaan_id) {
+                    alert("Penerimaan belum dibuat, simpan header dulu!");
+                    return;
+                }
+
                 $.ajax({
-                    url: `/inventory/penerimaan/${headerId}/update-header`,
-                    type: 'PUT',
-                    data: data,
-                    success: function() {
-                        showToast('success', 'Header berhasil diperbarui');
+                    url: `/inventory/penerimaan/${penerimaan_id}/load-po-detail`,
+                    type: "POST",
+                    data: { po_id: po_id },
+                    success: function () {
+                        loadDetailFromDatabase(penerimaan_id);
                     },
-                    error: function(xhr) {
-                        showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
+                    error: function (xhr) {
+                        console.log("Insert PO detail error:", xhr.responseText);
                     }
+                });
+            });
+
+            function loadDetailFromDatabase(penerimaan_id) {
+                $.ajax({
+                    url: `/inventory/penerimaan/${penerimaan_id}/details`,
+                    type: "GET",
+                    success: function(response) {
+
+                        let rows = '';
+                        let total = 0;
+
+                        response.forEach(function(item) {
+
+                            const kode = item.product?.kode_produk ?? '';
+                            const nama = item.product?.nama_produk ?? '';
+                            const uom  = item.uom?.UOM_Code ?? '';
+                            const qty  = Number(item.qty ?? 0);
+                            const harga = Number(item.unit_price ?? 0);
+                            const diskon = Number(item.discount_percent ?? 0);
+                            const pajak = Number(item.tax_percent ?? 0);
+
+                            // Hitung subtotal
+                            const nilaiBarang = qty * harga;
+                            const nilaiDiskon = nilaiBarang * (diskon / 100);
+                            const nilaiSetelahDiskon = nilaiBarang - nilaiDiskon;
+                            const nilaiPajak = nilaiSetelahDiskon * (pajak / 100);
+                            const subtotal = nilaiSetelahDiskon + nilaiPajak;
+
+                            total += subtotal;
+
+                            rows += `
+                                <tr>
+                                    <td>${kode}</td>
+                                    <td>${nama}</td>
+                                    <td class="text-right">${qty}</td>
+                                    <td>${uom}</td>
+                                    <td class="text-right">${harga.toLocaleString('id-ID')}</td>
+                                    <td class="text-right">${diskon}</td>
+                                    <td class="text-right">${pajak}</td>
+                                    <td class="text-right">${subtotal.toLocaleString('id-ID')}</td>
+                                    <td>${item.catatan ?? ''}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning edit-btn" data-id="${item.detail_id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        $("#detail_table_body").html(rows);
+                        $("#grand-total").text(total.toLocaleString("id-ID"));
+                    },
+                    error: function(xhr){
+                        console.log("Load DB detail error:", xhr.responseText);
+                    }
+                });
+            }
+
+            $('#po_id').on('change', function () {
+                let poId = $(this).val();
+
+                $.get(`/inventory/penerimaan/get-supplier-from-po/${poId}`, function (res) {
+                    if (!$('#supplier_id').val()) {
+                        $('#supplier_id').val(res.supplier_id).change();
+                    }
+
+                    // Jika supplier_id hidden
+                    $('#supplier_id_hidden').val(res.supplier_id);
                 });
             });
 
             // Open modal for new detail
-            $('#addDetailButton').click(function() {
-                editMode = false;
-                currentDetailId = null;
-                form[0].reset();
-                $('#product_code').val('');
-                $('#product_name').val('');
-                $('#nominal').val('');
-                $('#subtotal').val('');
-                modal.modal('show');
-            });
+            // $('#addDetailButton').click(function() {
+            //     editMode = false;
+            //     currentDetailId = null;
+            //     form[0].reset();
+            //     $('#product_code').val('');
+            //     $('#product_name').val('');
+            //     $('#nominal').val('');
+            //     $('#subtotal').val('');
+            //     modal.modal('show');
+            // });
 
-            // Open modal for edit detail
-            $('#dataTable').on('click', '.edit-btn', function() {
-                editMode = true;
-                currentDetailId = $(this).data('id');
+            // // Open modal for edit detail
+            // $('#dataTable').on('click', '.edit-btn', function() {
+            //     editMode = true;
+            //     currentDetailId = $(this).data('id');
                 
-                // Fill form
-                const productId = $(this).data('product_id');
-                $('#product_id').val(productId);
-                const selectedProduct = $('#product_id option[value="' + productId + '"]');
-                $('#product_code').val(selectedProduct.data('kode'));
-                $('#product_name').val(selectedProduct.data('nama'));
-                $('#uom_id').val($(this).data('uom_id'));
-                $('#qty').val($(this).data('qty'));
-                $('#harga_beli').val($(this).data('harga_beli'));
-                $('#pajak_persen').val($(this).data('pajak_persen'));
-                $('#diskon_persen').val($(this).data('diskon_persen'));
-                $('#dtl_catatan').val($(this).data('catatan'));
+            //     // Fill form
+            //     const productId = $(this).data('product_id');
+            //     $('#product_id').val(productId);
+            //     const selectedProduct = $('#product_id option[value="' + productId + '"]');
+            //     $('#product_code').val(selectedProduct.data('kode'));
+            //     $('#product_name').val(selectedProduct.data('nama'));
+            //     $('#uom_id').val($(this).data('uom_id'));
+            //     $('#qty').val($(this).data('qty'));
+            //     $('#harga_beli').val($(this).data('harga_beli'));
+            //     $('#pajak_persen').val($(this).data('pajak_persen'));
+            //     $('#diskon_persen').val($(this).data('diskon_persen'));
+            //     $('#dtl_catatan').val($(this).data('catatan'));
                 
-                // Calculate nominal
-                calculateNominal();
+            //     // Calculate nominal
+            //     calculateNominal();
                 
-                modal.modal('show');
-            });
+            //     modal.modal('show');
+            // });
 
-            // Save detail
-            $('#dtlSave').click(function() {
-                const data = form.serialize();
-                const url = editMode 
-                    ? `/inventory/penerimaan/${headerId}/details/${currentDetailId}`
-                    : `/inventory/penerimaan/${headerId}/details`;
+            // // Save detail
+            // $('#dtlSave').click(function() {
+            //     const data = form.serialize();
+            //     const url = editMode 
+            //         ? `/inventory/penerimaan/${headerId}/details/${currentDetailId}`
+            //         : `/inventory/penerimaan/${headerId}/details`;
 
-                const method = editMode ? 'PUT' : 'POST';
+            //     const method = editMode ? 'PUT' : 'POST';
 
-                $.ajax({
-                    url: url,
-                    type: method,
-                    data: data,
-                    success: function() {
-                        modal.modal('hide');
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        showToast('error', 'Gagal menyimpan detail: ' + xhr.responseText);
-                    }
-                });
-            });
+            //     $.ajax({
+            //         url: url,
+            //         type: method,
+            //         data: data,
+            //         success: function() {
+            //             modal.modal('hide');
+            //             location.reload();
+            //         },
+            //         error: function(xhr) {
+            //             showToast('error', 'Gagal menyimpan detail: ' + xhr.responseText);
+            //         }
+            //     });
+            // });
 
             // Delete detail
             $('#dataTable').on('click', '.delete-btn', function() {
@@ -727,6 +794,13 @@
 
             // Publish Penerimaan
             $('#btnPublish').click(function() {
+                let headerId = $("#penerimaan_id").val();
+
+                if (!headerId) {
+                    showToast('error', "ID penerimaan tidak ditemukan");
+                    return;
+                }
+
                 Swal.fire({
                     title: 'Simpan Penerimaan?',
                     text: "Pastikan data sudah benar sebelum disimpan",
@@ -737,6 +811,7 @@
                     confirmButtonText: 'Ya, simpan!'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        
                         $.ajax({
                             url: `/inventory/penerimaan/${headerId}/publish`,
                             type: 'POST',
@@ -760,6 +835,13 @@
 
             // Cancel draft
             $('#btnCancelDraft').click(function() {
+                let id = $(this).data('id');
+
+                if (!id) {
+                    alert('ID tidak ditemukan');
+                    return;
+                }
+                console.log(id);
                 Swal.fire({
                     title: 'Batalkan draft?',
                     text: "Semua data akan dihapus secara permanen",

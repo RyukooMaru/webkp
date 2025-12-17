@@ -42,10 +42,18 @@ class PurchaseOrderController extends Controller
                 'kontak_person' => 'Contact Person Dummy'
             ]);
         }
+
+        $lastPO = PurchaseOrder::orderBy('po_id', 'desc')->first();
+
+        $nextNumber = $lastPO
+            ? ((int) substr($lastPO->po_number, 3)) + 1
+            : 1;
+
+        $poNumber= 'PO-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     
         // Create new draft PO dengan nilai default
         $po = PurchaseOrder::create([
-            'po_number' => 'PO-' . Str::random(6),
+            'po_number' => $poNumber,
             'status' => 'draft',
             'supplier_id' => $dummySupplier->id, // Gunakan supplier dummy
             'purchase_type' => 'langsung', // Nilai default

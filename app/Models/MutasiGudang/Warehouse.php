@@ -4,7 +4,6 @@ namespace App\Models\MutasiGudang;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Inventory\Dtproduk;
 
 class Warehouse extends Model
 {
@@ -24,9 +23,4 @@ class Warehouse extends Model
         'ware_note2',
         'WARE_EntryDate',
     ];
-
-    public function products()
-    {   
-        return $this->hasMany(Dtproduk::class, 'WARE_Auto', 'WARE_Auto'); 
-    }
 }

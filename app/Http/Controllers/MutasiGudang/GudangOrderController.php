@@ -65,35 +65,19 @@ class GudangOrderController extends Controller
     {
         $order = GudangOrder::with('details')->findOrFail($id);   
         $user = Auth::user();
-        $isSuperAdmin = ($user->role_id == 1);
-        $accessibleWarehouses = $user->warehouse_access ?? [];
-        if ($isSuperAdmin) {
-            $warehouses = Warehouse::all();
-        } else {
-            $warehouses = Warehouse::whereIn('WARE_Auto', $accessibleWarehouses)->get();
-        }
-        $allWarehouses = Warehouse::all();
+        $warehouses = Warehouse::all();
 
-        return view('mutasigudang.gudangorder.index', compact('order', 'warehouses', 'allWarehouses'));
+        return view('mutasigudang.gudangorder.index', compact('order', 'warehouses'));
     }
 
     public function show($id)
     {
         $order = GudangOrder::with('details')->findOrFail($id);
-        $user = Auth::user();
-        $isSuperAdmin = ($user->role_id == 1);
-        $accessibleWarehouses = $user->warehouse_access ?? [];
-        if ($isSuperAdmin) {
-            $warehouses = Warehouse::all(); 
-        } else {
-            $warehouses = Warehouse::whereIn('WARE_Auto', $accessibleWarehouses)->get();
-        }
-        $allWarehouses = Warehouse::all();
+        $warehouses = Warehouse::all(); 
 
         return view('mutasigudang.gudangorder.index', [
             'order'      => $order,
             'warehouses' => $warehouses,
-            'allWarehouses' => $allWarehouses,
             'showMode'   => true
         ]);
     }

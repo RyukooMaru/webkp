@@ -592,20 +592,20 @@
             });
 
             // Header update
-            $('#headerForm').on('change', 'input, select, textarea', function() {
-                const data = $('#headerForm').serialize();
-                $.ajax({
-                    url: `/inventory/purchase-orders/${headerId}/update-header`,
-                    type: 'PUT',
-                    data: data,
-                    success: function() {
-                        showToast('success', 'Header berhasil diperbarui');
-                    },
-                    error: function(xhr) {
-                        showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
-                    }
-                });
-            });
+            // $('#headerForm').on('change', 'input, select, textarea', function() {
+            //     const data = $('#headerForm').serialize();
+            //     $.ajax({
+            //         url: `/inventory/purchase-orders/${headerId}/update-header`,
+            //         type: 'PUT',
+            //         data: data,
+            //         success: function() {
+            //             showToast('success', 'Header berhasil diperbarui');
+            //         },
+            //         error: function(xhr) {
+            //             showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
+            //         }
+            //     });
+            // });
 
             // Open modal for new detail
             $('#addDetailButton').click(function() {
