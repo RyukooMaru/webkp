@@ -10,6 +10,7 @@ use App\Models\Inventory\PurchaseOrder;
 use App\Models\Inventory\PurchaseOrderDetail;
 use App\Models\Inventory\Dtproduk;
 use App\Models\Inventory\SatuanProduk;
+use App\Models\MutasiGudang\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,7 @@ class PenerimaanController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'po_id' => 'required|exists:purchase_orders,po_id',
             'tgl_terima' => 'required|date',
-            'gudang' => 'required|string|max:20',
+            'WARE_Auto' => 'required|exists:m_warehouse,WARE_Auto',
             'faktur' => 'required|string|max:50',
             'jatuh_tempo' => 'required|date|after:tgl_terima',
         ]);
@@ -71,6 +72,8 @@ class PenerimaanController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
+        $warehouse = Warehouse::where('WARE_Auto', $request->WARE_Auto)->first();
 
         $penerimaan = Penerimaan::create([
             'no_penerimaan' => $request->no_penerimaan,

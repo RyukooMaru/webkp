@@ -224,6 +224,8 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::delete('/purchase-orders/{purchase_order}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
         // Custom routes for PO operations
         Route::put('/purchase-orders/{id}/update-header', [PurchaseOrderController::class, 'updateHeader'])->name('purchase-orders.update-header');
+        Route::get('/purchase-orders/products-by-supplier/{supplier}',[PurchaseOrderController::class, 'productsBySupplier']);
+        Route::get('/purchase-orders/products/{id}',[PurchaseOrderController::class, 'getProductPrice']);
         Route::post('/purchase-orders/{poId}/details', [PurchaseOrderController::class, 'storeDetail'])->name('purchase-orders.store-detail');
         Route::put('/purchase-orders/{poId}/details/{detailId}', [PurchaseOrderController::class, 'updateDetail'])->name('purchase-orders.update-detail');
         Route::delete('/purchase-orders/{poId}/details/{detailId}', [PurchaseOrderController::class, 'deleteDetail'])->name('purchase-orders.delete-detail');
