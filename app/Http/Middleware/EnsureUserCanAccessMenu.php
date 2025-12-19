@@ -37,6 +37,10 @@ class EnsureUserCanAccessMenu
             return $next($request);
         }
 
+        if ($request->ajax() && $request->is('api/jualan/*')) {
+        return $next($request);
+        }
+
          if ($request->ajax() && $request->is('api/jualan/outstanding-orders/*')) {
             return $next($request);
         }

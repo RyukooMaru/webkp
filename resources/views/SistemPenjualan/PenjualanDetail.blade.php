@@ -157,7 +157,7 @@
                                                     <th class="text-center">Satuan</th>
                                                     <th class="text-right">Harga</th>
                                                     <th class="text-center">Disc(%)</th>
-                                                    <th class="text-right">Pajak</th>
+                                                    <th class="text-center">Pajak (%)</th>
                                                     <th class="text-right">Nominal</th>
                                                     <th>Catatan</th>
                                                 </tr>
@@ -171,7 +171,7 @@
                                                     <td class="text-center">{{ $detail->satuan ?? 'pcs' }}</td>
                                                     <td class="text-right">Rp{{ number_format($detail->harga, 0, ',', '.') }}</td>
                                                     <td class="text-center">{{ $detail->disc ?? 0 }}</td>
-                                                    <td class="text-right">Rp{{ number_format($detail->pajak, 0, ',', '.') }}</td>
+                                                    <td class="text-center">{{ $detail->pajak ?? 0 }}%</td>
                                                     <td class="text-right">Rp{{ number_format($detail->nominal, 0, ',', '.') }}</td>
                                                     <td>{{ $detail->catatan ?? '-' }}</td>
                                                 </tr>
@@ -225,9 +225,6 @@
                                     <div class="alert alert-warning">
                                         <i class="fas fa-exclamation-triangle"></i> Penjualan ini belum di-approve. Stok barang akan dikurangi setelah penjualan di-approve.
                                     </div>
-                                    <button class="btn btn-success btn-block" id="approveBtn" data-id="{{ $jualan->id }}" data-no_jualan="{{ $jualan->no_jualan }}">
-                                        <i class="fas fa-check"></i> Approve Penjualan
-                                    </button>
                                 </div>
                             </div>
                             @endif
