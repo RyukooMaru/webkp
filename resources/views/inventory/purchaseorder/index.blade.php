@@ -96,7 +96,8 @@
 
                                 <label class="col-sm-2 col-form-label">Supplier</label>
                                 <div class="col-sm-4">
-                                    <select name="supplier_id" id="supplier_id" class="form-control" 
+                                    <select name="supplier_id" id="supplier_id"
+                                        class="form-control header-lock"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Supplier</option>
                                         @foreach($suppliers as $supplier)
@@ -112,7 +113,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Pembelian</label>
                                 <div class="col-sm-4">
-                                    <select name="purchase_type" id="purchase_type" class="form-control" 
+                                    <select name="purchase_type" id="purchase_type"
+                                        class="form-control header-lock"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="langsung" {{ $header->purchase_type == 'langsung' ? 'selected' : '' }}>Langsung</option>
                                         <option value="konsinyasi" {{ $header->purchase_type == 'konsinyasi' ? 'selected' : '' }}>Konsinyasi</option>
@@ -121,13 +123,13 @@
 
                                 <label class="col-sm-2 col-form-label">Lokasi</label>
                                 <div class="col-sm-4">
-                                    <select name="location_id" id="location_id" class="form-control" 
+                                    <select name="WARE_Auto" id="location_id" class="form-control" 
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Lokasi</option>
-                                        @foreach($locations as $location)
-                                            <option value="{{ $location }}"
-                                                {{ $header->location_id == $location ? 'selected' : '' }}>
-                                                {{ $location }}
+                                        @foreach($locations as $wh)
+                                            <option value="{{ $wh->WARE_Auto }}"
+                                                {{ $header->location_id == $wh->WARE_Auto ? 'selected' : '' }}>
+                                                {{ $wh->WARE_Name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -137,7 +139,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Tgl Kirim</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="delivery_date" id="delivery_date" class="form-control"
+                                    <input type="date" name="delivery_date" id="delivery_date"
+                                        class="form-control header-lock"
                                         value="{{ old('delivery_date', $header->delivery_date?->format('Y-m-d')) }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
@@ -291,25 +294,7 @@
                                         <div class="col-sm-9">
                                             <select name="product_id" id="product_id" class="form-control" required>
                                                 <option value="">Pilih Produk</option>
-                                                @foreach($products as $product)
-                                                    <option value="{{ $product->id }}" 
-                                                        data-kode="{{ $product->kode_produk }}"
-                                                        data-nama="{{ $product->nama_produk }}">
-                                                        {{ $product->kode_produk }} - {{ $product->nama_produk }}
-                                                    </option>
-                                                @endforeach
                                             </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label class="col-sm-3 col-form-label">Kode</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_code" class="form-control" readonly>
-                                        </div>
-                                        <label class="col-sm-3 col-form-label">Nama</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_name" class="form-control" readonly>
                                         </div>
                                     </div>
 
@@ -333,7 +318,7 @@
                                     <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Harga Beli</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="1000" step="100" name="unit_price" id="unit_price" class="form-control calc-trigger" required>
+                                            <input type="number" min="1000" step="100" name="unit_price" id="unit_price" class="form-control calc-trigger" readonly>
                                         </div>
                                         
                                         <label class="col-sm-3 col-form-label">Disc (%)</label>
@@ -585,62 +570,178 @@
             }
 
             // Update product code and name when product is selected
-            $('#product_id').change(function() {
-                const selectedOption = $(this).find('option:selected');
-                $('#product_code').val(selectedOption.data('kode'));
-                $('#product_name').val(selectedOption.data('nama'));
-            });
+            // $('#product_id').change(function() {
+            //     const selectedOption = $(this).find('option:selected');
+            //     $('#product_code').val(selectedOption.data('kode'));
+            //     $('#product_name').val(selectedOption.data('nama'));
+            // });
 
             // Header update
-            $('#headerForm').on('change', 'input, select, textarea', function() {
-                const data = $('#headerForm').serialize();
-                $.ajax({
-                    url: `/inventory/purchase-orders/${headerId}/update-header`,
-                    type: 'PUT',
-                    data: data,
-                    success: function() {
-                        showToast('success', 'Header berhasil diperbarui');
-                    },
-                    error: function(xhr) {
-                        showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
+            $(document).ready(function () {
+
+                // 🔒 Lock header field selain gudang
+                function lockHeaderFields(lock = true) {
+                    $('.header-lock').prop('disabled', lock);
+                }
+
+                // 🔍 Cek gudang sudah dipilih atau belum
+                function isWarehouseSelected() {
+                    return $('select[name="WARE_Auto"]').val() !== '';
+                }
+
+                // Initial state saat page load
+                lockHeaderFields(!isWarehouseSelected());
+
+                // 1️⃣ Saat gudang dipilih
+                $('select[name="WARE_Auto"]').on('change', function () {
+
+                    if (!isWarehouseSelected()) {
+                        lockHeaderFields(true);
+                        return;
                     }
+
+                    lockHeaderFields(false);
+                    updateHeader();
                 });
+
+                // 2️⃣ Field header lain
+                $('#supplier_id, #purchase_type, input[name="delivery_date"]').on('change', function () {
+                    if (!isWarehouseSelected()) {
+                        return;
+                    }
+                    updateHeader();
+                });
+
+                // 🔁 AJAX update header
+                function updateHeader() {
+                    $.ajax({
+                        url: `/inventory/purchase-orders/${headerId}/update-header`,
+                        type: 'PUT',
+                        data: $('#headerForm').serialize(),
+                        success: function () {
+                            showToast('success', 'Header berhasil diperbarui');
+                        },
+                        error: function (xhr) {
+                            showToast(
+                                'error',
+                                xhr.responseJSON?.message ?? 'Gagal memperbarui header'
+                            );
+                        }
+                    });
+                }
+
             });
 
             // Open modal for new detail
-            $('#addDetailButton').click(function() {
-                editMode = false;
-                currentDetailId = null;
-                form[0].reset();
-                $('#product_code').val('');
-                $('#product_name').val('');
-                $('#nominal').val('');
-                $('#subtotal').val('');
-                modal.modal('show');
+            $(document).ready(function () {
+
+                /* ==========================
+                FUNCTION
+                ========================== */
+                function loadProductsBySupplier(selectedProductId = null) {
+
+                    const supplierId = $('#supplier_id').val();
+                    const $productSelect = $('#product_id');
+
+                    $productSelect.empty()
+                        .append('<option value="">Pilih Produk</option>');
+
+                    if (!supplierId) return;
+
+                    $.ajax({
+                        url: `/inventory/purchase-orders/products-by-supplier/${supplierId}`,
+                        type: 'GET',
+                        success: function (products) {
+
+                            products.forEach(function (product) {
+                                $productSelect.append(
+                                    `<option value="${product.id}">${product.nama_produk}</option>`
+                                );
+                            });
+
+                            if (selectedProductId) {
+                                $productSelect.val(selectedProductId).trigger('change');
+                            }
+                        },
+                        error: function () {
+                            showToast('error', 'Gagal memuat produk supplier');
+                        }
+                    });
+                }
+
+                /* ==========================
+                ADD DETAIL
+                ========================== */
+                $('#addDetailButton').on('click', function () {
+                    editMode = false;
+                    currentDetailId = null;
+                    form[0].reset();
+
+                    loadProductsBySupplier();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                EDIT DETAIL
+                ========================== */
+                $('#dataTable').on('click', '.edit-btn', function () {
+                    editMode = true;
+                    currentDetailId = $(this).data('id');
+
+                    const productId = $(this).data('product_id');
+
+                    loadProductsBySupplier(productId);
+
+                    $('#uom_id').val($(this).data('uom_id'));
+                    $('#qty').val($(this).data('qty'));
+                    $('#unit_price').val($(this).data('unit_price'));
+                    $('#tax_percent').val($(this).data('tax_percent'));
+                    $('#discount_percent').val($(this).data('discount_percent'));
+                    $('#dtl_note').val($(this).data('note'));
+
+                    calculateNominal();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                SUPPLIER CHANGE
+                ========================== */
+                $('#supplier_id').on('change', function () {
+                    if ($('#detailModal').hasClass('show')) {
+                        loadProductsBySupplier();
+                    }
+                });
+
             });
 
-            // Open modal for edit detail
-            $('#dataTable').on('click', '.edit-btn', function() {
-                editMode = true;
-                currentDetailId = $(this).data('id');
-                
-                // Fill form
-                const productId = $(this).data('product_id');
-                $('#product_id').val(productId);
-                const selectedProduct = $('#product_id option[value="' + productId + '"]');
-                $('#product_code').val(selectedProduct.data('kode'));
-                $('#product_name').val(selectedProduct.data('nama'));
-                $('#uom_id').val($(this).data('uom_id'));
-                $('#qty').val($(this).data('qty'));
-                $('#unit_price').val($(this).data('unit_price'));
-                $('#tax_percent').val($(this).data('tax_percent'));
-                $('#discount_percent').val($(this).data('discount_percent'));
-                $('#dtl_note').val($(this).data('note'));
-                
-                // Calculate nominal
-                calculateNominal();
-                
-                modal.modal('show');
+            $('#product_id').on('change', function () {
+
+                const productId = $(this).val();
+
+                // Reset jika kosong
+                if (!productId) {
+                    $('#unit_price').val('');
+                    calculateNominal();
+                    return;
+                }
+
+                $.ajax({
+                    url: `/inventory/purchase-orders/products/${productId}`,
+                    type: 'GET',
+                    success: function (res) {
+
+                        // 🔥 AUTO ISI HARGA BELI
+                        $('#unit_price').val(res.harga_beli);
+
+                        // 🔁 Hitung ulang subtotal
+                        calculateNominal();
+                    },
+                    error: function () {
+                        showToast('error', 'Gagal mengambil harga produk');
+                    }
+                });
             });
 
             // Save detail

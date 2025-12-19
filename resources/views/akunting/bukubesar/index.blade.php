@@ -120,14 +120,14 @@
                                                 </td>
                                                 <td>
                                                     @if($entry->perkiraan)
-                                                        {{ $entry->perkiraan->cls_kiraid }}
+                                                        {{ $entry->nama_perkiraan_display }}
                                                     @else
                                                         <span class="text-muted">N/A</span>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     @if($entry->perkiraan)
-                                                        {{ $entry->perkiraan->cls_ina }}
+                                                        {{ $entry->nama_perkiraan_display }}
                                                     @else
                                                         <span class="text-muted">N/A</span>
                                                     @endif

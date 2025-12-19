@@ -100,12 +100,12 @@
 
                                 <label class="col-sm-2 col-form-label">Supplier</label>
                                 <div class="col-sm-4">
-                                    <select name="supplier_id" id="supplier_id" class="form-control" 
+                                    <select name="supplier_id" id="supplier_id"
+                                        class="form-control"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Supplier</option>
                                         @foreach($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}"
-                                                {{ $header->supplier_id == $supplier->id ? 'selected' : '' }}>
+                                            <option value="{{ $supplier->id }}">
                                                 {{ $supplier->nama_supplier }}
                                             </option>
                                         @endforeach
@@ -116,28 +116,22 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">No. PO</label>
                                 <div class="col-sm-4">
-                                    <select name="po_id" id="po_id" class="form-control" 
+                                    <select name="po_id" id="po_id"
+                                        class="form-control"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
-                                        <option value="">Pilih Purchase Order</option>
-                                        @foreach($purchaseOrders as $po)
-                                            <option value="{{ $po->po_id }}"
-                                                {{ $header->po_id == $po->po_id ? 'selected' : '' }}
-                                                data-supplier="{{ $po->supplier_id }}">
-                                                {{ $po->po_number }}
-                                            </option>
-                                        @endforeach
+                                        <option value="">-- Pilih No. PO --</option>
                                     </select>
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Gudang</label>
                                 <div class="col-sm-4">
-                                    <select name="gudang" id="gudang" class="form-control" 
+                                    <select name="WARE_Auto" id="gudang" class="form-control" 
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Gudang</option>
-                                        @foreach($locations as $location)
-                                            <option value="{{ $location }}"
-                                                {{ $header->gudang == $location ? 'selected' : '' }}>
-                                                {{ $location }}
+                                        @foreach($locations as $wh)
+                                            <option value="{{ $wh->WARE_Auto }}"
+                                                {{ $header->gudang == $wh->WARE_Auto ? 'selected' : '' }}>
+                                                {{ $wh->WARE_Name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -147,7 +141,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Tgl. Terima</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="tgl_terima" id="tgl_terima" class="form-control"
+                                    <input type="date" name="tgl_terima" id="tgl_terima"
+                                        class="form-control header-lock"
                                         value="{{ old('tgl_terima', $header->tgl_terima?->format('Y-m-d')) }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
@@ -161,14 +156,16 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Faktur</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="faktur" id="faktur" class="form-control"
+                                    <input type="text" name="faktur" id="faktur"
+                                        class="form-control header-lock"
                                         value="{{ $header->faktur }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Jatuh Tempo</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="jatuh_tempo" id="jatuh_tempo" class="form-control"
+                                    <input type="date" name="jatuh_tempo" id="jatuh_tempo"
+                                        class="form-control header-lock"
                                         value="{{ old('jatuh_tempo', $header->jatuh_tempo?->format('Y-m-d')) }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
@@ -317,17 +314,6 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label class="col-sm-3 col-form-label">Kode</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_code" class="form-control" readonly>
-                                        </div>
-                                        <label class="col-sm-3 col-form-label">Nama</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_name" class="form-control" readonly>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Satuan</label>
                                         <div class="col-sm-3">
                                             <select name="uom_id" id="uom_id" class="form-control" required>
@@ -347,19 +333,19 @@
                                     <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Harga Beli</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="1000" step="100" name="harga_beli" id="harga_beli" class="form-control calc-trigger" required>
+                                            <input type="number" min="1000" step="100" name="harga_beli" id="harga_beli" class="form-control calc-trigger" readonly>
                                         </div>
                                         
                                         <label class="col-sm-3 col-form-label">Disc (%)</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="0" max="100" step="0.1" name="diskon_persen" id="diskon_persen" class="form-control calc-trigger" value="0">
+                                            <input type="number" min="0" max="100" step="0.1" name="diskon_persen" id="diskon_persen" class="form-control calc-trigger" value="0" readonly>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Pajak (%)</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="0" max="100" step="0.1" name="pajak_persen" id="pajak_persen" class="form-control calc-trigger" value="0">
+                                            <input type="number" min="0" max="100" step="0.1" name="pajak_persen" id="pajak_persen" class="form-control calc-trigger" value="0" readonly>
                                         </div>
                                         
                                         <label class="col-sm-3 col-form-label">Nominal</label>
@@ -558,12 +544,18 @@
 
         $(function() {
             const headerId = $('#penerimaanId').val();
+            let poId = null;
             const modal = $('#dtlModal');
             const form = $('#dtlForm');
             let editMode = false,
                 currentDetailId = null;
 
             // Auto-calculate nominal in modal
+            $('#po_id').on('change', function () {
+                poId = $(this).val();
+                console.log('PO ID updated:', poId);
+            });
+
             $('.calc-trigger').on('input', calculateNominal);
 
             function calculateNominal() {
@@ -587,81 +579,240 @@
             }
 
             // Update product code and name when product is selected
-            $('#product_id').change(function() {
-                const selectedOption = $(this).find('option:selected');
-                $('#product_code').val(selectedOption.data('kode'));
-                $('#product_name').val(selectedOption.data('nama'));
-            });
+            // $('#product_id').change(function() {
+            //     const selectedOption = $(this).find('option:selected');
+            //     $('#product_code').val(selectedOption.data('kode'));
+            //     $('#product_name').val(selectedOption.data('nama'));
+            // });
 
             // Sync PO and Supplier selection
-            $('#po_id').change(function() {
-                const selectedOption = $(this).find('option:selected');
-                const supplierId = selectedOption.data('supplier');
-                if (supplierId) {
-                    $('#supplier_id').val(supplierId).trigger('change');
+            document.getElementById('supplier_id').addEventListener('change', function () {
+                let supplierId = this.value;
+                let poSelect = document.getElementById('po_id');
+
+                // Reset PO
+                poSelect.innerHTML = '<option value="">-- Pilih No. PO --</option>';
+
+                if (!supplierId) {
+                    return;
                 }
+
+                fetch(`/inventory/penerimaan/po-by-supplier/${supplierId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Server error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length === 0) {
+                            // Tidak ada PO → dropdown tetap kosong
+                            return;
+                        }
+
+                        data.forEach(po => {
+                            let option = document.createElement('option');
+                            option.value = po.po_id;
+                            option.text = po.po_number;
+                            poSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             });
 
             // Header update
-            $('#headerForm').on('change', 'input, select, textarea', function() {
-                const data = $('#headerForm').serialize();
-                $.ajax({
-                    url: `/inventory/penerimaan/${headerId}/update-header`,
-                    type: 'PUT',
-                    data: data,
-                    success: function() {
-                        showToast('success', 'Header berhasil diperbarui');
-                    },
-                    error: function(xhr) {
-                        showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
+            $(document).ready(function () {
+
+                // 🔒 Lock header field selain gudang
+                function lockHeaderFields(lock = true) {
+                    $('.header-lock').prop('disabled', lock);
+                }
+
+                // 🔍 Cek gudang sudah dipilih atau belum
+                function isWarehouseSelected() {
+                    return $('select[name="WARE_Auto"]').val() !== '';
+                }
+
+                // Initial state saat page load
+                lockHeaderFields(!isWarehouseSelected());
+
+                // 1️⃣ Saat gudang dipilih
+                $('select[name="WARE_Auto"]').on('change', function () {
+
+                    if (!isWarehouseSelected()) {
+                        lockHeaderFields(true);
+                        return;
                     }
+
+                    lockHeaderFields(false);
+                    updateHeader();
                 });
+
+                // 2️⃣ Field header lain
+                $('#supplier_id, #po_id, input[name="tgl_terima"], input[name="jatuh_tempo"], input[name="faktur"]').on('change', function () {
+                    if (!isWarehouseSelected()) {
+                        return;
+                    }
+                    updateHeader();
+                });
+
+                // 🔁 AJAX update header
+                function updateHeader() {
+                    $.ajax({
+                        url: `/inventory/penerimaan/${headerId}/update-header`,
+                        type: 'PUT',
+                        data: $('#headerForm').serialize(),
+                        success: function () {
+                            showToast('success', 'Header berhasil diperbarui');
+                        },
+                        error: function (xhr) {
+                            showToast(
+                                'error',
+                                xhr.responseJSON?.message ?? 'Gagal memperbarui header'
+                            );
+                        }
+                    });
+                }
+
             });
 
             // Open modal for new detail
-            $('#addDetailButton').click(function() {
-                editMode = false;
-                currentDetailId = null;
-                form[0].reset();
-                $('#product_code').val('');
-                $('#product_name').val('');
-                $('#nominal').val('');
-                $('#subtotal').val('');
-                modal.modal('show');
+             $(document).ready(function () {
+
+                /* ==========================
+                FUNCTION
+                ========================== */
+                function loadProductsBySupplier(selectedProductId = null) {
+
+                    const supplierId = $('#supplier_id').val();
+                    const $productSelect = $('#product_id');
+
+                    $productSelect.empty()
+                        .append('<option value="">Pilih Produk</option>');
+
+                    if (!supplierId) return;
+
+                    $.ajax({
+                        url: `/inventory/penerimaan/products-by-supplier/${supplierId}`,
+                        type: 'GET',
+                        success: function (products) {
+
+                            products.forEach(function (product) {
+                                $productSelect.append(
+                                    `<option value="${product.id}">${product.nama_produk}</option>`
+                                );
+                            });
+
+                            if (selectedProductId) {
+                                $productSelect.val(selectedProductId).trigger('change');
+                            }
+                        },
+                        error: function () {
+                            showToast('error', 'Gagal memuat produk supplier');
+                        }
+                    });
+                }
+
+                /* ==========================
+                ADD DETAIL
+                ========================== */
+                $('#addDetailButton').on('click', function () {
+                    editMode = false;
+                    currentDetailId = null;
+                    form[0].reset();
+
+                    loadProductsBySupplier();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                EDIT DETAIL
+                ========================== */
+                $('#dataTable').on('click', '.edit-btn', function () {
+                    editMode = true;
+                    currentDetailId = $(this).data('id');
+
+                    const productId = $(this).data('product_id');
+
+                    loadProductsBySupplier(productId);
+
+                    $('#uom_id').val($(this).data('uom_id'));
+                    $('#qty').val($(this).data('qty'));
+                    $('#unit_price').val($(this).data('unit_price'));
+                    $('#tax_percent').val($(this).data('tax_percent'));
+                    $('#discount_percent').val($(this).data('discount_percent'));
+                    $('#dtl_note').val($(this).data('note'));
+
+                    calculateNominal();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                SUPPLIER CHANGE
+                ========================== */
+                $('#supplier_id').on('change', function () {
+                    if ($('#detailModal').hasClass('show')) {
+                        loadProductsBySupplier();
+                    }
+                });
+
             });
 
-            // Open modal for edit detail
-            $('#dataTable').on('click', '.edit-btn', function() {
-                editMode = true;
-                currentDetailId = $(this).data('id');
-                
-                // Fill form
-                const productId = $(this).data('product_id');
-                $('#product_id').val(productId);
-                const selectedProduct = $('#product_id option[value="' + productId + '"]');
-                $('#product_code').val(selectedProduct.data('kode'));
-                $('#product_name').val(selectedProduct.data('nama'));
-                $('#uom_id').val($(this).data('uom_id'));
-                $('#qty').val($(this).data('qty'));
-                $('#harga_beli').val($(this).data('harga_beli'));
-                $('#pajak_persen').val($(this).data('pajak_persen'));
-                $('#diskon_persen').val($(this).data('diskon_persen'));
-                $('#dtl_catatan').val($(this).data('catatan'));
-                
-                // Calculate nominal
-                calculateNominal();
-                
-                modal.modal('show');
-            });
+            $('#product_id').on('change', function () {
 
-            // Save detail
+                const productId = $(this).val();
+
+                // Reset jika kosong
+                if (!productId) {
+                    $('#unit_price').val('');
+                    calculateNominal();
+                    return;
+                }
+
+                $.ajax({
+                    url: `/inventory/penerimaan/products/${productId}`,
+                    type: 'GET',
+                    success: function (res) {
+
+                        // 🔥 AUTO ISI HARGA BELI
+                        $('#harga_beli').val(res.harga_beli);
+                        $('#pajak_persen').val(res.pajak_persen);
+                        $('#diskon_persen').val(res.diskon_persen);
+
+                        // 🔁 Hitung ulang subtotal
+                        calculateNominal();
+                    },
+                    error: function () {
+                        showToast('error', 'Gagal mengambil harga produk');
+                    }
+                });
+            });  
+
+            // // Save detail
             $('#dtlSave').click(function() {
+
+                if (!poId) {
+                    showToast('error', 'PO belum dipilih');
+                    return;
+                }
+
                 const data = form.serialize();
                 const url = editMode 
-                    ? `/inventory/penerimaan/${headerId}/details/${currentDetailId}`
-                    : `/inventory/penerimaan/${headerId}/details`;
+                    ? `/inventory/penerimaan/${headerId}/${poId}/details/${currentDetailId}`
+                    : `/inventory/penerimaan/${headerId}/${poId}/details`;
 
                 const method = editMode ? 'PUT' : 'POST';
+
+                console.log({
+                    headerId,
+                    poId,
+                    currentDetailId,
+                    editMode
+                });
 
                 $.ajax({
                     url: url,

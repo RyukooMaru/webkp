@@ -3,16 +3,32 @@
 @section('main-content')
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">Jurnal Umum</h1>
-    <div class="mb-3">
-        @php
-            $currentRouteName = Route::currentRouteName();
-            $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
-        @endphp
-        @can('tambah', $currentMenuSlug)
-        <button type="button" class="btn btn-primary" id="btnTambahJurnal">
-            <i class="fas fa-plus"></i> Tambah Jurnal
-        </button>
-        @endcan
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        
+        {{-- Tombol Tambah --}}
+        <div>
+            @php
+                $currentRouteName = Route::currentRouteName();
+                $currentMenuSlug = Str::beforeLast($currentRouteName, '.');
+            @endphp
+            @can('tambah', $currentMenuSlug)
+            <button type="button" class="btn btn-primary" id="btnTambahJurnal">
+                <i class="fas fa-plus"></i> Tambah Jurnal
+            </button>
+            @endcan
+        </div>
+
+        {{-- Filter Lokasi --}}
+        <div>
+            <select id="filterLokasi" class="form-control" style="width: 250px;">
+                <option value="">-- Semua Lokasi --</option>
+                @if(isset($warehouses))
+                    @foreach($warehouses as $warehouse)
+                        <option value="{{ $warehouse->WARE_Name }}">{{ $warehouse->WARE_Name }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
     </div>
     <div class="card mb-4">
         <div class="card-header">
@@ -145,14 +161,12 @@
                 @csrf {{-- CSRF Token --}}
                 <input type="hidden" name="_method" id="formMethod" value="POST"> {{-- Untuk metode PUT saat edit --}}
                 <input type="hidden" name="jurnal_id" id="jurnalId" value=""> {{-- ID jurnal untuk edit --}}
-
                 <div class="modal-header">
                     <h5 class="modal-title" id="jurnalModalLabel">Tambah Jurnal Baru</h5>
                 </div>
                 <div class="modal-body">
-                     {{-- Alert untuk error di dalam modal --}}
                     <div id="modal-alert" class="alert alert-danger" style="display: none;">
-                         <ul id="modal-error-list"></ul>
+                        <ul id="modal-error-list"></ul>
                     </div>
 
                     {{-- Header Jurnal --}}
@@ -165,7 +179,7 @@
                             <label for="tanggal_buat" class="form-label">Tanggal Transaksi <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_buat" name="tanggal_buat" required>
                         </div>
-                         <div class="col-md-3">
+                        <div class="col-md-3">
                             <label for="lokasi_nama" class="form-label">Lokasi</label>
                             <select class="form-control" id="lokasi_nama" name="lokasi_nama">
                                 <option value="" selected>-- Pilih Lokasi --</option>
@@ -177,20 +191,18 @@
                                 @endif
                             </select>
                         </div>
-                         <div class="col-md-3">
+                        <div class="col-md-3">
                             <label for="referensi" class="form-label">Referensi</label>
                             <input type="text" class="form-control" id="referensi" name="referensi" placeholder="No. Faktur, dll">
                         </div>
                     </div>
-                     <div class="row mb-3">
-                         <div class="col-md-12">
-                             <label for="catatan_header" class="form-label">Catatan Header</label>
-                             <textarea class="form-control" id="catatan_header" name="catatan_header" rows="2"></textarea>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="catatan_header" class="form-label">Catatan Header</label>
+                            <textarea class="form-control" id="catatan_header" name="catatan_header" rows="2"></textarea>
                          </div>
                      </div>
-
                     <hr>
-
                     {{-- Detail Jurnal --}}
                     <h5 class="mb-3">Detail Penjurnalan</h5>
                     <div class="table-responsive">
@@ -479,6 +491,21 @@ var table = $('#dataTable').DataTable();
     // EVENT LISTENERS
     // -------------------------
 
+    // Filter Lokasi
+    $('#filterLokasi').on('change', function() {
+        var selectedLocation = $(this).val();
+        
+        // Column index 3 adalah kolom "Lokasi" (dihitung mulai dari 0: Tanggal, No, Ref, Lokasi)
+        // Kita menggunakan regex untuk pencarian presisi (exact match)
+        if (selectedLocation) {
+            // Search dengan regex: ^value$ (diawali dan diakhiri dengan value tersebut)
+            table.column(3).search('^' + selectedLocation + '$', true, false).draw();
+        } else {
+            // Jika memilih "Semua Lokasi", hapus filter
+            table.column(3).search('').draw();
+        }
+    });
+
     // Tombol Tambah Jurnal di Klik
     $('#btnTambahJurnal').on('click', function() {
         console.log("Tombol Tambah Jurnal diklik");
@@ -511,7 +538,18 @@ var table = $('#dataTable').DataTable();
             const data = response.jurnal;
             if (data) {
                 $('#no_jurnal_display').val(data.no_jurnal);
-                $('#tanggal_buat').val(data.tanggal_buat.split('T')[0]);
+                // perubahan baris edit tanggal yang mundur 1 hari
+                const tanggalDariServer = data.tanggal_buat; // Misal: "2025-10-19"
+                if (tanggalDariServer) {
+                    // 1. Buat objek Date. Ini OTOMATIS mengonversi ke zona waktu lokal browser
+                    const tanggalLokal = new Date(tanggalDariServer);
+                    // 2. Format manual ke YYYY-MM-DD yang dibutuhkan oleh <input type="date">
+                    const yyyy = tanggalLokal.getFullYear();
+                    const mm = String(tanggalLokal.getMonth() + 1).padStart(2, '0'); // +1 karena bulan (0-11)
+                    const dd = String(tanggalLokal.getDate()).padStart(2, '0');
+                    const formatInput = `${yyyy}-${mm}-${dd}`; // Hasil: "2025-10-20"
+                    $('#tanggal_buat').val(formatInput);
+                }
                 $('#lokasi_nama').val(data.lokasi_nama);
                 $('#referensi').val(data.referensi);
                 $('#catatan_header').val(data.catatan);
@@ -802,7 +840,6 @@ var table = $('#dataTable').DataTable();
     const totalKredit = parseCurrency($('#totalKredit').text());
     if (Math.abs(totalDebet - totalKredit) >= 0.01) { /* ... */ return; }
 
-
     // 1. Kumpulkan data header
     let headerData = {};
     // Ambil semua field KECUALI detail asli dari form
@@ -852,11 +889,37 @@ var table = $('#dataTable').DataTable();
         finalData['_token'] = $('meta[name="csrf-token"]').attr('content'); // Ambil dari meta tag
      }
 
-
     // Disable tombol simpan... (SUDAH ADA)
     const submitButton = $('#btnSimpanJurnal');
     submitButton.prop('disabled', true).html(/* Loading spinner */);
     $('#modal-alert').hide();
+
+    // Penambahan sistem tanggal yang tidak boleh maju dari tanggal sekarang
+    const tanggalInput = $('#tanggal_buat').val(); // Misal: "2025-10-21"
+
+    // Buat objek tanggal hari ini (setel waktu ke tengah malam)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Ini penting untuk perbandingan murni tanggal
+
+    // Buat objek tanggal dari input
+    // Kita parse manual untuk menghindari masalah timezone (new Date("YYYY-MM-DD") itu UTC)
+    const parts = tanggalInput.split('-'); // [ "2025", "10", "21" ]
+    // Bulan di JS adalah 0-11, jadi kita kurangi 1
+    const inputDate = new Date(parts[0], parts[1] - 1, parts[2]); 
+    inputDate.setHours(0, 0, 0, 0); // Setel ke tengah malam juga
+    // Lakukan Pengecekan
+    if (inputDate > today) {
+        // Jika tanggal yang diinput MELEBIHI hari ini (ada di masa depan)
+
+        // Tampilkan pesan error menggunakan fungsi Anda yang sudah ada
+        Swal.fire('Oops!', 'Tanggal tidak boleh melebihi hari ini.', 'warning');
+
+        // Aktifkan kembali tombol simpan (karena proses dihentikan)
+        submitButton.prop('disabled', false).html('<i class="fas fa-save"></i> Simpan Jurnal');
+        
+        // Hentikan eksekusi, jangan kirim AJAX
+        return; 
+    }
 
     // Kirim data via AJAX
     $.ajax({

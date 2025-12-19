@@ -8,6 +8,7 @@ use App\Models\Inventory\PurchaseOrderDetail;
 use App\Models\Inventory\Supplier;
 use App\Models\Inventory\Dtproduk;
 use App\Models\Inventory\SatuanProduk;
+use App\Models\MutasiGudang\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -42,14 +43,24 @@ class PurchaseOrderController extends Controller
                 'kontak_person' => 'Contact Person Dummy'
             ]);
         }
+
+        $lastPO = PurchaseOrder::orderBy('po_id', 'desc')->first();
+
+        $nextNumber = $lastPO
+            ? ((int) substr($lastPO->po_number, 3)) + 1
+            : 1;
+
+        $poNumber= 'PO-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+        $defaultWarehouse = Warehouse::orderBy('WARE_Auto')->first();
     
         // Create new draft PO dengan nilai default
         $po = PurchaseOrder::create([
-            'po_number' => 'PO-' . Str::random(6),
+            'po_number' => $poNumber,
             'status' => 'draft',
             'supplier_id' => $dummySupplier->id, // Gunakan supplier dummy
+            'location_id' => $defaultWarehouse->WARE_Name, // Nilai default
             'purchase_type' => 'langsung', // Nilai default
-            'location_id' => 'WH-A', // Nilai default
             'delivery_date' => now()->addDays(7), // Nilai default (7 hari dari sekarang)
         ]);
     
@@ -61,7 +72,7 @@ class PurchaseOrderController extends Controller
         $validator = Validator::make($request->all(), [
             'supplier_id' => 'required|exists:suppliers,id',
             'purchase_type' => 'required|in:langsung,konsinyasi',
-            'location_id' => 'required',
+            'location_id' => 'required|exists:m_warehouse,WARE_Auto',
             'delivery_date' => 'required|date',
         ]);
 
@@ -69,12 +80,14 @@ class PurchaseOrderController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $warehouse = Warehouse::where('WARE_Auto', $request->WARE_Auto)->first();
+
         $po = PurchaseOrder::create([
             'po_number' => 'PO-' . Str::random(6),
             'status' => 'draft',
             'supplier_id' => $request->supplier_id,
             'purchase_type' => $request->purchase_type,
-            'location_id' => $request->location_id,
+            'location_id' => $warehouse->WARE_Name,
             'delivery_date' => $request->delivery_date
         ]);
 
@@ -91,7 +104,7 @@ class PurchaseOrderController extends Controller
             'suppliers' => Supplier::all(),
             'products' => Dtproduk::all(),
             'uoms' => SatuanProduk::all(),
-            'locations' => ['WH-A', 'WH-B', 'WH-C']
+            'locations' => Warehouse::orderBy('WARE_Name')->get()
         ]);
     }
 
@@ -105,7 +118,7 @@ class PurchaseOrderController extends Controller
         'suppliers' => Supplier::orderBy('nama_supplier')->get()->unique('nama_supplier'),
         'products' => Dtproduk::all(),
         'uoms' => SatuanProduk::all(),
-        'locations' => ['WH-A', 'WH-B', 'WH-C']
+        'locations' => Warehouse::orderBy('WARE_Name')->get()
     ]);
     }
 
@@ -145,14 +158,39 @@ class PurchaseOrderController extends Controller
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'purchase_type' => 'required|in:langsung,konsinyasi',
-            'location_id' => 'required',
+            'WARE_Auto' => 'required|exists:m_warehouse,WARE_Auto',
             'delivery_date' => 'required|date',
         ]);
 
+        $warehouse = Warehouse::findOrFail($request->WARE_Auto);
+
         $po = PurchaseOrder::findOrFail($id);
-        $po->update($request->all());
+        $po->update([
+            'supplier_id' => $request->supplier_id,
+            'purchase_type' => $request->purchase_type,
+            'location_id' => $warehouse->WARE_Name, 
+            'delivery_date' => $request->delivery_date,
+        ]);
 
         return response()->json(['success' => true]);
+    }
+
+    public function productsBySupplier($supplierId)
+    {
+        $products = Dtproduk::where('supplier_id', $supplierId)
+            ->orderBy('nama_produk')
+            ->get(['id', 'nama_produk']);
+
+        return response()->json($products);
+    }
+
+    public function getProductPrice($id)
+    {
+        $product = Dtproduk::findOrFail($id);
+
+        return response()->json([
+            'harga_beli' => $product->harga_beli
+        ]);
     }
 
     public function storeDetail(Request $request, $poId)
@@ -165,6 +203,26 @@ class PurchaseOrderController extends Controller
             'tax_percent' => 'nullable|numeric|min:0|max:100',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
+
+        $po = PurchaseOrder::findOrFail($poId);
+
+        $product = Dtproduk::findOrFail($request->product_id);
+
+        $isValidProduct = Dtproduk::where('id', $request->product_id)
+            ->where('supplier_id', $po->supplier_id)
+            ->exists();
+            
+        if (!$isValidProduct) {
+            return response()->json([
+                'message' => 'Produk tidak sesuai dengan supplier PO'
+            ], 422);
+        }
+
+        if ($request->unit_price < $product->harga_beli) {
+            return response()->json([
+                'message' => 'Harga beli tidak boleh lebih kecil dari harga default'
+            ], 422);
+        }
 
         PurchaseOrderDetail::create([
             'po_id' => $poId,
@@ -190,6 +248,18 @@ class PurchaseOrderController extends Controller
             'tax_percent' => 'nullable|numeric|min:0|max:100',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
         ]);
+
+        $po = PurchaseOrder::findOrFail($poId);
+
+        $isValidProduct = Dtproduk::where('id', $request->product_id)
+            ->where('supplier_id', $po->supplier_id)
+            ->exists();
+            
+        if (!$isValidProduct) {
+            return response()->json([
+                'message' => 'Produk tidak sesuai dengan supplier PO'
+            ], 422);
+        }
 
         $detail = PurchaseOrderDetail::where('po_id', $poId)
             ->where('detail_id', $detailId)

@@ -11,11 +11,6 @@ class EnsureUserCanAccessMenu
 {
     public function handle(Request $request, Closure $next)
     {
-
-        if ($request->is('api/*')) {
-            return $next($request);
-        }
-
         if (!Auth::check()) {
             return redirect()->route('login');
         }
@@ -25,6 +20,28 @@ class EnsureUserCanAccessMenu
 
         // Jika route tidak memiliki nama atau route khusus yang boleh diakses
         if (is_null($routeName)) {
+            return $next($request);
+        }
+
+        if (
+            $request->ajax() &&
+            $request->is('inventory/purchase-orders/*')
+        ) {
+            return $next($request);
+        }
+
+        if (
+            $request->ajax() &&
+            $request->is('inventory/penerimaan/*')
+        ) {
+            return $next($request);
+        }
+
+         if ($request->ajax() && $request->is('api/jualan/outstanding-orders/*')) {
+            return $next($request);
+        }
+
+        if ($request->ajax() && $request->is('api/customer-orders/*/details')) {
             return $next($request);
         }
 
