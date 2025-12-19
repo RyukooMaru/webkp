@@ -241,13 +241,11 @@ Route::middleware(['auth', 'can.access.menu'])->group(function () {
         Route::delete('/penerimaan/{penerimaan}', [PenerimaanController::class, 'destroy'])->name('penerimaan.destroy');
         // Custom routes for Penerimaan operations
         Route::put('/penerimaan/{id}/update-header', [PenerimaanController::class, 'updateHeader'])->name('penerimaan.update-header');
-        Route::get('/penerimaan/po-by-supplier/{supplier_id}', [PenerimaanController::class, 'getPOBySupplier'])->name('penerimaan.po.by.supplier');
-        Route::get('/inventory/penerimaan/po-detail/{po_id}', [PenerimaanController::class, 'getPODetail'])->name('penerimaan.po.detail');
-        Route::post('/penerimaan/{id}/load-po-detail', [PenerimaanController::class, 'loadPODetailToPenerimaan'])->name('penerimaan.load.po.detail');
-        Route::get('/penerimaan/{id}/details', [PenerimaanController::class, 'getDetails'])->name('penerimaan.details');
-        Route::get('/inventory/penerimaan/get-supplier-from-po/{po_id}', function ($po_id) {$po = \App\Models\Inventory\PurchaseOrder::findOrFail($po_id);return response()->json(['supplier_id' => $po->supplier_id]);});
-        Route::post('/penerimaan/{penerimaanId}/details', [PenerimaanController::class, 'storeDetail'])->name('penerimaan.store-detail');
-        Route::put('/penerimaan/{penerimaanId}/details/{detailId}', [PenerimaanController::class, 'updateDetail'])->name('penerimaan.update-detail');
+        Route::get('/penerimaan/po-by-supplier/{supplier}', [PenerimaanController::class, 'POBySupplier']);
+        Route::get('/penerimaan/products-by-supplier/{supplier}',[PenerimaanController::class, 'productsBySupplier']);
+        Route::get('/penerimaan/products/{id}',[PenerimaanController::class, 'getProductPrice']);
+        Route::post('/penerimaan/{penerimaanId}/{poId}/details', [PenerimaanController::class, 'storeDetail'])->name('penerimaan.store-detail');
+        Route::put('/penerimaan/{penerimaanId}/{poId}/details/{detailId}', [PenerimaanController::class, 'updateDetail'])->name('penerimaan.update-detail');
         Route::delete('/penerimaan/{penerimaanId}/details/{detailId}', [PenerimaanController::class, 'deleteDetail'])->name('penerimaan.delete-detail');
         Route::post('/penerimaan/{id}/publish', [PenerimaanController::class, 'publish'])->name('penerimaan.publish');
         Route::delete('/penerimaan/{id}/cancel', [PenerimaanController::class, 'cancel'])->name('penerimaan.cancel');

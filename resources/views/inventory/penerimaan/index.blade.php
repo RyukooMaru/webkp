@@ -88,8 +88,8 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <form id="headerForm" onsubmit="return false;">@csrf
-                            <input type="hidden" id="penerimaan_id" onsubmit="return false;" value="{{ $header->penerimaan_id }}">
+                        <form id="headerForm">@csrf
+                            <input type="hidden" id="penerimaanId" value="{{ $header->penerimaan_id }}">
 
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">No. Penerimaan</label>
@@ -100,12 +100,12 @@
 
                                 <label class="col-sm-2 col-form-label">Supplier</label>
                                 <div class="col-sm-4">
-                                    <select name="supplier_id" id="supplier_id" class="form-control" 
+                                    <select name="supplier_id" id="supplier_id"
+                                        class="form-control"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Supplier</option>
                                         @foreach($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}"
-                                                {{ $header->supplier_id == $supplier->id ? 'selected' : '' }}>
+                                            <option value="{{ $supplier->id }}">
                                                 {{ $supplier->nama_supplier }}
                                             </option>
                                         @endforeach
@@ -116,21 +116,22 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">No. PO</label>
                                 <div class="col-sm-4">
-                                    <select name="po_id" id="po_id" class="form-control" 
+                                    <select name="po_id" id="po_id"
+                                        class="form-control"
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
-                                        <option value="">Pilih Purchase Order</option>
+                                        <option value="">-- Pilih No. PO --</option>
                                     </select>
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Gudang</label>
                                 <div class="col-sm-4">
-                                    <select name="gudang" id="gudang" class="form-control" 
+                                    <select name="WARE_Auto" id="gudang" class="form-control" 
                                         {{ $header->status !== 'draft' ? 'disabled' : '' }} required>
                                         <option value="">Pilih Gudang</option>
-                                        @foreach($locations as $location)
-                                            <option value="{{ $location }}"
-                                                {{ $header->gudang == $location ? 'selected' : '' }}>
-                                                {{ $location }}
+                                        @foreach($locations as $wh)
+                                            <option value="{{ $wh->WARE_Auto }}"
+                                                {{ $header->gudang == $wh->WARE_Auto ? 'selected' : '' }}>
+                                                {{ $wh->WARE_Name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -140,7 +141,8 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Tgl. Terima</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="tgl_terima" id="tgl_terima" class="form-control"
+                                    <input type="date" name="tgl_terima" id="tgl_terima"
+                                        class="form-control header-lock"
                                         value="{{ old('tgl_terima', $header->tgl_terima?->format('Y-m-d')) }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
@@ -154,14 +156,16 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Faktur</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="faktur" id="faktur" class="form-control"
+                                    <input type="text" name="faktur" id="faktur"
+                                        class="form-control header-lock"
                                         value="{{ $header->faktur }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
 
                                 <label class="col-sm-2 col-form-label">Jatuh Tempo</label>
                                 <div class="col-sm-4">
-                                    <input type="date" name="jatuh_tempo" id="jatuh_tempo" class="form-control"
+                                    <input type="date" name="jatuh_tempo" id="jatuh_tempo"
+                                        class="form-control header-lock"
                                         value="{{ old('jatuh_tempo', $header->jatuh_tempo?->format('Y-m-d')) }}" 
                                         {{ $header->status !== 'draft' ? 'readonly' : '' }} required>
                                 </div>
@@ -181,6 +185,12 @@
                 {{-- TOMBOL ACTION --}}
                 @if($header->status === 'draft')
                 <div class="mb-3 d-flex">
+                    @can('tambah', $currentMenuSlug)
+                    <button type="button" id="addDetailButton" class="btn btn-primary mr-2" data-bs-toggle="modal"
+                        data-bs-target="#dtlModal">
+                        <i class="fas fa-plus"></i> Tambah Barang
+                    </button>
+                    @endcan
                     
                     @can('ubah', $currentMenuSlug)
                     <button id="btnPublish" class="btn btn-success mr-2">
@@ -188,6 +198,11 @@
                     </button>
                     @endcan
                     
+                    @can('hapus', $currentMenuSlug)
+                    <button id="btnCancelDraft" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Batalkan
+                    </button>
+                    @endcan
                 </div>
                 @endif
 
@@ -211,12 +226,56 @@
                                         <th width='10%'>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody id="detail_table_body">
+                                <tbody>
+                                    @foreach($header->details as $detail)
+                                        <tr>
+                                            <td>{{ $detail->product->kode_produk }}</td>
+                                            <td>{{ $detail->product->nama_produk }}</td>
+                                            <td class="text-right">{{ number_format($detail->qty) }}</td>
+                                            <td>{{ $detail->uom->UOM_Code }}</td>
+                                            <td class="text-right">{{ number_format($detail->harga_beli, 0, ',', '.') }}</td>
+                                            <td class="text-right">{{ number_format($detail->diskon_persen, 2) }}</td>
+                                            <td class="text-right">{{ number_format($detail->pajak_persen, 2) }}</td>
+                                            <td class="text-right">{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                                            <td>{{ $detail->catatan }}</td>
+                                            <td>
+                                                @if($header->status === 'draft')
+                                                    @can('ubah', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-warning edit-btn" 
+                                                        data-id="{{ $detail->detail_id }}"
+                                                        data-product_id="{{ $detail->product_id }}"
+                                                        data-uom_id="{{ $detail->uom_id }}"
+                                                        data-qty="{{ $detail->qty }}"
+                                                        data-harga_beli="{{ $detail->harga_beli }}"
+                                                        data-pajak_persen="{{ $detail->pajak_persen }}"
+                                                        data-diskon_persen="{{ $detail->diskon_persen }}"
+                                                        data-catatan="{{ $detail->catatan }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    @endcan
+                                                    
+                                                    @can('hapus', $currentMenuSlug)
+                                                    <button class="btn btn-sm btn-danger delete-btn" 
+                                                        data-id="{{ $detail->detail_id }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    @endcan
+                                                @else
+                                                <span class="text-muted">Locked</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                                 <tfoot class="font-weight-bold">
                                     <tr>
                                         <td colspan="7" class="text-right">TOTAL</td>
-                                        <td class="text-right" id="grand-total">0</td>
+                                        <td class="text-right">
+                                            @php
+                                                $grandTotal = $header->details->sum('subtotal');
+                                            @endphp
+                                            {{ number_format($grandTotal, 0, ',', '.') }}
+                                        </td>
                                         <td colspan="2"></td>
                                     </tr>
                                 </tfoot>
@@ -255,17 +314,6 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label class="col-sm-3 col-form-label">Kode</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_code" class="form-control" readonly>
-                                        </div>
-                                        <label class="col-sm-3 col-form-label">Nama</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" id="product_name" class="form-control" readonly>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Satuan</label>
                                         <div class="col-sm-3">
                                             <select name="uom_id" id="uom_id" class="form-control" required>
@@ -285,19 +333,19 @@
                                     <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Harga Beli</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="1000" step="100" name="harga_beli" id="harga_beli" class="form-control calc-trigger" required>
+                                            <input type="number" min="1000" step="100" name="harga_beli" id="harga_beli" class="form-control calc-trigger" readonly>
                                         </div>
                                         
                                         <label class="col-sm-3 col-form-label">Disc (%)</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="0" max="100" step="0.1" name="diskon_persen" id="diskon_persen" class="form-control calc-trigger" value="0">
+                                            <input type="number" min="0" max="100" step="0.1" name="diskon_persen" id="diskon_persen" class="form-control calc-trigger" value="0" readonly>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label class="col-sm-3 col-form-label">Pajak (%)</label>
                                         <div class="col-sm-3">
-                                            <input type="number" min="0" max="100" step="0.1" name="pajak_persen" id="pajak_persen" class="form-control calc-trigger" value="0">
+                                            <input type="number" min="0" max="100" step="0.1" name="pajak_persen" id="pajak_persen" class="form-control calc-trigger" value="0" readonly>
                                         </div>
                                         
                                         <label class="col-sm-3 col-form-label">Nominal</label>
@@ -496,35 +544,41 @@
 
         $(function() {
             const headerId = $('#penerimaanId').val();
+            let poId = null;
             const modal = $('#dtlModal');
-            const form = $('#dtlForm'); 
+            const form = $('#dtlForm');
             let editMode = false,
                 currentDetailId = null;
 
             // Auto-calculate nominal in modal
-            // $('.calc-trigger').on('input', calculateNominal);
+            $('#po_id').on('change', function () {
+                poId = $(this).val();
+                console.log('PO ID updated:', poId);
+            });
 
-            // function calculateNominal() {
-            //     const qty = parseFloat($('#qty').val()) || 0;
-            //     const hargaBeli = parseFloat($('#harga_beli').val()) || 0;
-            //     const diskonPersen = parseFloat($('#diskon_persen').val()) || 0;
-            //     const pajakPersen = parseFloat($('#pajak_persen').val()) || 0;
+            $('.calc-trigger').on('input', calculateNominal);
 
-            //     // Calculate subtotal (price * qty)
-            //     const subtotal = qty * hargaBeli;
+            function calculateNominal() {
+                const qty = parseFloat($('#qty').val()) || 0;
+                const hargaBeli = parseFloat($('#harga_beli').val()) || 0;
+                const diskonPersen = parseFloat($('#diskon_persen').val()) || 0;
+                const pajakPersen = parseFloat($('#pajak_persen').val()) || 0;
 
-            //     // Apply discount and tax percentages
-            //     const diskonAmount = subtotal * (diskonPersen / 100);
-            //     const afterDiskon = subtotal - diskonAmount;
-            //     const pajakAmount = afterDiskon * (pajakPersen / 100);
+                // Calculate subtotal (price * qty)
+                const subtotal = qty * hargaBeli;
 
-            //     // Calculate final price
-            //     const total = afterDiskon + pajakAmount;
-            //     $('#nominal').val(total.toLocaleString('id-ID'));
-            //     $('#subtotal').val(total);
-            // }
+                // Apply discount and tax percentages
+                const diskonAmount = subtotal * (diskonPersen / 100);
+                const afterDiskon = subtotal - diskonAmount;
+                const pajakAmount = afterDiskon * (pajakPersen / 100);
 
-            // // Update product code and name when product is selected
+                // Calculate final price
+                const total = afterDiskon + pajakAmount;
+                $('#nominal').val(total.toLocaleString('id-ID'));
+                $('#subtotal').val(total);
+            }
+
+            // Update product code and name when product is selected
             // $('#product_id').change(function() {
             //     const selectedOption = $(this).find('option:selected');
             //     $('#product_code').val(selectedOption.data('kode'));
@@ -532,217 +586,247 @@
             // });
 
             // Sync PO and Supplier selection
+            document.getElementById('supplier_id').addEventListener('change', function () {
+                let supplierId = this.value;
+                let poSelect = document.getElementById('po_id');
+
+                // Reset PO
+                poSelect.innerHTML = '<option value="">-- Pilih No. PO --</option>';
+
+                if (!supplierId) {
+                    return;
+                }
+
+                fetch(`/inventory/penerimaan/po-by-supplier/${supplierId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Server error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length === 0) {
+                            // Tidak ada PO → dropdown tetap kosong
+                            return;
+                        }
+
+                        data.forEach(po => {
+                            let option = document.createElement('option');
+                            option.value = po.po_id;
+                            option.text = po.po_number;
+                            poSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
+
+            // Header update
             $(document).ready(function () {
 
-                $('#supplier_id').on('change', function () {
-                    let supplierId = $(this).val();
+                // 🔒 Lock header field selain gudang
+                function lockHeaderFields(lock = true) {
+                    $('.header-lock').prop('disabled', lock);
+                }
 
-                    if (po_id) {
-                        loadDetailFromDatabase(po_id);
+                // 🔍 Cek gudang sudah dipilih atau belum
+                function isWarehouseSelected() {
+                    return $('select[name="WARE_Auto"]').val() !== '';
+                }
+
+                // Initial state saat page load
+                lockHeaderFields(!isWarehouseSelected());
+
+                // 1️⃣ Saat gudang dipilih
+                $('select[name="WARE_Auto"]').on('change', function () {
+
+                    if (!isWarehouseSelected()) {
+                        lockHeaderFields(true);
+                        return;
                     }
 
-                    $('#po_id').html('<option value="">Pilih Purchase Order</option>');
+                    lockHeaderFields(false);
+                    updateHeader();
+                });
 
-                    if (supplierId === "") return;
+                // 2️⃣ Field header lain
+                $('#supplier_id, #po_id, input[name="tgl_terima"], input[name="jatuh_tempo"], input[name="faktur"]').on('change', function () {
+                    if (!isWarehouseSelected()) {
+                        return;
+                    }
+                    updateHeader();
+                });
 
+                // 🔁 AJAX update header
+                function updateHeader() {
                     $.ajax({
-                        url: "{{ route('penerimaan.po.by.supplier', ['supplier_id' => ':supplier_id']) }}"
-                                .replace(':supplier_id', supplierId),
-                        method: "GET",
-                        success: function (res) {
-                            res.forEach(function (po) {
-                                $('#po_id').append(
-                                    `<option value="${po.po_id}">${po.po_number}</option>`
-                                );
-                            });
+                        url: `/inventory/penerimaan/${headerId}/update-header`,
+                        type: 'PUT',
+                        data: $('#headerForm').serialize(),
+                        success: function () {
+                            showToast('success', 'Header berhasil diperbarui');
+                        },
+                        error: function (xhr) {
+                            showToast(
+                                'error',
+                                xhr.responseJSON?.message ?? 'Gagal memperbarui header'
+                            );
                         }
                     });
-                });
-
-                if ($('#supplier_id').val() !== "") {
-                    $('#supplier_id').trigger('change');
-                }
-            });
-
-            // // Header update
-            // $('#headerForm').on('change', 'input, select, textarea', function(e) {
-
-            //     if ($(this).attr('id') === 'supplier_id') {
-            //         return;
-            //     }
-
-            //     const data = $('#headerForm').serialize();
-            //     $.ajax({
-            //         url: `/inventory/penerimaan/${headerId}/update-header`,
-            //         type: 'PUT',
-            //         data: data,
-            //         success: function() {
-            //             showToast('success', 'Header berhasil diperbarui');
-            //         },
-            //         error: function(xhr) {
-            //             showToast('error', 'Gagal memperbarui header: ' + xhr.responseText);
-            //         }
-            //     });
-            // });
-
-            // FUNGSI: Ambil detail PO dari server lalu tampilkan ke tabel
-            // --- AUTLOAD DETAIL PO SAAT NO. PO DIPILIH --- //
-            $('#po_id').on('change', function () {
-                let po_id = $(this).val();
-                let penerimaan_id = $('#penerimaan_id').val();
-
-                if (!po_id) {
-                    $("#detail_table_body").html('');
-                    $("#grand-total").text('0');
-                    return;
                 }
 
-                if (!penerimaan_id) {
-                    alert("Penerimaan belum dibuat, simpan header dulu!");
-                    return;
-                }
-
-                $.ajax({
-                    url: `/inventory/penerimaan/${penerimaan_id}/load-po-detail`,
-                    type: "POST",
-                    data: { po_id: po_id },
-                    success: function () {
-                        loadDetailFromDatabase(penerimaan_id);
-                    },
-                    error: function (xhr) {
-                        console.log("Insert PO detail error:", xhr.responseText);
-                    }
-                });
-            });
-
-            function loadDetailFromDatabase(penerimaan_id) {
-                $.ajax({
-                    url: `/inventory/penerimaan/${penerimaan_id}/details`,
-                    type: "GET",
-                    success: function(response) {
-
-                        let rows = '';
-                        let total = 0;
-
-                        response.forEach(function(item) {
-
-                            const kode = item.product?.kode_produk ?? '';
-                            const nama = item.product?.nama_produk ?? '';
-                            const uom  = item.uom?.UOM_Code ?? '';
-                            const qty  = Number(item.qty ?? 0);
-                            const harga = Number(item.unit_price ?? 0);
-                            const diskon = Number(item.discount_percent ?? 0);
-                            const pajak = Number(item.tax_percent ?? 0);
-
-                            // Hitung subtotal
-                            const nilaiBarang = qty * harga;
-                            const nilaiDiskon = nilaiBarang * (diskon / 100);
-                            const nilaiSetelahDiskon = nilaiBarang - nilaiDiskon;
-                            const nilaiPajak = nilaiSetelahDiskon * (pajak / 100);
-                            const subtotal = nilaiSetelahDiskon + nilaiPajak;
-
-                            total += subtotal;
-
-                            rows += `
-                                <tr>
-                                    <td>${kode}</td>
-                                    <td>${nama}</td>
-                                    <td class="text-right">${qty}</td>
-                                    <td>${uom}</td>
-                                    <td class="text-right">${harga.toLocaleString('id-ID')}</td>
-                                    <td class="text-right">${diskon}</td>
-                                    <td class="text-right">${pajak}</td>
-                                    <td class="text-right">${subtotal.toLocaleString('id-ID')}</td>
-                                    <td>${item.catatan ?? ''}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning edit-btn" data-id="${item.detail_id}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-
-                        $("#detail_table_body").html(rows);
-                        $("#grand-total").text(total.toLocaleString("id-ID"));
-                    },
-                    error: function(xhr){
-                        console.log("Load DB detail error:", xhr.responseText);
-                    }
-                });
-            }
-
-            $('#po_id').on('change', function () {
-                let poId = $(this).val();
-
-                $.get(`/inventory/penerimaan/get-supplier-from-po/${poId}`, function (res) {
-                    if (!$('#supplier_id').val()) {
-                        $('#supplier_id').val(res.supplier_id).change();
-                    }
-
-                    // Jika supplier_id hidden
-                    $('#supplier_id_hidden').val(res.supplier_id);
-                });
             });
 
             // Open modal for new detail
-            // $('#addDetailButton').click(function() {
-            //     editMode = false;
-            //     currentDetailId = null;
-            //     form[0].reset();
-            //     $('#product_code').val('');
-            //     $('#product_name').val('');
-            //     $('#nominal').val('');
-            //     $('#subtotal').val('');
-            //     modal.modal('show');
-            // });
+             $(document).ready(function () {
 
-            // // Open modal for edit detail
-            // $('#dataTable').on('click', '.edit-btn', function() {
-            //     editMode = true;
-            //     currentDetailId = $(this).data('id');
-                
-            //     // Fill form
-            //     const productId = $(this).data('product_id');
-            //     $('#product_id').val(productId);
-            //     const selectedProduct = $('#product_id option[value="' + productId + '"]');
-            //     $('#product_code').val(selectedProduct.data('kode'));
-            //     $('#product_name').val(selectedProduct.data('nama'));
-            //     $('#uom_id').val($(this).data('uom_id'));
-            //     $('#qty').val($(this).data('qty'));
-            //     $('#harga_beli').val($(this).data('harga_beli'));
-            //     $('#pajak_persen').val($(this).data('pajak_persen'));
-            //     $('#diskon_persen').val($(this).data('diskon_persen'));
-            //     $('#dtl_catatan').val($(this).data('catatan'));
-                
-            //     // Calculate nominal
-            //     calculateNominal();
-                
-            //     modal.modal('show');
-            // });
+                /* ==========================
+                FUNCTION
+                ========================== */
+                function loadProductsBySupplier(selectedProductId = null) {
+
+                    const supplierId = $('#supplier_id').val();
+                    const $productSelect = $('#product_id');
+
+                    $productSelect.empty()
+                        .append('<option value="">Pilih Produk</option>');
+
+                    if (!supplierId) return;
+
+                    $.ajax({
+                        url: `/inventory/penerimaan/products-by-supplier/${supplierId}`,
+                        type: 'GET',
+                        success: function (products) {
+
+                            products.forEach(function (product) {
+                                $productSelect.append(
+                                    `<option value="${product.id}">${product.nama_produk}</option>`
+                                );
+                            });
+
+                            if (selectedProductId) {
+                                $productSelect.val(selectedProductId).trigger('change');
+                            }
+                        },
+                        error: function () {
+                            showToast('error', 'Gagal memuat produk supplier');
+                        }
+                    });
+                }
+
+                /* ==========================
+                ADD DETAIL
+                ========================== */
+                $('#addDetailButton').on('click', function () {
+                    editMode = false;
+                    currentDetailId = null;
+                    form[0].reset();
+
+                    loadProductsBySupplier();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                EDIT DETAIL
+                ========================== */
+                $('#dataTable').on('click', '.edit-btn', function () {
+                    editMode = true;
+                    currentDetailId = $(this).data('id');
+
+                    const productId = $(this).data('product_id');
+
+                    loadProductsBySupplier(productId);
+
+                    $('#uom_id').val($(this).data('uom_id'));
+                    $('#qty').val($(this).data('qty'));
+                    $('#unit_price').val($(this).data('unit_price'));
+                    $('#tax_percent').val($(this).data('tax_percent'));
+                    $('#discount_percent').val($(this).data('discount_percent'));
+                    $('#dtl_note').val($(this).data('note'));
+
+                    calculateNominal();
+
+                    modal.modal('show');
+                });
+
+                /* ==========================
+                SUPPLIER CHANGE
+                ========================== */
+                $('#supplier_id').on('change', function () {
+                    if ($('#detailModal').hasClass('show')) {
+                        loadProductsBySupplier();
+                    }
+                });
+
+            });
+
+            $('#product_id').on('change', function () {
+
+                const productId = $(this).val();
+
+                // Reset jika kosong
+                if (!productId) {
+                    $('#unit_price').val('');
+                    calculateNominal();
+                    return;
+                }
+
+                $.ajax({
+                    url: `/inventory/penerimaan/products/${productId}`,
+                    type: 'GET',
+                    success: function (res) {
+
+                        // 🔥 AUTO ISI HARGA BELI
+                        $('#harga_beli').val(res.harga_beli);
+                        $('#pajak_persen').val(res.pajak_persen);
+                        $('#diskon_persen').val(res.diskon_persen);
+
+                        // 🔁 Hitung ulang subtotal
+                        calculateNominal();
+                    },
+                    error: function () {
+                        showToast('error', 'Gagal mengambil harga produk');
+                    }
+                });
+            });  
 
             // // Save detail
-            // $('#dtlSave').click(function() {
-            //     const data = form.serialize();
-            //     const url = editMode 
-            //         ? `/inventory/penerimaan/${headerId}/details/${currentDetailId}`
-            //         : `/inventory/penerimaan/${headerId}/details`;
+            $('#dtlSave').click(function() {
 
-            //     const method = editMode ? 'PUT' : 'POST';
+                if (!poId) {
+                    showToast('error', 'PO belum dipilih');
+                    return;
+                }
 
-            //     $.ajax({
-            //         url: url,
-            //         type: method,
-            //         data: data,
-            //         success: function() {
-            //             modal.modal('hide');
-            //             location.reload();
-            //         },
-            //         error: function(xhr) {
-            //             showToast('error', 'Gagal menyimpan detail: ' + xhr.responseText);
-            //         }
-            //     });
-            // });
+                const data = form.serialize();
+                const url = editMode 
+                    ? `/inventory/penerimaan/${headerId}/${poId}/details/${currentDetailId}`
+                    : `/inventory/penerimaan/${headerId}/${poId}/details`;
+
+                const method = editMode ? 'PUT' : 'POST';
+
+                console.log({
+                    headerId,
+                    poId,
+                    currentDetailId,
+                    editMode
+                });
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function() {
+                        modal.modal('hide');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        showToast('error', 'Gagal menyimpan detail: ' + xhr.responseText);
+                    }
+                });
+            });
 
             // Delete detail
             $('#dataTable').on('click', '.delete-btn', function() {
@@ -794,13 +878,6 @@
 
             // Publish Penerimaan
             $('#btnPublish').click(function() {
-                let headerId = $("#penerimaan_id").val();
-
-                if (!headerId) {
-                    showToast('error', "ID penerimaan tidak ditemukan");
-                    return;
-                }
-
                 Swal.fire({
                     title: 'Simpan Penerimaan?',
                     text: "Pastikan data sudah benar sebelum disimpan",
@@ -811,7 +888,6 @@
                     confirmButtonText: 'Ya, simpan!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        
                         $.ajax({
                             url: `/inventory/penerimaan/${headerId}/publish`,
                             type: 'POST',
@@ -835,13 +911,6 @@
 
             // Cancel draft
             $('#btnCancelDraft').click(function() {
-                let id = $(this).data('id');
-
-                if (!id) {
-                    alert('ID tidak ditemukan');
-                    return;
-                }
-                console.log(id);
                 Swal.fire({
                     title: 'Batalkan draft?',
                     text: "Semua data akan dihapus secara permanen",

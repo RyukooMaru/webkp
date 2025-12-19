@@ -43,13 +43,15 @@ class PenerimaanController extends Controller
                 ->with('error', 'Harap buat Purchase Order terlebih dahulu sebelum membuat penerimaan');
         }
 
+        $defaultWarehouse = Warehouse::orderBy('WARE_Auto')->first();
+
         // Buat penerimaan baru dengan default values
         $penerimaan = Penerimaan::create([
             'no_penerimaan' => 'RCV-' . date('Ymd') . '-' . Str::random(4),
             'supplier_id' => Supplier::first()->id,
             'po_id' => PurchaseOrder::where('status', 'published')->first()->po_id,
             'tgl_terima' => now(),
-            'gudang' => 'WH-A', // Default gudang
+            'gudang' => $defaultWarehouse->WARE_Name,
             'faktur' => 'INV-' . date('YmdHis'),
             'jatuh_tempo' => now()->addDays(30),
             'status' => 'draft'
@@ -64,13 +66,25 @@ class PenerimaanController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'po_id' => 'required|exists:purchase_orders,po_id',
             'tgl_terima' => 'required|date',
-            'WARE_Auto' => 'required|exists:m_warehouse,WARE_Auto',
+            'gudang' => 'required|exists:m_warehouse,WARE_Auto',
             'faktur' => 'required|string|max:50',
             'jatuh_tempo' => 'required|date|after:tgl_terima',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if ($request->po_id) {
+            $valid = PurchaseOrder::where('id', $request->po_id)
+                ->where('supplier_id', $request->supplier_id)
+                ->exists();
+
+            if (! $valid) {
+                return response()->json([
+                    'message' => 'PO tidak sesuai dengan supplier'
+                ], 422);
+            }
         }
 
         $warehouse = Warehouse::where('WARE_Auto', $request->WARE_Auto)->first();
@@ -81,7 +95,7 @@ class PenerimaanController extends Controller
             'supplier_id' => $request->supplier_id,
             'po_id' => $request->po_id,
             'tgl_terima' => $request->tgl_terima,
-            'gudang' => $request->gudang,
+            'gudang' => $warehouse->WARE_Name,
             'faktur' => $request->faktur,
             'jatuh_tempo' => $request->jatuh_tempo,
             'catatan' => $request->catatan
@@ -91,14 +105,6 @@ class PenerimaanController extends Controller
             'success' => true,
             'redirect' => route('penerimaan.edit', $penerimaan->penerimaan_id)
         ]);
-
-        $poSupplier = PurchaseOrder::where('po_id', $request->po_id)->value('supplier_id');
-
-        if ($poSupplier != $request->supplier_id) {
-            return response()->json([
-                'error' => 'Supplier dan PO tidak cocok'
-            ], 422);
-        }
     }
 
     public function show(Penerimaan $penerimaan)
@@ -112,7 +118,7 @@ class PenerimaanController extends Controller
             'purchaseOrders' => PurchaseOrder::where('status', 'published')->get(),
             'products' => Dtproduk::all(),
             'uoms' => SatuanProduk::all(),
-            'locations' => ['WH-A', 'WH-B', 'WH-C'],
+            'locations' => Warehouse::orderBy('WARE_Name')->get(),
             'title' => 'Detail Penerimaan: ' . $penerimaan->no_penerimaan
         ]);
     }
@@ -135,7 +141,7 @@ class PenerimaanController extends Controller
             ->get(),
         'products' => Dtproduk::orderBy('nama_produk')->get(),
         'uoms' => SatuanProduk::orderBy('UOM_Code')->get(),
-        'locations' => ['WH-A', 'WH-B', 'WH-C'],
+        'locations' => Warehouse::orderBy('WARE_Name')->get(),
         'title' => 'Edit Penerimaan: ' . $penerimaan->no_penerimaan
     ]);
     }
@@ -146,7 +152,7 @@ class PenerimaanController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'po_id' => 'required|exists:purchase_orders,po_id',
             'tgl_terima' => 'required|date',
-            'gudang' => 'required|string|max:20',
+            'gudang' => 'required',
             'faktur' => 'required|string|max:50',
             'jatuh_tempo' => 'required|date|after:tgl_terima',
         ]);
@@ -155,25 +161,21 @@ class PenerimaanController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $penerimaan->update([
-            'supplier_id' => $request->supplier_id_hidden,
-            'po_id'       => $request->po_id,
-            'tgl_terima'  => $request->tgl_terima,
-            'gudang'      => $request->gudang,
-            'faktur'      => $request->faktur,
-            'jatuh_tempo' => $request->jatuh_tempo,
-            'catatan'     => $request->catatan,
-        ]);
+        if ($request->po_id) {
+            $valid = PurchaseOrder::where('id', $request->po_id)
+                ->where('supplier_id', $request->supplier_id)
+                ->exists();
+
+            if (! $valid) {
+                return response()->json([
+                    'message' => 'PO tidak sesuai dengan supplier'
+                ], 422);
+            }
+        }
+
+        $penerimaan->update($request->all());
 
         return response()->json(['success' => true]);
-
-        $poSupplier = PurchaseOrder::where('po_id', $request->po_id)->value('supplier_id');
-
-        if ($poSupplier != $request->supplier_id) {
-            return response()->json([
-                'error' => 'Supplier dan PO tidak cocok'
-            ], 422);
-        }
     }
 
     public function destroy($id)
@@ -196,125 +198,69 @@ class PenerimaanController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'po_id' => 'required|exists:purchase_orders,po_id',
             'tgl_terima' => 'required|date',
-            'gudang' => 'required|string|max:20',
+            'WARE_Auto' => 'required|exists:m_warehouse,WARE_Auto',
             'faktur' => 'required|string|max:50',
             'jatuh_tempo' => 'required|date|after:tgl_terima',
             'catatan' => 'nullable|string'
         ]);
 
+        $warehouse = Warehouse::findOrFail($request->WARE_Auto);
+
         $penerimaan = Penerimaan::findOrFail($id);
-        $penerimaan->update($request->all());
+        $penerimaan->update([
+            'supplier_id' => $request->supplier_id,
+            'po_id' => $request->po_id,
+            'tgl_terima' => $request->tgl_terima,
+            'gudang' => $warehouse->WARE_Name,
+            'faktur' => $request->faktur,
+            'jatuh_tempo' => $request->jatuh_tempo,
+            'catatan' => $request->catatan
+        ]);
 
         return response()->json(['success' => true]);
     }
 
-    public function getPOBySupplier($supplier_id)
+    public function POBySupplier($supplierId)
     {
-        // Ambil PO berdasarkan supplier
-        $poList = PurchaseOrder::where('supplier_id', $supplier_id)
+        $pos = PurchaseOrder::where('supplier_id', $supplierId)
             ->select('po_id', 'po_number')
             ->get();
 
-        return response()->json($poList);
+        return response()->json($pos);
     }
 
-    public function getPODetail($po_id)
+    public function productsBySupplier($supplierId)
     {
-        $items = PurchaseOrderDetail::where('po_id', $po_id)
-            ->with(['product', 'uom'])
-            ->get();
+        $products = Dtproduk::where('supplier_id', $supplierId)
+            ->orderBy('nama_produk')
+            ->get(['id', 'nama_produk']);
 
-        return response()->json($items);
+        return response()->json($products);
     }
 
-    public function loadPODetailToPenerimaan(Request $request, $id)
+    public function getProductPrice($product_id)
     {
-        $po_id = $request->po_id;
+        $detail = PurchaseOrderDetail::where('product_id', $product_id)
+            ->orderBy('created_at', 'desc')
+            ->first(); // ⬅️ BUKAN get()
 
-        if (!$po_id) {
-            return response()->json(['error' => 'PO ID tidak ditemukan'], 422);
-        }
-
-        // Cek apakah penerimaan ada
-        $penerimaan = Penerimaan::find($id);
-        if (!$penerimaan) {
-            return response()->json(['error' => 'Penerimaan tidak ditemukan'], 404);
-        }
-
-        // Ambil detail PO
-        $details = PurchaseOrderDetail::where('po_id', $po_id)->get();
-
-        $penerimaan->update([
-            'po_id' => $po_id,
-            'supplier_id' => PurchaseOrder::where('po_id', $po_id)->value('supplier_id'),
-        ]);
-
-        // Hapus detail lama
-        PenerimaanDetail::where('penerimaan_id', $id)->delete();
-
-        foreach ($details as $d) {
-
-            // Hitung ulang subtotal
-            $qty = $d->qty;
-            $harga = $d->unit_price;
-            $diskon = $d->discount_percent;
-            $pajak = $d->tax_percent;
-
-            $nilaiBarang = $qty * $harga;
-            $nilaiDiskon = $nilaiBarang * ($diskon / 100);
-            $nilaiSetelahDiskon = $nilaiBarang - $nilaiDiskon;
-            $nilaiPajak = $nilaiSetelahDiskon * ($pajak / 100);
-
-            $subtotal = $nilaiSetelahDiskon + $nilaiPajak;
-
-            // Insert ke tabel penerimaan_detail
-            PenerimaanDetail::create([
-                'penerimaan_id' => $id,
-                'product_id'    => $d->product_id,
-                'uom_id'        => $d->uom_id,
-                'qty'           => $qty,
-                'harga_beli'    => $harga,
-                'diskon_persen' => $diskon,
-                'pajak_persen'  => $pajak,
-                'subtotal'      => $subtotal,
-                'catatan'       => $d->catatan,
+        if (!$detail) {
+            return response()->json([
+                'harga_beli' => 0,
+                'pajak_persen' => 0,
+                'diskon_persen' => 0,
+                'message' => 'Harga beli belum tersedia'
             ]);
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'harga_beli' => $detail->unit_price,
+            'pajak_persen' => $detail->tax_percent,
+            'diskon_persen' => $detail->discount_percent,
+        ]);
     }
 
-    public function getDetails($id)
-    {
-        $details = PenerimaanDetail::where('penerimaan_id', $id)
-            ->with(['product', 'uom'])
-            ->get()
-            ->map(function ($d) {
-
-                return [
-                    'detail_id' => $d->id,
-                    'qty'       => $d->qty,
-                    'unit_price' => $d->harga_beli,
-                    'discount_percent' => $d->diskon_persen,
-                    'tax_percent' => $d->pajak_persen,
-                    'subtotal'   => $d->subtotal,
-                    'catatan'    => $d->catatan,
-
-                    // FORMAT JSON SESUAI AJAX
-                    'product' => [
-                        'kode_produk' => $d->product->kode_produk,
-                        'nama_produk' => $d->product->nama_produk,
-                    ],
-                    'uom' => [
-                        'UOM_Code' => $d->uom->UOM_Code,
-                    ],
-                ];
-            });
-
-        return response()->json($details);
-    }
-
-    public function storeDetail(Request $request, $penerimaanId)
+    public function storeDetail(Request $request, $penerimaanId, $poId)
     {
         $request->validate([
             'product_id' => 'required|exists:dataproduk_tabel,id',
@@ -325,6 +271,18 @@ class PenerimaanController extends Controller
             'diskon_persen' => 'nullable|numeric|min:0|max:100',
             'catatan' => 'nullable|string'
         ]);
+
+        $po = PurchaseOrder::findOrFail($poId);
+
+        $isValidProduct = Dtproduk::where('id', $request->product_id)
+            ->where('supplier_id', $po->supplier_id)
+            ->exists();
+            
+        if (!$isValidProduct) {
+            return response()->json([
+                'message' => 'Produk tidak sesuai dengan supplier PO'
+            ], 422);
+        }
 
         DB::transaction(function () use ($request, $penerimaanId) {
             // Calculate subtotal
@@ -349,7 +307,7 @@ class PenerimaanController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updateDetail(Request $request, $penerimaanId, $detailId)
+    public function updateDetail(Request $request, $poId, $penerimaanId, $detailId)
     {
         $request->validate([
             'product_id' => 'required|exists:dataproduk_tabel,id',
@@ -360,6 +318,18 @@ class PenerimaanController extends Controller
             'diskon_persen' => 'nullable|numeric|min:0|max:100',
             'catatan' => 'nullable|string'
         ]);
+
+        $po = PurchaseOrder::findOrFail($poId);
+
+        $isValidProduct = Dtproduk::where('id', $request->product_id)
+            ->where('supplier_id', $po->supplier_id)
+            ->exists();
+            
+        if (!$isValidProduct) {
+            return response()->json([
+                'message' => 'Produk tidak sesuai dengan supplier PO'
+            ], 422);
+        }
 
         DB::transaction(function () use ($request, $penerimaanId, $detailId) {
             $detail = PenerimaanDetail::where('penerimaan_id', $penerimaanId)
